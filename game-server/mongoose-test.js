@@ -7,28 +7,22 @@ db.once('open', function callback () {
   // yay!
 });
 
-var kittySchema = mongoose.Schema({
-    name: String
+var tileSchema = mongoose.Schema({
+    humanReadableName: String,
+    startTile : Boolean
 });
-// NOTE: methods must be added to the schema before compiling it with mongoose.model()
-kittySchema.methods.speak = function () {
-  var greeting = this.name
-    ? "Meow name is " + this.name
-    : "I don't have a name"
-  console.log(greeting);
-}
-var Kitten = mongoose.model('Kitten', kittySchema)
+var Tile = mongoose.model('Tile', tileSchema);
 
-var fluffy = new Kitten({ name: 'fluffy' });
-fluffy.speak(); // "Meow name is fluffy"
+var tile1 = new Tile({ humanReadableName : "River", startTile : true });
+var tile2 = new Tile({ humanReadableName : "Cathedral surrounded by grass", startTile : false });
 
-fluffy.save(function(err, fluffy) {
+tile1.save(function(err, fluffy) {
 	if (err) {}
-	fluffy.speak();
+	console.log("Tile saved.")
 });
 
-Kitten.find(function (err, kittens) {
+Tile.find(function (err, tiles) {
   if (err) // TODO handle err
   	console.log(err)
-  console.log("Kittens!", kittens)
+  console.log("Tiles!", tiles)
 })
