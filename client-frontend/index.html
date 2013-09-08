@@ -1,8 +1,15 @@
-<script src="/scripts/vendors/socket.io.js"></script>
-<script>
-  var socket = io.connect('http://localhost');
-  socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('my other event', { my: 'data' });
-  });
-</script>
+
+<html>
+<head>
+	<script src="http://localhost/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<script>
+	  var socket = io.connect('http://localhost');
+	  socket.on('conn', function(data) {
+	    console.log("Connected!", data);
+	    socket.emit('conn', { confirm : true });
+	  });
+	</script>
+</body>
+</html>
