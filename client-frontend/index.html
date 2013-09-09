@@ -5,11 +5,36 @@
 </head>
 <body>
 	<script>
+    console.log("Connecting...");
 	  var socket = io.connect('http://localhost');
-	  socket.on('conn', function(data) {
-	    console.log("Connected!", data);
-	    socket.emit('conn', { confirm : true });
-	  });
+
+    socket.on('connection-attempt', function(data) {
+      console.log("Connection attempt: " + data.status);
+    });
+
+    socket.on("game-status", function(data) {
+      switch (data.action) {
+        case "start":
+          console.log("Starting game: " + data.status);
+          break;
+        case "end":
+          console.log("Ending game: " + data.status);
+          break;
+        default:
+          console.log("Game-status message didn't fit any options.");
+          break;
+      }
+    });
+
+    var startGame = function() {
+      console.log("Attempting to start game...");
+      socket.emit("game-status", { action : "start" });
+    }
+
+    var endGame = function() {
+      console.log("Attempting to end game...");
+      socket.emit("game-status", { action : "end" });
+    }
 	</script>
 </body>
 </html>
