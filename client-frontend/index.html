@@ -26,14 +26,20 @@
       }
     });
 
-    var startGame = function() {
-      console.log("Attempting to start game...");
-      socket.emit("game-status", { action : "start" });
+    socket.on("join", function(data) {
+      console.log("Join: " + data.status);
+    });
+
+    socket.on("leave", function(data) {
+      console.log("Leave: " + data.status);
+    });
+
+    var join = function(user) {
+      socket.emit("join", user);
     }
 
-    var endGame = function() {
-      console.log("Attempting to end game...");
-      socket.emit("game-status", { action : "end" });
+    var leave = function(user) {
+      socket.emit("leave", user);
     }
 	</script>
 </body>
