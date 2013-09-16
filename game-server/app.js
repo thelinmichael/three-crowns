@@ -12,22 +12,15 @@ app.get('/', function (req, res) {
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 
+var Game = require('./models/game.js');
+var Player = require('./models/player.js');
+var Tile = require('./models/tile.js');
+
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   // yay!
 });
-
-var gameSchema = mongoose.Schema({
-    start: Date,
-    end : Date
-});
-var Game = mongoose.model('Game', gameSchema);
-
-var playerSchema = mongoose.Schema({
-    name: String
-});
-var Player = mongoose.model('Player', playerSchema);
 
 /* Controllers */
 io.sockets.on('connection', function(socket) {
@@ -70,6 +63,10 @@ io.sockets.on('connection', function(socket) {
         })
       }
     });
+  });
+
+  socket.on('tiles', function() {
+
   });
 
 });
