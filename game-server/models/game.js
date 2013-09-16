@@ -5,14 +5,18 @@ var Game = function() {
     start: Date,
     end : Date
 	});
-	var Game = mongoose.model('Game', schema);
+	var _model = mongoose.model('Game', schema);
 
-	var _getResponse = function(callback) {
-		return 1;
+	var _newGame = function(callback) {
+		var game = new _model();
+		game.save(function(err) {
+				callback(err);
+		});
 	};
 
 	return {
-		getResponse : _getResponse
+		newGame : _newGame,
+		model : _model
 	}
 
 }();
