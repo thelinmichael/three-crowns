@@ -1,8 +1,8 @@
 var mongoose = require("mongoose");
-var unit = require("../models/player");
+var unit = require("../models/tile");
 var should = require("should");
 
-describe('Player', function() {
+describe('Tile', function() {
 
 	before(function(done) {
 		mongoose.disconnect(function() {
@@ -29,8 +29,8 @@ describe('Player', function() {
 		});
 	});
 
-	it("Should be able to create a player", function(done) {
-		unit.newPlayer("Jenni", function(err) {
+	it("Should be able to create a tile", function(done) {
+		unit.newTile(function(err) {
 			should.not.exist(err);
 			unit.model.count(function(err, count) {
 				should.not.exist(err);

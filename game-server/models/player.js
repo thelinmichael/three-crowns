@@ -7,7 +7,7 @@ var Player = function() {
 	});
 	var _model = mongoose.model('Player', schema);
 
-	var _createPlayer = function(name, callback) {
+	var _newPlayer = function(name, callback) {
 		var player = new _model({ "name" : name });
 		player.save(function(err) {
 			callback(err);
@@ -15,7 +15,7 @@ var Player = function() {
 	};
 
 	return {
-		createPlayer : _createPlayer,
+		newPlayer : _newPlayer,
 		model : _model
 	}
 
