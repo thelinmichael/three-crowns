@@ -29,7 +29,7 @@ describe('Game', function() {
 		});
 	});
 
-	it("Should be able to create a game", function(done) {
+	it("should be able to create a game", function(done) {
 		unit.newGame(function(err) {
 			should.not.exist(err);
 			unit.model.count(function(err, count) {
@@ -39,6 +39,26 @@ describe('Game', function() {
 			});
 		});
 	});
+
+	it("should know when the game is started and when it has ended", function(done) {
+		unit.newGame(function(err) {
+			should.not.exist(err);
+			unit.model.isStarted().should.equal(false);
+		});
+	});
+
+	it.skip("should not be able to start a game without players", function(done) {
+		unit.newGame(function(err) {
+			unit.startGame(function(err) {
+				should.exist(err);
+				done();
+			});
+		});
+	});
+
+	it("should not be able to start a game without tiles");
+
+	it("should not be able to start a game without players and tiles");
 
 	after(function(done) {
 		mongoose.disconnect(function() {
