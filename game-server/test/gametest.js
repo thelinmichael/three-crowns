@@ -1,69 +1,54 @@
 var mongoose = require("mongoose");
-var unit = require("../models/game");
+var Game = require("../models/game");
 var should = require("should");
 
 describe('Game', function() {
 
 	before(function(done) {
-		mongoose.disconnect(function() {
-			try {
-				mongoose.connect('mongodb://localhost/game_test');
-				done();
-			} catch (err) {
-				console.log("Couldn't connect to MongoDB", err);
-				should.fail();
-			}
-		})
+    if (mongoose.connection.db) {
+        return done();
+    }
+    mongoose.connect('mongodb://localhost/game_test', done);
+  });
+
+  after(function(done) {
+    mongoose.connection.db.dropDatabase(function() {
+      mongoose.connection.close(done);
+    });
+  });
+
+	beforeEach(function(done){
+    mongoose.connection.db.dropDatabase(function(err){
+      if (err) return done(err);
+      done();
+    });
+  });
+
+	it("should know when game is started and not", function() {
+		unit = new Game();
+		unit.isStarted().should.equal(false);
+		unit.startGame();
+		unit.isStarted().should.equal(true);
+		unit.endGame();
+		unit.isStarted().should.equal(true);
 	});
 
-	beforeEach(function(done) {
-		unit.model.remove({}, function(err) {
-			should.not.exist(err);
-
-			unit.model.count(function(err, count) {
-				should.not.exist(err);
-				count.should.equal(0);
-
-				done();
-			});
-		});
+	it("should know when the game is ended and not", function() {
+		unit = new Game();
+		unit.isEnded().should.equal(false);
+		unit.startGame();
+		unit.isEnded().should.equal(false);
+		unit.endGame();
+		unit.isEnded().should.equal(true);
 	});
 
-	it("should be able to create a game", function(done) {
-		unit.newGame(function(err) {
-			should.not.exist(err);
-			unit.model.count(function(err, count) {
-				should.not.exist(err);
-				count.should.equal(1);
-				done();
-			});
-		});
-	});
-
-	it("should know when the game is started and when it has ended", function(done) {
-		unit.newGame(function(err) {
-			should.not.exist(err);
-			unit.model.isStarted().should.equal(false);
-		});
-	});
-
-	it.skip("should not be able to start a game without players", function(done) {
-		unit.newGame(function(err) {
-			unit.startGame(function(err) {
-				should.exist(err);
-				done();
-			});
-		});
-	});
-
-	it("should not be able to start a game without tiles");
-
-	it("should not be able to start a game without players and tiles");
-
-	after(function(done) {
-		mongoose.disconnect(function() {
-			done();
-		});
+	it("should know when the game is in progess and not", function() {
+		unit = new Game();
+		unit.inProgress().should.equal(false);
+		unit.startGame();
+		unit.inProgress().should.equal(true);
+		unit.endGame();
+		unit.inProgress().should.equal(false);
 	});
 
 });

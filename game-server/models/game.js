@@ -1,39 +1,29 @@
-var Game = function() {
-	var mongoose = require("mongoose");
+var mongoose = require("mongoose");
+var schema = mongoose.Schema({
+  start: Date,
+  end : Date,
+  test : String
+});
 
-	var schema = mongoose.Schema({
-		created : Date,
-    start: Date,
-    end : Date
-	});
+schema.methods.startGame = function() {
+	this.start = Date.now();
+};
 
-	schema.methods.startGame = function() {
+schema.methods.endGame = function() {
+	this.end = Date.now();
+}
 
-	};
+schema.methods.isEnded = function() {
+	return (this.end != undefined);
+}
 
-	schema.methods.isStarted = function() {
-		return created;
-	};
+schema.methods.isStarted = function() {
+	return (this.start != undefined);
+};
 
-	var _model = mongoose.model('Game', schema);
+schema.methods.inProgress = function() {
+	return (this.isStarted() && !this.isEnded());
+}
 
-	var _newGame = function(callback) {
-		var game = new _model();
-		game.save(function(err) {
-				callback(err);
-		});
-	};
 
-	var _startGame = function(callback) {
-
-	}
-
-	return {
-		newGame : _newGame,
-		startGame : _startGame,
-		model : _model
-	}
-
-}();
-
-module.exports = Game;
+module.exports = mongoose.model('Game', schema);
