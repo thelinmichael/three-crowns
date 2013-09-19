@@ -2,15 +2,19 @@ var mongoose = require("mongoose");
 var schema = mongoose.Schema({
   start: Date,
   end : Date,
-  test : String
+  players : ['Player'],
 });
 
 schema.methods.startGame = function() {
-	this.start = Date.now();
+  if (!this.start) {
+	 this.start = Date.now();
+  }
 };
 
 schema.methods.endGame = function() {
-	this.end = Date.now();
+  if (!this.end) {
+    this.end = Date.now();
+  }
 }
 
 schema.methods.isEnded = function() {

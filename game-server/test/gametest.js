@@ -1,10 +1,16 @@
 var mongoose = require("mongoose");
+var mockery = require("mockery");
 var Game = require("../models/game");
 var should = require("should");
+
+// Loading mocks
+var Player = require("./mocks/player");
+mockery.registerMock('./mocks/player', Player);
 
 describe('Game', function() {
 
 	before(function(done) {
+		mockery.enable();
     if (mongoose.connection.db) {
         return done();
     }
@@ -12,6 +18,7 @@ describe('Game', function() {
   });
 
   after(function(done) {
+  	mockery.disable();
     mongoose.connection.db.dropDatabase(function() {
       mongoose.connection.close(done);
     });
@@ -33,6 +40,9 @@ describe('Game', function() {
 		unit.isStarted().should.equal(true);
 	});
 
+	// Use a spy to see if the property is changed
+	it("should not be able to reset the starting time");
+
 	it("should know when the game is ended and not", function() {
 		unit = new Game();
 		unit.isEnded().should.equal(false);
@@ -50,5 +60,15 @@ describe('Game', function() {
 		unit.endGame();
 		unit.inProgress().should.equal(false);
 	});
+
+
+	it("should be able to add players to the game", function() {
+		unit = new Game();
+		// Need to mock the player model
+	});
+
+	it("should only be able to add players when the game is not yet started");
+
+	it("should populate a new game with appropriate tiles");
 
 });
