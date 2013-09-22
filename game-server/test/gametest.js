@@ -3,7 +3,7 @@ var mockery = require("mockery");
 var Game = require("../models/game");
 var should = require("should");
 
-// Loading mocks
+// Mocks
 var Player = require("./mocks/player");
 mockery.registerMock('./mocks/player', Player);
 
@@ -61,11 +61,15 @@ describe('Game', function() {
 		unit.inProgress().should.equal(false);
 	});
 
+  it("should successfully be able to mock a player", function() {
+    player = new Player();
+    player.should.exist;
+    player.isMock().should.equal.true;
+  });
 
 	it("should be able to add players to the game", function() {
-		unit = new Game();
-		// Need to mock the player model
-	});
+    var game = new Game();
+  });
 
 	it("should only be able to add players when the game is not yet started");
 
