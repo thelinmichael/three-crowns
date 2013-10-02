@@ -11,6 +11,6 @@
   "devDependencies": {
   	"mocha" : "*",
     "should" : "*",
-    "mockery" : "*"
+    "sinon" : "*"
   }
 }

@@ -1,16 +1,12 @@
 var mongoose = require("mongoose");
-var mockery = require("mockery");
 var Game = require("../models/game");
+var Player = require("../models/player");
+var sinon = require("sinon");
 var should = require("should");
-
-// Mocks
-var Player = require("./mocks/player");
-mockery.registerMock('./mocks/player', Player);
 
 describe('Game', function() {
 
 	before(function(done) {
-		mockery.enable();
     if (mongoose.connection.db) {
         return done();
     }
@@ -18,7 +14,6 @@ describe('Game', function() {
   });
 
   after(function(done) {
-  	mockery.disable();
     mongoose.connection.db.dropDatabase(function() {
       mongoose.connection.close(done);
     });
@@ -41,7 +36,17 @@ describe('Game', function() {
 	});
 
 	// Use a spy to see if the property is changed
-	it("should not be able to reset the starting time");
+	it("should not be able to reset the starting time", function() {
+    unit = new Game();
+    var startingTime = unit.getStartingTime();
+    should.not.exist(startingTime);
+    unit.startGame();
+    startingTime = unit.getStartingTime();
+    should.exist(startingTime);
+    unit.startGame();
+    var startingTimeAfterSecondStart = unit.getStartingTime();
+    startingTime.should.equal(startingTimeAfterSecondStart);
+  });
 
 	it("should know when the game is ended and not", function() {
 		unit = new Game();
@@ -61,17 +66,47 @@ describe('Game', function() {
 		unit.inProgress().should.equal(false);
 	});
 
-  it("should successfully be able to mock a player", function() {
-    player = new Player();
-    player.should.exist;
-    player.isMock().should.equal.true;
-  });
-
-	it("should be able to add players to the game", function() {
+	it("should be able to add players to an unstarted game", function() {
     var game = new Game();
+    game.getPlayers().length.should.equal(0);
+    var playerJenni = new Player({ name : "Jenni" });
+
+    var spy = sinon.spy();
+    game.addPlayer(playerJenni, spy);
+    spy.calledOnce.should.equal(true);
+    spy.calledWith().should.equal(true);
+    game.getPlayers().length.should.equal(1);
+
+    spy.reset();
+    game.addPlayer(playerJenni, spy);
+    spy.calledOnce.should.equal(true);
+    spy.calledWith({ "error" : "Player already exists in the game"}).should.equal(true)
+    game.getPlayers().length.should.equal(1);
+
+    spy.reset();
+    var playerMicke = new Player({ name : "Micke" });
+    game.addPlayer(playerMicke, spy);
+    spy.calledOnce.should.equal(true);
+    spy.calledWith().should.equal(true);
+    game.getPlayers().length.should.equal(2);
   });
 
-	it("should only be able to add players when the game is not yet started");
+	it("should only be able to add players when the game is not yet started", function() {
+    var game = new Game();
+
+    var spy = sinon.spy();
+    var player = new Player({ name : "beforeStart" });
+    game.addPlayer(player, spy);
+    spy.calledOnce.should.equal(true);
+    spy.calledWith().should.equal(true);
+
+    spy.reset();
+    game.startGame();
+    var player = new Player({ name : "afterStart" });
+    game.addPlayer(player, spy);
+    spy.calledOnce.should.equal(true);
+    spy.calledWith({ "error" : "Players cannot be added once game has started" }).should.equal(true);
+  });
 
 	it("should populate a new game with appropriate tiles");
 

@@ -13,8 +13,6 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 
 var Game = require('./models/game.js');
-var Player = require('./models/player.js');
-var Tile = require('./models/tile.js');
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
