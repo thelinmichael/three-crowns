@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var Game = require("../models/tile");
+var Tile = require("../models/tile");
 var should = require("should");
 
 describe('Tile', function() {
@@ -11,12 +11,6 @@ describe('Tile', function() {
     mongoose.connect('mongodb://localhost/game_test', done);
   });
 
-  after(function(done) {
-    mongoose.connection.db.dropDatabase(function() {
-      mongoose.connection.close(done);
-    });
-  });
-
 	beforeEach(function(done){
     mongoose.connection.db.dropDatabase(function(err){
       if (err) return done(err);
@@ -24,4 +18,10 @@ describe('Tile', function() {
     });
   });
 
+  it("edgetypes should exist", function() {
+    should.exist(Tile.EdgeTypes);
+    should.exist(Tile.EdgeTypes.GRASS);
+    should.exist(Tile.EdgeTypes.ROAD);
+    should.exist(Tile.EdgeTypes.CASTLE);
+  });
 });
