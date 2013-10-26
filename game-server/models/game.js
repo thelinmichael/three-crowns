@@ -3,6 +3,7 @@ var schema = mongoose.Schema({
   start: Date,
   end : Date,
   players : ['Player'],
+  tiles : ['Tile']
 });
 
 schema.methods.startGame = function() {
@@ -38,15 +39,22 @@ schema.methods.getPlayers = function() {
 };
 
 schema.methods.addPlayer = function(player, callback) {
-  var error;
   if (this.inProgress()) {
-    error = { "error" : "Players cannot be added once game has started" };
+    var error = { "error" : "Players cannot be added once game has started" };
   } else if (this.players.indexOf(player) == -1) {
     this.players.push(player);
   } else {
-    error = { "error" : "Player already exists in the game"};
+    var error = { "error" : "Player already exists in the game"};
   }
   callback(error);
 };
+
+schema.methods.getTiles = function(callback) {
+  if (this.isStarted()) {
+    callback(null, this.tiles);
+  } else {
+    callback({ "error" : "Tiles are not created until the game has started" });
+  }
+}
 
 module.exports = mongoose.model('Game', schema);

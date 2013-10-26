@@ -108,6 +108,30 @@ describe('Game', function() {
     spy.calledWith({ "error" : "Players cannot be added once game has started" }).should.equal(true);
   });
 
-	it("should populate a new game with appropriate tiles");
+	it("should populate a new game with appropriate tiles", function() {
+        var game = new Game();
 
+        var spy = sinon.spy();
+        var player1 = new Player({ name : "Michael" });
+        game.addPlayer(player1, spy);
+        spy.calledWith().should.equal(true);
+        spy.reset();
+        var player2 = new Player({ name : "Jenni"});
+        game.addPlayer(player2, spy);
+        spy.calledWith().should.equal(true);
+
+        game.isStarted().should.equal(false);
+        spy.reset();
+        game.getTiles(spy);
+        spy.calledOnce.should.equal(true);
+        spy.calledWith({ "error" :"Tiles are not created until the game has started" });
+
+        game.startGame();
+        game.isStarted().should.equal(true);
+
+        game.getTiles(function(error, tiles) {
+            should.not.exist(error);
+            should.exist(tiles);
+        });
+    });
 });
