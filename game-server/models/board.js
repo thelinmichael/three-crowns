@@ -8,6 +8,13 @@ var tileHash = function(x,y) {
   return x + "," + y;
 }
 
+schema.methods.hasAdjacentTile = function(x,y) {
+  return (this.tiles[tileHash(x-1,y)] ||
+          this.tiles[tileHash(x+1,y)] ||
+          this.tiles[tileHash(x,y-1)] ||
+          this.tiles[tileHash(x,y+1)]);
+}
+
 schema.methods.getTiles = function() {
   return this.tiles;
 }
@@ -19,7 +26,7 @@ schema.methods.placeTile = function(x,y,tile) {
   } else if (this.tiles[tileHash(x,y)]) {
     return false;
   } else {
-    if (!hasAdjacentTile(x,y)) {
+    if (!this.hasAdjacentTile(x,y)) {
       return false;
     } else {
       this.tiles[tileHash(x,y)] = tile;

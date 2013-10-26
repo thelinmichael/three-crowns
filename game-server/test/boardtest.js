@@ -26,11 +26,7 @@ describe('Board', function() {
     var tiles = unit.getTiles();
     should.exist(tiles);
 
-    var amountOfTiles = 0;
-    for (var key in tiles) {
-      amountOfTiles++;
-    }
-    amountOfTiles.should.equal(0);
+    unit.getNumberOfTiles().should.equal(0);
 
     var tile = new Tile({ "edges" : [ Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
 
@@ -66,14 +62,21 @@ describe('Board', function() {
   it("should be able to place several tiles next to eachother", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = new Tile({ "edges" : [ Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
-    var tile2 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
+    var tile1 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS ]});
+    var tile2 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS ]});
 
+    unit.getNumberOfTiles().should.equal(0);
     var wasPlaced = unit.placeTile(0,0,tile1);
     wasPlaced.should.equal(true);
+    unit.getNumberOfTiles().should.equal(1);
 
-    unit.placeTile(0,5,tile2);
+    wasPlaced = unit.placeTile(0,5,tile2);
     wasPlaced.should.equal(false);
+    unit.getNumberOfTiles().should.equal(1);
+
+    wasPlaced = unit.placeTile(0,1,tile2);
+    wasPlaced.should.equal(true);
+    unit.getNumberOfTiles().should.equal(2);
   });
 
 });
