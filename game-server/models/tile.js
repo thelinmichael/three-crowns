@@ -1,6 +1,11 @@
 var mongoose = require("mongoose");
 var schema = mongoose.Schema({
+  edges : []
 });
+
+schema.methods.getEdges = function() {
+  return this.edges;
+}
 
 module.exports = mongoose.model('Tile', schema);
 
