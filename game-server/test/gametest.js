@@ -51,6 +51,19 @@ describe('Game', function() {
 		unit.isEnded().should.equal(true);
 	});
 
+    it("should not end game if it hasn't started", function() {
+        unit = new Game();
+
+        unit.endGame();
+        var endTimeNotSet = unit.getEndTime();
+        should.not.exist(endTimeNotSet);
+        unit.startGame();
+
+        unit.endGame();
+        var endTimeSet = unit.getEndTime();
+        should.exist(endTimeSet);
+    });
+
 	it("should know when the game is in progess and not", function() {
 		unit = new Game();
 		unit.inProgress().should.equal(false);

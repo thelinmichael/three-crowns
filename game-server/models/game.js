@@ -13,7 +13,7 @@ schema.methods.startGame = function() {
 };
 
 schema.methods.endGame = function() {
-  if (!this.end) {
+  if (!this.isEnded() && this.isStarted()) {
     this.end = Date.now();
   }
 };
@@ -32,6 +32,10 @@ schema.methods.inProgress = function() {
 
 schema.methods.getStartingTime = function() {
   return this.start;
+}
+
+schema.methods.getEndTime = function() {
+  return this.end;
 }
 
 schema.methods.getPlayers = function() {
