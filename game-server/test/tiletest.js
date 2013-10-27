@@ -26,13 +26,12 @@ describe('Tile', function() {
   });
 
   it("a tile can be instantiated with four edges", function() {
-    var unit = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.GRASS] });
+    var unit = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
     var edges = unit.getEdges();
     should.exist(edges);
-    edges.length.should.equal(4);
-    edges[0].should.equal(Tile.EdgeTypes.ROAD);
-    edges[1].should.equal(Tile.EdgeTypes.GRASS);
-    edges[2].should.equal(Tile.EdgeTypes.CASTLE);
-    edges[3].should.equal(Tile.EdgeTypes.GRASS);
+    edges["north"].should.equal(Tile.EdgeTypes.ROAD);
+    edges["east"].should.equal(Tile.EdgeTypes.GRASS);
+    edges["south"].should.equal(Tile.EdgeTypes.CASTLE);
+    edges["west"].should.equal(Tile.EdgeTypes.GRASS);
   });
 });
