@@ -3,6 +3,7 @@ var Game = require("../models/game");
 var Player = require("../models/player");
 var sinon = require("sinon");
 var should = require("should");
+var assert = require("assert");
 
 describe('Game', function() {
 
@@ -128,17 +129,12 @@ describe('Game', function() {
     spy.calledWith().should.equal(true);
 
     game.isStarted().should.equal(false);
-    spy.reset();
-    game.getTiles(spy);
-    spy.calledOnce.should.equal(true);
-    spy.calledWith({ "error" :"Tiles are not created until the game has started" });
+    game.getUnplacedTiles.should.throw();
 
     game.startGame();
     game.isStarted().should.equal(true);
-
-    game.getTiles(function(error, tiles) {
-        should.not.exist(error);
-        should.exist(tiles);
-    });
+    should.exist(game.getBoard());
+    var unplacedTiles = game.getUnplacedTiles();
+    should.exist(unplacedTiles);
   });
 });

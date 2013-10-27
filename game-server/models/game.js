@@ -1,14 +1,18 @@
 var mongoose = require("mongoose");
+var Board = require("./board");
+
 var schema = mongoose.Schema({
   start: Date,
   end : Date,
   players : ['Player'],
-  tiles : ['Tile']
+  unplacedTiles : ['Tile'],
+  board : {} // TODO: Find a way to reference a single model.
 });
 
 schema.methods.startGame = function() {
   if (!this.start) {
 	 this.start = Date.now();
+   this.board = new Board();
   }
 };
 
@@ -53,11 +57,19 @@ schema.methods.addPlayer = function(player, callback) {
   callback(error);
 };
 
-schema.methods.getTiles = function(callback) {
+schema.methods.getUnplacedTiles = function() {
   if (this.isStarted()) {
-    callback(null, this.tiles);
+    return this.unplacedTiles;
   } else {
-    callback({ "error" : "Tiles are not created until the game has started" });
+    throw new Error("Cannot get unplaced tiles as game hasn't started");
+  }
+}
+
+schema.methods.getBoard = function() {
+  if (this.isStarted()) {
+    return this.board;
+  } else {
+    throw new Error("Cannot get board as game hasn't started");
   }
 }
 
