@@ -1,50 +1,46 @@
 var mongoose = require("mongoose");
 var Tile = require("./tile");
 var schema = mongoose.Schema({
-  tiles : {}
+  tiles : []
 });
 
-var tileHash = function(x,y) {
-  return x + "," + y;
-}
-
-schema.methods.hasAdjacentTile = function(x,y) {
-  return (this.tiles[tileHash(x-1,y)] ||
-          this.tiles[tileHash(x+1,y)] ||
-          this.tiles[tileHash(x,y-1)] ||
-          this.tiles[tileHash(x,y+1)]);
+schema.methods.hasAdjacentTile = function(x, y) {
+  return (this.tiles[x - 1, y] ||
+          this.tiles[x + 1, y] ||
+          this.tiles[x, y - 1] ||
+          this.tiles[x, y + 1]);
 }
 
 schema.methods.getTiles = function() {
   return this.tiles;
 }
 
-schema.methods.placeTile = function(x,y,tile) {
+schema.methods.placeTile = function(x, y, tile) {
+  /* This is the first tile of the game */
   if (this.getNumberOfTiles() == 0) {
-    this.tiles[tileHash(x,y)] = tile;
+    this.tiles[x, y] = tile;
     return true;
-  } else if (this.tiles[tileHash(x,y)]) {
+  /* A tile has already been placed at this coordinate */
+  } else if (this.tiles[x, y]) {
     return false;
   } else {
-    if (!this.hasAdjacentTile(x,y)) {
+    /* Empty spot but has no adjacent tiles */
+    if (!this.hasAdjacentTile(x, y)) {
       return false;
+    /* Empty spot with adjacent tiles */
     } else {
-      this.tiles[tileHash(x,y)] = tile;
+      this.tiles[x, y] = tile;
       return true;
     }
   }
 }
 
 schema.methods.getNumberOfTiles = function() {
-  var numberOfTiles = 0;
-  for (var key in this.tiles) {
-    numberOfTiles++;
-  }
-  return numberOfTiles;
+  return this.tiles.length;
 }
 
 schema.methods.getTileAt = function(x,y) {
-  return this.tiles[tileHash(x,y)];
+  return this.tiles[x, y];
 }
 
 module.exports = mongoose.model('Board', schema);

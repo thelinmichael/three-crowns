@@ -21,7 +21,7 @@ describe('Board', function() {
   });
 
   it("should be able to place a tile on a board on an empty board", function() {
-    var unit = new Board({ "tiles" : {} });
+    var unit = new Board({ "tiles" : [] });
     should.exist(unit);
     var tiles = unit.getTiles();
     should.exist(tiles);
