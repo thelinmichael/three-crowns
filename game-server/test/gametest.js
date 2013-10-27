@@ -51,18 +51,18 @@ describe('Game', function() {
 		unit.isEnded().should.equal(true);
 	});
 
-    it("should not end game if it hasn't started", function() {
-        unit = new Game();
+  it("should not end game if it hasn't started", function() {
+    unit = new Game();
 
-        unit.endGame();
-        var endTimeNotSet = unit.getEndTime();
-        should.not.exist(endTimeNotSet);
-        unit.startGame();
+    unit.endGame();
+    var endTimeNotSet = unit.getEndTime();
+    should.not.exist(endTimeNotSet);
+    unit.startGame();
 
-        unit.endGame();
-        var endTimeSet = unit.getEndTime();
-        should.exist(endTimeSet);
-    });
+    unit.endGame();
+    var endTimeSet = unit.getEndTime();
+    should.exist(endTimeSet);
+  });
 
 	it("should know when the game is in progess and not", function() {
 		unit = new Game();
@@ -116,29 +116,29 @@ describe('Game', function() {
   });
 
 	it("should populate a new game with appropriate tiles", function() {
-        var game = new Game();
+    var game = new Game();
 
-        var spy = sinon.spy();
-        var player1 = new Player({ name : "Michael" });
-        game.addPlayer(player1, spy);
-        spy.calledWith().should.equal(true);
-        spy.reset();
-        var player2 = new Player({ name : "Jenni"});
-        game.addPlayer(player2, spy);
-        spy.calledWith().should.equal(true);
+    var spy = sinon.spy();
+    var player1 = new Player({ name : "Michael" });
+    game.addPlayer(player1, spy);
+    spy.calledWith().should.equal(true);
+    spy.reset();
+    var player2 = new Player({ name : "Jenni"});
+    game.addPlayer(player2, spy);
+    spy.calledWith().should.equal(true);
 
-        game.isStarted().should.equal(false);
-        spy.reset();
-        game.getTiles(spy);
-        spy.calledOnce.should.equal(true);
-        spy.calledWith({ "error" :"Tiles are not created until the game has started" });
+    game.isStarted().should.equal(false);
+    spy.reset();
+    game.getTiles(spy);
+    spy.calledOnce.should.equal(true);
+    spy.calledWith({ "error" :"Tiles are not created until the game has started" });
 
-        game.startGame();
-        game.isStarted().should.equal(true);
+    game.startGame();
+    game.isStarted().should.equal(true);
 
-        game.getTiles(function(error, tiles) {
-            should.not.exist(error);
-            should.exist(tiles);
-        });
+    game.getTiles(function(error, tiles) {
+        should.not.exist(error);
+        should.exist(tiles);
     });
+  });
 });
