@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var History = require("../models/history");
+var History = require("../../lib/models/history");
 var sinon = require("sinon");
 var should = require("should");
 

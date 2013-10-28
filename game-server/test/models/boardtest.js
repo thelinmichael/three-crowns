@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
-var Board = require("../models/board");
-var Tile = require("../models/tile");
+var Board = require("../../lib/models/board");
+var Tile = require("../../lib/models/tile");
 var should = require("should");
 var assert = require("assert");
 

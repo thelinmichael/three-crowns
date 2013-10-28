@@ -1,18 +1,23 @@
 var mongoose = require("mongoose");
-var Move = require("../models/move");
-var sinon = require("sinon");
+var Game = require("../../lib/models/player");
 var should = require("should");
 
-describe('Move', function() {
+describe('Player', function() {
 
-  before(function(done) {
+	before(function(done) {
     if (mongoose.connection.db) {
         return done();
     }
     mongoose.connect('mongodb://localhost/game_test', done);
   });
 
-    beforeEach(function(done){
+  after(function(done) {
+    mongoose.connection.db.dropDatabase(function() {
+      mongoose.connection.close(done);
+    });
+  });
+
+	beforeEach(function(done){
     mongoose.connection.db.dropDatabase(function(err){
       if (err) return done(err);
       done();

@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var Tile = require("../models/tile");
+var Tile = require("../../lib/models/tile");
 var should = require("should");
 
 describe('Tile', function() {

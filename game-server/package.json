@@ -1,6 +1,6 @@
 {
-  "name" : "opencarcassonne",
-  "description": "Carcassonne Game server",
+  "name" : "threecrowns",
+  "description": "Game server for Three Crowns, a Carcassonne clone.",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -17,6 +17,6 @@
     "mocha-istanbul": "~0.2.0"
   },
   "scripts": {
-    "coverage" : "istanbul cover --dir ./reports _mocha -- -R spec test/"
+    "coverage" : "istanbul cover --dir ./reports _mocha -- -R spec test/models"
   }
 }

@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
-var Game = require("../models/game");
-var Player = require("../models/player");
+var Game = require("../../lib/models/game");
+var Player = require("../../lib/models/player");
 var sinon = require("sinon");
 var should = require("should");
 var assert = require("assert");
@@ -124,4 +124,5 @@ describe('Game', function() {
     var board = game.getBoard();
     should.exist(board);
   });
+
 });
