@@ -47,7 +47,7 @@ schema.methods.getPlayers = function() {
 };
 
 schema.methods.addPlayer = function(player) {
-  if (this.inProgress()) {
+  if (this.isStarted()) {
     throw new Error("Players cannot be added once game has started");
   } else if (this.players.indexOf(player) == -1) {
     this.players.push(player);

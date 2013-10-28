@@ -74,9 +74,25 @@ describe('Game', function() {
 		unit.inProgress().should.equal(false);
 	});
 
-	it("should be able to add players to an unstarted game");
+	it("should only be able to add players when the game is not yet started", function() {
+    var game = new Game();
 
-	it("should only be able to add players when the game is not yet started");
+    var player1 = new Player({ name : "beforeStart" });
+    game.addPlayer(player1);
+
+    game.startGame();
+    var player2 = new Player({ name : "afterStart" });
+    (function() {
+      game.addPlayer(player2);
+    }).should.throw();
+
+    game.endGame();
+
+    var player3 = new Player({ name : "afterEnd" });
+    (function() {
+      game.addPlayer(player3);
+    }).should.throw();
+  });
 
 	it("should populate a new game with appropriate tiles", function() {
     var game = new Game();
@@ -96,5 +112,16 @@ describe('Game', function() {
     should.exist(unplacedTiles);
   });
 
-  it("should only return a board if the game has started");
+  it("should only return a board if the game has started", function() {
+    var game = new Game();
+
+    (function() {
+      game.getBoard();
+    }).should.throw();
+
+    game.startGame();
+
+    var board = game.getBoard();
+    should.exist(board);
+  });
 });
