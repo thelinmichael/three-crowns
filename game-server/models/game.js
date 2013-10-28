@@ -46,15 +46,14 @@ schema.methods.getPlayers = function() {
   return this.players;
 };
 
-schema.methods.addPlayer = function(player, callback) {
+schema.methods.addPlayer = function(player) {
   if (this.inProgress()) {
-    var error = { "error" : "Players cannot be added once game has started" };
+    throw new Error("Players cannot be added once game has started");
   } else if (this.players.indexOf(player) == -1) {
     this.players.push(player);
   } else {
-    var error = { "error" : "Player already exists in the game"};
+    throw new Error("Player already exists in the game");
   }
-  callback(error);
 };
 
 schema.methods.getUnplacedTiles = function() {

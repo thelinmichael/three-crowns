@@ -74,59 +74,17 @@ describe('Game', function() {
 		unit.inProgress().should.equal(false);
 	});
 
-	it("should be able to add players to an unstarted game", function() {
-    var game = new Game();
-    game.getPlayers().length.should.equal(0);
-    var playerJenni = new Player({ name : "Jenni" });
+	it("should be able to add players to an unstarted game");
 
-    var spy = sinon.spy();
-    game.addPlayer(playerJenni, spy);
-    spy.calledOnce.should.equal(true);
-    spy.calledWith().should.equal(true);
-    game.getPlayers().length.should.equal(1);
-
-    spy.reset();
-    game.addPlayer(playerJenni, spy);
-    spy.calledOnce.should.equal(true);
-    spy.calledWith({ "error" : "Player already exists in the game"}).should.equal(true)
-    game.getPlayers().length.should.equal(1);
-
-    spy.reset();
-    var playerMicke = new Player({ name : "Micke" });
-    game.addPlayer(playerMicke, spy);
-    spy.calledOnce.should.equal(true);
-    spy.calledWith().should.equal(true);
-    game.getPlayers().length.should.equal(2);
-  });
-
-	it("should only be able to add players when the game is not yet started", function() {
-    var game = new Game();
-
-    var spy = sinon.spy();
-    var player = new Player({ name : "beforeStart" });
-    game.addPlayer(player, spy);
-    spy.calledOnce.should.equal(true);
-    spy.calledWith().should.equal(true);
-
-    spy.reset();
-    game.startGame();
-    var player = new Player({ name : "afterStart" });
-    game.addPlayer(player, spy);
-    spy.calledOnce.should.equal(true);
-    spy.calledWith({ "error" : "Players cannot be added once game has started" }).should.equal(true);
-  });
+	it("should only be able to add players when the game is not yet started");
 
 	it("should populate a new game with appropriate tiles", function() {
     var game = new Game();
 
-    var spy = sinon.spy();
     var player1 = new Player({ name : "Michael" });
-    game.addPlayer(player1, spy);
-    spy.calledWith().should.equal(true);
-    spy.reset();
+    game.addPlayer(player1);
     var player2 = new Player({ name : "Jenni"});
-    game.addPlayer(player2, spy);
-    spy.calledWith().should.equal(true);
+    game.addPlayer(player2);
 
     game.isStarted().should.equal(false);
     game.getUnplacedTiles.should.throw();
@@ -137,4 +95,6 @@ describe('Game', function() {
     var unplacedTiles = game.getUnplacedTiles();
     should.exist(unplacedTiles);
   });
+
+  it("should only return a board if the game has started");
 });
