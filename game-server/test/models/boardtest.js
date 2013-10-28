@@ -79,4 +79,6 @@ describe('Board', function() {
     unit.getNumberOfTiles().should.equal(2);
   });
 
+  it("should be able to place a meeple on a tile");
+
 });

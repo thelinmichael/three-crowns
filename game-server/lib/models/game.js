@@ -2,32 +2,32 @@ var mongoose = require("mongoose");
 var Board = require("./board");
 
 var schema = mongoose.Schema({
-  start: Date,
-  end : Date,
+  startTime: Date,
+  endTime : Date,
   players : ['Player'],
   unplacedTiles : ['Tile'],
   board : {} // TODO: Find a way to reference a single model.
 });
 
-schema.methods.startGame = function() {
-  if (!this.start) {
-	 this.start = Date.now();
+schema.methods.start = function() {
+  if (!this.isStarted()) {
+	 this.startTime = Date.now();
    this.board = new Board();
   }
 };
 
-schema.methods.endGame = function() {
+schema.methods.end = function() {
   if (!this.isEnded() && this.isStarted()) {
-    this.end = Date.now();
+    this.endTime = Date.now();
   }
 };
 
 schema.methods.isEnded = function() {
-	return (this.end != undefined);
+	return (this.endTime != undefined);
 };
 
 schema.methods.isStarted = function() {
-	return (this.start != undefined);
+	return (this.startTime != undefined);
 };
 
 schema.methods.inProgress = function() {
@@ -35,11 +35,11 @@ schema.methods.inProgress = function() {
 };
 
 schema.methods.getStartingTime = function() {
-  return this.start;
+  return this.startTime;
 }
 
 schema.methods.getEndTime = function() {
-  return this.end;
+  return this.endTime;
 }
 
 schema.methods.getPlayers = function() {

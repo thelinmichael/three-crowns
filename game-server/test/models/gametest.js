@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Game = require("../../lib/models/game");
 var Player = require("../../lib/models/player");
+var Tile = require("../../lib/models/tile");
 var sinon = require("sinon");
 var should = require("should");
 var assert = require("assert");
@@ -24,9 +25,9 @@ describe('Game', function() {
 	it("should know when game is started and not", function() {
 		unit = new Game();
 		unit.isStarted().should.equal(false);
-		unit.startGame();
+		unit.start();
 		unit.isStarted().should.equal(true);
-		unit.endGame();
+		unit.end();
 		unit.isStarted().should.equal(true);
 	});
 
@@ -35,10 +36,10 @@ describe('Game', function() {
     unit = new Game();
     var startingTime = unit.getStartingTime();
     should.not.exist(startingTime);
-    unit.startGame();
+    unit.start();
     startingTime = unit.getStartingTime();
     should.exist(startingTime);
-    unit.startGame();
+    unit.start();
     var startingTimeAfterSecondStart = unit.getStartingTime();
     startingTime.should.equal(startingTimeAfterSecondStart);
   });
@@ -46,21 +47,21 @@ describe('Game', function() {
 	it("should know when the game is ended and not", function() {
 		unit = new Game();
 		unit.isEnded().should.equal(false);
-		unit.startGame();
+		unit.start();
 		unit.isEnded().should.equal(false);
-		unit.endGame();
+		unit.end();
 		unit.isEnded().should.equal(true);
 	});
 
   it("should not end game if it hasn't started", function() {
     unit = new Game();
 
-    unit.endGame();
+    unit.end();
     var endTimeNotSet = unit.getEndTime();
     should.not.exist(endTimeNotSet);
-    unit.startGame();
+    unit.start();
 
-    unit.endGame();
+    unit.end();
     var endTimeSet = unit.getEndTime();
     should.exist(endTimeSet);
   });
@@ -68,9 +69,9 @@ describe('Game', function() {
 	it("should know when the game is in progess and not", function() {
 		unit = new Game();
 		unit.inProgress().should.equal(false);
-		unit.startGame();
+		unit.start();
 		unit.inProgress().should.equal(true);
-		unit.endGame();
+		unit.end();
 		unit.inProgress().should.equal(false);
 	});
 
@@ -80,13 +81,13 @@ describe('Game', function() {
     var player1 = new Player({ name : "beforeStart" });
     game.addPlayer(player1);
 
-    game.startGame();
+    game.start();
     var player2 = new Player({ name : "afterStart" });
     (function() {
       game.addPlayer(player2);
     }).should.throw();
 
-    game.endGame();
+    game.end();
 
     var player3 = new Player({ name : "afterEnd" });
     (function() {
@@ -105,7 +106,7 @@ describe('Game', function() {
     game.isStarted().should.equal(false);
     game.getUnplacedTiles.should.throw();
 
-    game.startGame();
+    game.start();
     game.isStarted().should.equal(true);
     should.exist(game.getBoard());
     var unplacedTiles = game.getUnplacedTiles();
@@ -119,10 +120,42 @@ describe('Game', function() {
       game.getBoard();
     }).should.throw();
 
-    game.startGame();
+    game.start();
 
     var board = game.getBoard();
     should.exist(board);
   });
+
+  it("should give unique tiles to players until there are no more tiles", function() {
+    var game = new Game();
+
+    var player1 = new Player({ name : "Michael" });
+    game.addPlayer(player1);
+    var player2 = new Player({ name : "Jenni"});
+    game.addPlayer(player2);
+
+    var startingTiles = [];
+    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
+    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
+    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.CASTLE } });
+    var tile4 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
+    startingTiles.push(tile1, tile2, tile3, tile4);
+
+    game.start({ "unplacedTiles" : startingTiles });
+  });
+
+  it.skip("should remember which players turn it is", function() {
+    var game = new Game();
+
+    var player1 = new Player({ name : "Michael" });
+    game.addPlayer(player1);
+    var player2 = new Player({ name : "Jenni"});
+    game.addPlayer(player2);
+
+    game.start();
+    var board = game.getBoard();
+  });
+
+  it("should remember how many meeples a user has");
 
 });
