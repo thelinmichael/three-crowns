@@ -9,10 +9,14 @@
     "mongoose" : "*"
   },
   "devDependencies": {
-  	"mocha" : "*",
+    "grunt" : "*",
+    "mocha" : "*",
     "should" : "*",
     "sinon" : "*",
     "istanbul": "~0.1.36",
     "mocha-istanbul": "~0.2.0"
+  },
+  "scripts": {
+    "coverage" : "istanbul cover --dir ./reports _mocha -- -R spec test/"
   }
 }
