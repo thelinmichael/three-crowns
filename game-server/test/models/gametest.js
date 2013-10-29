@@ -126,36 +126,52 @@ describe('Game', function() {
     should.exist(board);
   });
 
-  it("should give unique tiles to players until there are no more tiles", function() {
-    var game = new Game();
+  it("should know which player is in control each turn", function() {
+    var game = generateGenericGame();
+    (function() {
+      game.getActivePlayer();
+    }).should.throw();
 
+    var firstPlayer = game.getPlayers()[0];
+    var secondPlayer = game.getPlayers()[1];
+
+    game.start();
+
+    var activePlayerFirstRound = game.getActivePlayer();
+    should.exist(activePlayerFirstRound);
+    activePlayerFirstRound.should.equal(firstPlayer);
+
+    game.nextTurn();
+
+    var activePlayerSecondRound = game.getActivePlayer();
+    should.exist(activePlayerSecondRound);
+    activePlayerSecondRound.should.equal(secondPlayer);
+
+    game.nextTurn();
+
+    var activePlayerThirdRound = game.getActivePlayer();
+    should.exist(activePlayerThirdRound);
+    activePlayerThirdRound.should.equal(firstPlayer);
+
+    game.nextTurn();
+
+    var activePlayerFourthRound = game.getActivePlayer();
+    should.exist(activePlayerFourthRound);
+    activePlayerFourthRound.should.equal(secondPlayer);
+  });
+
+});
+
+var generateGenericGame = function() {
     var player1 = new Player({ name : "Michael" });
-    game.addPlayer(player1);
     var player2 = new Player({ name : "Jenni"});
-    game.addPlayer(player2);
+    var players = [player1, player2];
 
-    var startingTiles = [];
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
     var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
     var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.CASTLE } });
     var tile4 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
-    startingTiles.push(tile1, tile2, tile3, tile4);
+    var startingTiles = (tile1, tile2, tile3, tile4);
 
-    game.start({ "unplacedTiles" : startingTiles });
-  });
-
-  it.skip("should remember which players turn it is", function() {
-    var game = new Game();
-
-    var player1 = new Player({ name : "Michael" });
-    game.addPlayer(player1);
-    var player2 = new Player({ name : "Jenni"});
-    game.addPlayer(player2);
-
-    game.start();
-    var board = game.getBoard();
-  });
-
-  it("should remember how many meeples a user has");
-
-});
+    return new Game({ "unplacedTiles" : startingTiles, "players" : players });
+}

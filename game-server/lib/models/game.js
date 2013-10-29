@@ -13,6 +13,7 @@ schema.methods.start = function() {
   if (!this.isStarted()) {
 	 this.startTime = Date.now();
    this.board = new Board();
+   this.activePlayer = this.players[0];
   }
 };
 
@@ -70,6 +71,18 @@ schema.methods.getBoard = function() {
   } else {
     throw new Error("Cannot get board as game hasn't started");
   }
+}
+
+schema.methods.getActivePlayer = function() {
+  if (!this.inProgress()) {
+    throw new Error("No active player as game isn't in progress");
+  } else {
+    return this.activePlayer;
+  }
+}
+
+schema.methods.nextTurn = function() {
+  this.activePlayer = this.players[(this.players.indexOf(this.activePlayer) + 1) % this.players.length];
 }
 
 module.exports = mongoose.model('Game', schema);
