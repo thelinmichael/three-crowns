@@ -5,15 +5,19 @@ var schema = mongoose.Schema({
   startTime: Date,
   endTime : Date,
   players : ['Player'],
-  unplacedTiles : ['Tile'],
-  board : {} // TODO: Find a way to reference a single model.
+  tileQueue : ['Tile'],
+  currentRound : {
+    player : {}, // Type: Player
+    tile : {}    // Type: Tile
+  },
+  board : {} // TODO: Find a way to reference a single model. 
 });
 
 schema.methods.start = function() {
   if (!this.isStarted()) {
 	 this.startTime = Date.now();
    this.board = new Board();
-   this.activePlayer = this.players[0];
+   this.currentRound.player = this.players[0];
   }
 };
 
@@ -57,11 +61,11 @@ schema.methods.addPlayer = function(player) {
   }
 };
 
-schema.methods.getUnplacedTiles = function() {
+schema.methods.getQueuedTiles = function() {
   if (this.isStarted()) {
-    return this.unplacedTiles;
+    return this.tileQueue;
   } else {
-    throw new Error("Cannot get unplaced tiles as game hasn't started");
+    throw new Error("Cannot get tile queue as game hasn't started");
   }
 }
 
@@ -77,12 +81,12 @@ schema.methods.getActivePlayer = function() {
   if (!this.inProgress()) {
     throw new Error("No active player as game isn't in progress");
   } else {
-    return this.activePlayer;
+    return this.currentRound.player;
   }
 }
 
 schema.methods.nextTurn = function() {
-  this.activePlayer = this.players[(this.players.indexOf(this.activePlayer) + 1) % this.players.length];
+  this.currentRound.player = this.players[(this.players.indexOf(this.currentRound.player) + 1) % this.players.length];
 }
 
 module.exports = mongoose.model('Game', schema);

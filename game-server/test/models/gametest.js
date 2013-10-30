@@ -8,7 +8,7 @@ var assert = require("assert");
 
 describe('Game', function() {
 
-	before(function(done) {
+  before(function(done) {
     if (mongoose.connection.db) {
         return done();
     }
@@ -22,16 +22,16 @@ describe('Game', function() {
     });
   });
 
-	it("should know when game is started and not", function() {
-		unit = new Game();
-		unit.isStarted().should.equal(false);
-		unit.start();
-		unit.isStarted().should.equal(true);
-		unit.end();
-		unit.isStarted().should.equal(true);
-	});
+  it("should know when game is started and not", function() {
+    unit = new Game();
+    unit.isStarted().should.equal(false);
+    unit.start();
+    unit.isStarted().should.equal(true);
+    unit.end();
+    unit.isStarted().should.equal(true);
+  });
 
-	it("should not be able to reset the starting time", function() {
+  it("should not be able to reset the starting time", function() {
     unit = new Game();
     var startingTime = unit.getStartingTime();
     should.not.exist(startingTime);
@@ -43,9 +43,9 @@ describe('Game', function() {
     startingTime.should.equal(startingTimeAfterSecondStart);
   });
 
-	it("should know when the game is ended and not", function() {
-		unit = new Game();
-		unit.isEnded().should.equal(false);
+  it("should know when the game is ended and not", function() {
+    unit = new Game();
+    unit.isEnded().should.equal(false);
 		unit.start();
 		unit.isEnded().should.equal(false);
 		unit.end();
@@ -103,13 +103,13 @@ describe('Game', function() {
     game.addPlayer(player2);
 
     game.isStarted().should.equal(false);
-    game.getUnplacedTiles.should.throw();
+    game.getQueuedTiles.should.throw();
 
     game.start();
     game.isStarted().should.equal(true);
     should.exist(game.getBoard());
-    var unplacedTiles = game.getUnplacedTiles();
-    should.exist(unplacedTiles);
+    var queuedTiles = game.getQueuedTiles();
+    should.exist(queuedTiles);
   });
 
   it("should only return a board if the game has started", function() {
@@ -163,11 +163,9 @@ describe('Game', function() {
     var game = generateGenericGame();
     game.start();
 
-    game.getUnplacedTiles().length.should.equal(4);
+    game.getQueuedTiles().length.should.equal(4);
     game.getBoard().placeTile(0,0,game.getUnplacedTiles[0]);
-    game.getUnplacedTiles().length.should.equal(3);
-
-    // TODO: Make difference between activeTile and unplacedTiles. Pop one each round.
+    game.getQueuedTiles().length.should.equal(3);
   });
 
 });
