@@ -15,7 +15,7 @@ describe('Game', function() {
     mongoose.connect('mongodb://localhost/game_test', done);
   });
 
-    beforeEach(function(done){
+  beforeEach(function(done) {
     mongoose.connection.db.dropDatabase(function(err){
       if (err) return done(err);
       done();
@@ -31,7 +31,6 @@ describe('Game', function() {
 		unit.isStarted().should.equal(true);
 	});
 
-	// Use a spy to see if the property is changed
 	it("should not be able to reset the starting time", function() {
     unit = new Game();
     var startingTime = unit.getStartingTime();
@@ -160,6 +159,17 @@ describe('Game', function() {
     activePlayerFourthRound.should.equal(secondPlayer);
   });
 
+  it.skip("should end the game when moving to the next turn after all tiles are used", function() {
+    var game = generateGenericGame();
+    game.start();
+
+    game.getUnplacedTiles().length.should.equal(4);
+    game.getBoard().placeTile(0,0,game.getUnplacedTiles[0]);
+    game.getUnplacedTiles().length.should.equal(3);
+
+    // TODO: Make difference between activeTile and unplacedTiles. Pop one each round.
+  });
+
 });
 
 var generateGenericGame = function() {
@@ -171,7 +181,7 @@ var generateGenericGame = function() {
     var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
     var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.CASTLE } });
     var tile4 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
-    var startingTiles = (tile1, tile2, tile3, tile4);
+    var startingTiles = [tile1, tile2, tile3, tile4];
 
     return new Game({ "unplacedTiles" : startingTiles, "players" : players });
 }

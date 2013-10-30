@@ -12,11 +12,10 @@ describe('Move', function() {
     mongoose.connect('mongodb://localhost/game_test', done);
   });
 
-    beforeEach(function(done){
+  beforeEach(function(done){
     mongoose.connection.db.dropDatabase(function(err){
       if (err) return done(err);
       done();
     });
   });
-
 });
