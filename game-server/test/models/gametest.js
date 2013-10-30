@@ -55,7 +55,9 @@ describe('Game', function() {
   it("should not end game if it hasn't started", function() {
     unit = new Game();
 
-    unit.end();
+    (function() {
+        unit.end();
+    }).should.throw();
     var endTimeNotSet = unit.getEndTime();
     should.not.exist(endTimeNotSet);
     unit.start();
@@ -187,7 +189,31 @@ describe('Game', function() {
     game.getQueuedTiles().length.should.equal(0);
   });
 
-  it("should end the game when moving to the next turn after all tiles are used");
+  it("should end the game when moving to the next turn after all tiles are used", function() {
+    var game = generateGenericGame();
+    game.start();
+
+    game.getQueuedTiles().length.should.equal(4);
+    game.placeTile(0, 0);
+    game.nextTurn();
+    game.isEnded().should.equal(false);
+
+    game.getQueuedTiles().length.should.equal(3);
+    game.placeTile(1, 0);
+    game.nextTurn();
+    game.isEnded().should.equal(false);
+
+    game.getQueuedTiles().length.should.equal(2);
+    game.placeTile(0, 1);
+    game.nextTurn();
+    game.isEnded().should.equal(false);
+
+    game.getQueuedTiles().length.should.equal(1);
+    game.placeTile(0, 2);
+    game.getQueuedTiles().length.should.equal(0);
+    game.nextTurn();
+    game.isEnded().should.equal(true);
+  });
 
   it.skip("should know which tile is going to be placed every turn");
 

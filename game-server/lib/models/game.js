@@ -24,6 +24,8 @@ schema.methods.start = function() {
 schema.methods.end = function() {
   if (!this.isEnded() && this.isStarted()) {
     this.endTime = Date.now();
+  } else {
+    throw new Error("Cannot end a game that isn't in progress.");
   }
 };
 
@@ -86,6 +88,9 @@ schema.methods.getActivePlayer = function() {
 }
 
 schema.methods.nextTurn = function() {
+  if (this.getQueuedTiles().length == 0) {
+    this.end();
+  }
   this.currentRound.player = this.players[(this.players.indexOf(this.currentRound.player) + 1) % this.players.length];
 }
 
