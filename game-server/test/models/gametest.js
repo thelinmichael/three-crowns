@@ -166,20 +166,24 @@ describe('Game', function() {
     game.getQueuedTiles().length.should.equal(4);
     game.placeTile(0, 0);
     game.getQueuedTiles().length.should.equal(3);
+    game.getBoard().getNumberOfTiles().should.equal(1);
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(3);
-    game.placeTile(1,0);
+    game.getBoard().getNumberOfTiles().should.equal(1);
+
+    game.placeTile(1, 0);
     game.getQueuedTiles().length.should.equal(2);
+    game.getBoard().getNumberOfTiles().should.equal(2);
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(2);
-    game.placeTile(1,1);
+    game.placeTile(1, 1);
     game.getQueuedTiles().length.should.equal(1);
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(1);
-    game.placeTile(1,1);
+    game.placeTile(1, 2);
     game.getQueuedTiles().length.should.equal(0);
   });
 

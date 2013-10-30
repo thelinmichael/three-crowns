@@ -91,8 +91,8 @@ schema.methods.nextTurn = function() {
 
 /* I don't like this. Board either needs to know which Game it belongs to,
    or Game needs to copy Board's API in order to keep track of which tiles are left. */
-schema.methods.placeTile = function (x, y, tile) {
-  this.board.placeTile(x, y, tile);
+schema.methods.placeTile = function (x, y) {
+  this.board.placeTile(x, y, this.tileQueue[0]);
   this.tileQueue = this.tileQueue.splice(1);
 }
 

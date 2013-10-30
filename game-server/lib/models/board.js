@@ -5,10 +5,10 @@ var schema = mongoose.Schema({
 });
 
 schema.methods.hasAdjacentTile = function(x, y) {
-  return (this.tiles[x - 1, y] ||
-          this.tiles[x + 1, y] ||
-          this.tiles[x, y - 1] ||
-          this.tiles[x, y + 1]);
+  return (this.hasTile(x - 1, y) ||
+          this.hasTile(x + 1, y) ||
+          this.hasTile(x, y - 1) ||
+          this.hasTile(x, y + 1));
 }
 
 schema.methods.getTiles = function() {
@@ -18,9 +18,12 @@ schema.methods.getTiles = function() {
 schema.methods.placeTile = function(x, y, tile) {
   /* This is the first tile of the game */
   if (this.getNumberOfTiles() == 0) {
-    this.tiles[x, y] = tile;
+    if (!this.tiles[x]) {
+      this.tiles[x] = [];
+    }
+    this.tiles[x][y] = tile;
   /* A tile has already been placed at this coordinate */
-  } else if (this.tiles[x, y]) {
+  } else if (this.hasTile(x, y)) {
     throw new Error("Tile could not be placed: A tile is already there.");
   } else {
     /* Empty spot but has no adjacent tiles */
@@ -28,7 +31,10 @@ schema.methods.placeTile = function(x, y, tile) {
       throw new Error("Tile could not be placed: No tiles are placed adjacent.");
     /* Empty spot with adjacent tiles */
     } else {
-      this.tiles[x, y] = tile;
+      if (!this.tiles[x]) {
+        this.tiles[x] = [];
+      }
+      this.tiles[x][y] = tile;
     }
   }
 }
@@ -37,8 +43,14 @@ schema.methods.getNumberOfTiles = function() {
   return this.tiles.length;
 }
 
-schema.methods.getTile = function(x,y) {
-  return this.tiles[x, y];
+schema.methods.getTile = function(x, y) {
+  if (this.hasTile(x, y)) {
+    return this.tiles[x][y];
+  }
+}
+
+schema.methods.hasTile = function(x, y) {
+  return (this.tiles[x] && this.tiles[x][y]);
 }
 
 module.exports = mongoose.model('Board', schema);

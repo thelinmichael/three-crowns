@@ -30,7 +30,7 @@ describe('Board', function() {
 
     var tile = new Tile({ "edges" : [ Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
 
-    var noTile = unit.getTile(0,0);
+    var noTile = unit.getTile(0, 0);
     should.not.exist(noTile);
 
     unit.placeTile(0, 0, tile);
@@ -45,8 +45,8 @@ describe('Board', function() {
     var tile1 = new Tile({ "edges" : [ Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
     var tile2 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
 
-    unit.placeTile(0,0, tile1);
-    var placedTile = unit.getTile(0,0);
+    unit.placeTile(0, 0, tile1);
+    var placedTile = unit.getTile(0, 0);
     should.exist(placedTile);
     placedTile.should.equal(tile1);
 
@@ -74,22 +74,22 @@ describe('Board', function() {
 
     /* Two steps east of first tile -- Cannot place it there */
     (function() {
-      unit.placeTile(0, 2, tile2);
+      unit.placeTile(2, 0, tile2);
     }).should.throw();
     unit.getNumberOfTiles().should.equal(1);
     var noTile = unit.getTile(0, 2);
     should.not.exist(noTile);
 
     /* One step east of tile -- Can be placed there */
-    unit.placeTile(0, 1, tile2);
+    unit.placeTile(1, 0, tile2);
     unit.getNumberOfTiles().should.equal(2);
-    var secondPlacedTile = unit.getTile(0, 1);
+    var secondPlacedTile = unit.getTile(1, 0);
     tile2.should.equal(secondPlacedTile);
 
     /* Two steps east of tile -- Can now be placed there */
-    unit.placeTile(0, 2, tile3);
+    unit.placeTile(2, 0, tile3);
     unit.getNumberOfTiles().should.equal(3);
-    var thirdPlacedTile = unit.getTile(0, 2);
+    var thirdPlacedTile = unit.getTile(2, 0);
     tile3.should.equal(thirdPlacedTile);
   });
 });
