@@ -159,14 +159,33 @@ describe('Game', function() {
     activePlayerFourthRound.should.equal(secondPlayer);
   });
 
-  it.skip("should end the game when moving to the next turn after all tiles are used", function() {
+  it("should end the game that tiles decrease every turn", function() {
     var game = generateGenericGame();
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
-    game.getBoard().placeTile(0,0,game.getUnplacedTiles[0]);
+    game.placeTile(0, 0);
     game.getQueuedTiles().length.should.equal(3);
+
+    game.nextTurn();
+    game.getQueuedTiles().length.should.equal(3);
+    game.placeTile(1,0);
+    game.getQueuedTiles().length.should.equal(2);
+
+    game.nextTurn();
+    game.getQueuedTiles().length.should.equal(2);
+    game.placeTile(1,1);
+    game.getQueuedTiles().length.should.equal(1);
+
+    game.nextTurn();
+    game.getQueuedTiles().length.should.equal(1);
+    game.placeTile(1,1);
+    game.getQueuedTiles().length.should.equal(0);
   });
+
+  it("should end the game when moving to the next turn after all tiles are used");
+
+  it.skip("should know which tile is going to be placed every turn");
 
 });
 
@@ -181,5 +200,5 @@ var generateGenericGame = function() {
     var tile4 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
     var startingTiles = [tile1, tile2, tile3, tile4];
 
-    return new Game({ "unplacedTiles" : startingTiles, "players" : players });
+    return new Game({ "tileQueue" : startingTiles, "players" : players });
 }

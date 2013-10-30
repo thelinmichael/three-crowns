@@ -89,4 +89,11 @@ schema.methods.nextTurn = function() {
   this.currentRound.player = this.players[(this.players.indexOf(this.currentRound.player) + 1) % this.players.length];
 }
 
+/* I don't like this. Board either needs to know which Game it belongs to,
+   or Game needs to copy Board's API in order to keep track of which tiles are left. */
+schema.methods.placeTile = function (x, y, tile) {
+  this.board.placeTile(x, y, tile);
+  this.tileQueue = this.tileQueue.splice(1);
+}
+
 module.exports = mongoose.model('Game', schema);
