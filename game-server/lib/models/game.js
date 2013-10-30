@@ -18,6 +18,7 @@ schema.methods.start = function() {
 	 this.startTime = Date.now();
    this.board = new Board();
    this.currentRound.player = this.players[0];
+   this.currentRound.tile = this.tileQueue[0];
   }
 };
 
@@ -87,11 +88,16 @@ schema.methods.getActivePlayer = function() {
   }
 }
 
+schema.methods.getActiveTile = function() {
+  return this.currentRound.tile;
+}
+
 schema.methods.nextTurn = function() {
   if (this.getQueuedTiles().length == 0) {
     this.end();
   }
-  this.currentRound.player = this.players[(this.players.indexOf(this.currentRound.player) + 1) % this.players.length];
+  this.currentRound.player = this.getPlayers()[(this.getPlayers().indexOf(this.currentRound.player) + 1) % this.getPlayers().length];
+  this.currentRound.tile = this.getQueuedTiles()[0];
 }
 
 /* I don't like this. Board either needs to know which Game it belongs to,

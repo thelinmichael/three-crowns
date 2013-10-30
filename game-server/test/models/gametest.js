@@ -215,7 +215,36 @@ describe('Game', function() {
     game.isEnded().should.equal(true);
   });
 
-  it.skip("should know which tile is going to be placed every turn");
+  it("should know which tile is going to be placed every turn", function() {
+    var game = generateGenericGame();
+    game.start();
+
+    var tile1 = game.getQueuedTiles()[0];
+    var tile2 = game.getQueuedTiles()[1];
+    var tile3 = game.getQueuedTiles()[2];
+    var tile4 = game.getQueuedTiles()[3];
+
+    var activeTile_roundOne = game.getActiveTile();
+    game.placeTile(0, 0);
+    should.exist(activeTile_roundOne);
+    activeTile_roundOne.should.equal(game.getBoard().getTile(0, 0));
+    game.nextTurn();
+
+    var activeTile_roundTwo = game.getActiveTile();
+    game.placeTile(1, 0);
+    activeTile_roundTwo.should.equal(game.getBoard().getTile(1, 0));
+    game.nextTurn();
+
+    var activeTile_roundThree = game.getActiveTile();
+    game.placeTile(0, 1);
+    activeTile_roundThree.should.equal(game.getBoard().getTile(0, 1));
+    game.nextTurn();
+
+    var activeTile_roundFour = game.getActiveTile();
+    game.placeTile(0, 2);
+    activeTile_roundFour.should.equal(game.getBoard().getTile(0, 2));
+    game.nextTurn();
+  });
 
 });
 
