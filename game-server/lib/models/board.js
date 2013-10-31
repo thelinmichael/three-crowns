@@ -16,20 +16,20 @@ schema.methods.getTiles = function() {
 }
 
 schema.methods.placeTile = function(x, y, tile) {
-  /* This is the first tile of the game */
+  /* OK -- This is the first tile of the game */
   if (this.getNumberOfTiles() == 0) {
     if (!this.tiles[x]) {
       this.tiles[x] = [];
     }
     this.tiles[x][y] = tile;
-  /* A tile has already been placed at this coordinate */
   } else if (this.hasTile(x, y)) {
     throw new Error("Tile could not be placed: A tile is already there.");
   } else {
-    /* Empty spot but has no adjacent tiles */
     if (!this.hasAdjacentTile(x, y)) {
       throw new Error("Tile could not be placed: No tiles are placed adjacent.");
-    /* Empty spot with adjacent tiles */
+    } else if (!this.adjacentTilesHasMatchingEdges(x, y, tile)) {
+      throw new Error("Tile could not be placed: Adjacent tiles' edges don't match.");
+    /* OK -- Empty spot with adjacent tiles with matching edges */
     } else {
       if (!this.tiles[x]) {
         this.tiles[x] = [];
@@ -51,6 +51,25 @@ schema.methods.getTile = function(x, y) {
 
 schema.methods.hasTile = function(x, y) {
   return (this.tiles[x] && this.tiles[x][y]);
+}
+
+schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
+  /* Checking east edge of placed tile */
+  if (this.hasTile(x + 1, y)) {
+    var matches = this.getTile(x + 1, y).getEdges()["west"] == tile.getEdges()["east"];
+    if (!matches) {
+      return false;
+    }
+  }
+
+  /* Checking west edge of placed tile */
+  if (this.hasTile(x - 1, y)) {
+    var matches = this.getTile(x - 1, y).getEdges()["east"] == tile.getEdges()["east"];
+    if (!matches) {
+      return false;
+    }
+  }
+  return true;
 }
 
 module.exports = mongoose.model('Board', schema);

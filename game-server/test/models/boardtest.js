@@ -42,8 +42,8 @@ describe('Board', function() {
 
   it("should not be able to place a tile on the same coordinate as an existing tile", function() {
     var unit = new Board({ "tiles" : {} });
-    var tile1 = new Tile({ "edges" : [ Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
-    var tile2 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
+    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.GRASS }});
+    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.GRASS }});
 
     unit.placeTile(0, 0, tile1);
     var placedTile = unit.getTile(0, 0);
@@ -62,9 +62,9 @@ describe('Board', function() {
   it("should be able to place several tiles next to eachother", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS ]});
-    var tile2 = new Tile({ "edges" : [ Tile.EdgeTypes.ROAD, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS ]});
-    var tile3 = new Tile({ "edges" : [ Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.GRASS ]});
+    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.CASTLE, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS }});
 
     unit.getNumberOfTiles().should.equal(0);
     unit.placeTile(0, 0, tile1);
@@ -91,5 +91,36 @@ describe('Board', function() {
     unit.getNumberOfTiles().should.equal(3);
     var thirdPlacedTile = unit.getTile(2, 0);
     tile3.should.equal(thirdPlacedTile);
+  });
+
+  it("should not allow a tile to be placed adjacent to another tile unless the edges match", function() {
+    var unit = new Board({ "tiles" : {} });
+
+    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+
+    // Edges do not match (GRASS and CASTLE)
+    unit.placeTile(0, 0, tile1);
+    (function() {
+      unit.placeTile(-1, 0, tile2);
+    }).should.throw();
+
+    // Edges match (GRASS and GRASS)
+    (function() {
+      unit.placeTile(1, 0, tile2);
+    }).should.not.throw();
+
+    var firstPlacedTile = unit.getTile(0, 0);
+    should.exist(firstPlacedTile);
+    firstPlacedTile.should.equal(tile1);
+
+    var secondPlacedTile = unit.getTile(1, 0);
+    should.exist(secondPlacedTile);
+    secondPlacedTile.should.equal(tile2);
+
+    unit.getNumberOfTiles().should.equal(2);
+
+    var noTile = unit.getTile(-1, 0);
+    should.not.exist(noTile);
   });
 });
