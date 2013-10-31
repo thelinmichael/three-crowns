@@ -64,11 +64,28 @@ schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
 
   /* Checking west edge of placed tile */
   if (this.hasTile(x - 1, y)) {
-    var matches = this.getTile(x - 1, y).getEdges()["east"] == tile.getEdges()["east"];
+    var matches = this.getTile(x - 1, y).getEdges()["east"] == tile.getEdges()["west"];
     if (!matches) {
       return false;
     }
   }
+
+  /* Checking north edge of placed tile */
+  if (this.hasTile(x, y + 1)) {
+    var matches = this.getTile(x, y + 1).getEdges()["south"] == tile.getEdges()["north"];
+    if (!matches) {
+      return false;
+    }
+  }
+
+  /* Checking south edge of placed tile */
+  if (this.hasTile(x, y - 1)) {
+    var matches = this.getTile(x, y - 1).getEdges()["north"] == tile.getEdges()["south"];
+    if (!matches) {
+      return false;
+    }
+  }
+
   return true;
 }
 

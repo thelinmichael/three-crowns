@@ -64,7 +64,7 @@ describe('Board', function() {
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
     var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
-    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.CASTLE, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS }});
+    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.CASTLE, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.CASTLE }});
 
     unit.getNumberOfTiles().should.equal(0);
     unit.placeTile(0, 0, tile1);
@@ -77,7 +77,7 @@ describe('Board', function() {
       unit.placeTile(2, 0, tile2);
     }).should.throw();
     unit.getNumberOfTiles().should.equal(1);
-    var noTile = unit.getTile(0, 2);
+    var noTile = unit.getTile(2, 0);
     should.not.exist(noTile);
 
     /* One step east of tile -- Can be placed there */
