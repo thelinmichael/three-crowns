@@ -180,12 +180,12 @@ describe('Game', function() {
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(2);
-    game.placeTile(1, 1);
+    game.placeTile(0, 1);
     game.getQueuedTiles().length.should.equal(1);
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(1);
-    game.placeTile(1, 2);
+    game.placeTile(0, 2);
     game.getQueuedTiles().length.should.equal(0);
   });
 
@@ -255,7 +255,7 @@ var generateGenericGame = function() {
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
     var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
-    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.CASTLE } });
+    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
     var tile4 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
     var startingTiles = [tile1, tile2, tile3, tile4];
 
