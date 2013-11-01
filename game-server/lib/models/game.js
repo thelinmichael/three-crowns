@@ -10,7 +10,7 @@ var schema = mongoose.Schema({
     player : {}, // Type: Player
     tile : {}    // Type: Tile
   },
-  board : {} // TODO: Find a way to reference a single model. 
+  board : {} // TODO: Find a way to reference a single model.
 });
 
 schema.methods.start = function() {
@@ -19,6 +19,8 @@ schema.methods.start = function() {
    this.board = new Board();
    this.currentRound.player = this.players[0];
    this.currentRound.tile = this.tileQueue[0];
+  } else {
+    throw new Error("Game has already been started");
   }
 };
 
@@ -93,15 +95,22 @@ schema.methods.getActiveTile = function() {
 }
 
 schema.methods.nextTurn = function() {
+  /* If there are no more tiles at the end of the turn,
+     the game ends. */
   if (this.getQueuedTiles().length == 0) {
     this.end();
   }
+
+  /* Change active player to the next player */
   this.currentRound.player = this.getPlayers()[(this.getPlayers().indexOf(this.currentRound.player) + 1) % this.getPlayers().length];
+
+  /* Change active tile to the tile that's currently at the top of the stack */
   this.currentRound.tile = this.getQueuedTiles()[0];
 }
 
-/* I don't like this. Board either needs to know which Game it belongs to,
-   or Game needs to copy Board's API in order to keep track of which tiles are left. */
+/* Places a tile on the specified coordinate
+   on the board.
+   Side effect: Removes the first tile from the tile queue */
 schema.methods.placeTile = function (x, y) {
   this.board.placeTile(x, y, this.tileQueue[0]);
   this.tileQueue = this.tileQueue.splice(1);

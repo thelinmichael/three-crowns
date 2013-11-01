@@ -31,6 +31,15 @@ describe('Game', function() {
     unit.isStarted().should.equal(true);
   });
 
+  it("should know when the game is ended and not", function() {
+    unit = new Game();
+    unit.isEnded().should.equal(false);
+    unit.start();
+    unit.isEnded().should.equal(false);
+    unit.end();
+    unit.isEnded().should.equal(true);
+  });
+
   it("should not be able to reset the starting time", function() {
     unit = new Game();
     var startingTime = unit.getStartingTime();
@@ -38,21 +47,17 @@ describe('Game', function() {
     unit.start();
     startingTime = unit.getStartingTime();
     should.exist(startingTime);
-    unit.start();
+
+    // Should throw an error as game has already been started
+    (function() {
+      unit.start();
+    }).should.throw();
+
     var startingTimeAfterSecondStart = unit.getStartingTime();
     startingTime.should.equal(startingTimeAfterSecondStart);
   });
 
-  it("should know when the game is ended and not", function() {
-    unit = new Game();
-    unit.isEnded().should.equal(false);
-		unit.start();
-		unit.isEnded().should.equal(false);
-		unit.end();
-		unit.isEnded().should.equal(true);
-	});
-
-  it("should not end game if it hasn't started", function() {
+  it("should not be able to end game if it hasn't started", function() {
     unit = new Game();
 
     (function() {
@@ -67,7 +72,7 @@ describe('Game', function() {
     should.exist(endTimeSet);
   });
 
-	it("should know when the game is in progess and not", function() {
+	it("should know when the game is in progress and not", function() {
 		unit = new Game();
 		unit.inProgress().should.equal(false);
 		unit.start();
