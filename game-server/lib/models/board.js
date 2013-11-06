@@ -1,7 +1,8 @@
 var mongoose = require("mongoose");
 var Tile = require("./tile");
+
 var schema = mongoose.Schema({
-  tiles : []
+  tiles : ['Tile']
 });
 
 schema.methods.hasAdjacentTile = function(x, y) {
@@ -11,10 +12,6 @@ schema.methods.hasAdjacentTile = function(x, y) {
           this.hasTile(x, y + 1));
 }
 
-schema.methods.getTiles = function() {
-  return this.tiles;
-}
-
 schema.methods.placeTile = function(x, y, tile) {
   if (this.canPlaceTile(x, y, tile)) {
     if (!this.tiles[x]) {
@@ -22,7 +19,7 @@ schema.methods.placeTile = function(x, y, tile) {
     }
     this.tiles[x][y] = tile;
   } else {
-    throw new Error("Cannot place tile there.");
+    throw new Error("Cannot place tile there");
   }
 }
 
@@ -38,10 +35,6 @@ schema.methods.canPlaceTile = function(x, y, tile) {
   } else {
     return true;
   }
-}
-
-schema.methods.getNumberOfTiles = function() {
-  return this.tiles.length;
 }
 
 schema.methods.getTile = function(x, y) {
@@ -88,6 +81,14 @@ schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
   }
 
   return true;
+}
+
+schema.methods.getNumberOfTiles = function() {
+  return this.tiles.length;
+}
+
+schema.methods.getTiles = function() {
+  return this.tiles;
 }
 
 module.exports = mongoose.model('Board', schema);

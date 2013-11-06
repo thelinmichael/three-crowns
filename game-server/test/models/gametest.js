@@ -42,10 +42,14 @@ describe('Game', function() {
 
   it("should not be able to reset the starting time", function() {
     unit = new Game();
-    var startingTime = unit.getStartingTime();
-    should.not.exist(startingTime);
+    (function() {
+        unit.getStartingTime();
+    }).should.throw();
     unit.start();
-    startingTime = unit.getStartingTime();
+    var startingTime;
+    (function() {
+        startingTime = unit.getStartingTime();
+    }).should.not.throw();
     should.exist(startingTime);
 
     // Should throw an error as game has already been started
@@ -63,7 +67,10 @@ describe('Game', function() {
     (function() {
         unit.end();
     }).should.throw();
-    var endTimeNotSet = unit.getEndTime();
+    var endTimeNotSet;
+    (function() {
+        endTimeNotSet = unit.getEndTime();
+    }).should.throw();
     should.not.exist(endTimeNotSet);
     unit.start();
 

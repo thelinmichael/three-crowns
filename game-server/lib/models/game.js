@@ -10,8 +10,30 @@ var schema = mongoose.Schema({
     player : {}, // Type: Player
     tile : {}    // Type: Tile
   },
-  board : {} // TODO: Find a way to reference a single model.
+  board : {}     // Type: Board
 });
+
+schema.methods.nextTurn = function() {
+  /* If there are no more tiles at the end of the turn,
+     the game ends. */
+  if (this.getQueuedTiles().length == 0) {
+    this.end();
+  }
+
+  /* Change active player to the next player */
+  this.currentRound.player = this.getPlayers()[(this.getPlayers().indexOf(this.currentRound.player) + 1) % this.getPlayers().length];
+
+  /* Change active tile to the tile that's currently at the top of the stack */
+  this.currentRound.tile = this.getQueuedTiles()[0];
+}
+
+/* Places a tile on the specified coordinate
+   on the board.
+   Side effect: Removes the first tile from the tile queue */
+schema.methods.placeTile = function (x, y) {
+  this.board.placeTile(x, y, this.tileQueue[0]);
+  this.tileQueue = this.tileQueue.splice(1);
+}
 
 schema.methods.start = function() {
   if (!this.isStarted()) {
@@ -28,7 +50,7 @@ schema.methods.end = function() {
   if (!this.isEnded() && this.isStarted()) {
     this.endTime = Date.now();
   } else {
-    throw new Error("Cannot end a game that isn't in progress.");
+    throw new Error("Cannot end a game that isn't in progress");
   }
 };
 
@@ -45,16 +67,20 @@ schema.methods.inProgress = function() {
 };
 
 schema.methods.getStartingTime = function() {
-  return this.startTime;
+  if (this.isStarted()) {
+    return this.startTime;
+  } else {
+    throw new Error("Game has not been started");
+  }
 }
 
 schema.methods.getEndTime = function() {
-  return this.endTime;
+  if (this.isEnded()) {
+    return this.endTime;
+  } else {
+    throw new Error("Game has not ended");
+  }
 }
-
-schema.methods.getPlayers = function() {
-  return this.players;
-};
 
 schema.methods.addPlayer = function(player) {
   if (this.isStarted()) {
@@ -94,26 +120,8 @@ schema.methods.getActiveTile = function() {
   return this.currentRound.tile;
 }
 
-schema.methods.nextTurn = function() {
-  /* If there are no more tiles at the end of the turn,
-     the game ends. */
-  if (this.getQueuedTiles().length == 0) {
-    this.end();
-  }
-
-  /* Change active player to the next player */
-  this.currentRound.player = this.getPlayers()[(this.getPlayers().indexOf(this.currentRound.player) + 1) % this.getPlayers().length];
-
-  /* Change active tile to the tile that's currently at the top of the stack */
-  this.currentRound.tile = this.getQueuedTiles()[0];
-}
-
-/* Places a tile on the specified coordinate
-   on the board.
-   Side effect: Removes the first tile from the tile queue */
-schema.methods.placeTile = function (x, y) {
-  this.board.placeTile(x, y, this.tileQueue[0]);
-  this.tileQueue = this.tileQueue.splice(1);
-}
+schema.methods.getPlayers = function() {
+  return this.players;
+};
 
 module.exports = mongoose.model('Game', schema);
