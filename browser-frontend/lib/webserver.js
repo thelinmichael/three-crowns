@@ -4,11 +4,14 @@ var app = express();
 
 var PORT = 8080;
 
-var pageDirectory = path.resolve("../pages");
+var root = path.resolve("../")
 
 app.get('/', function(req, res) {
-  res.sendfile(pageDirectory + "/index.html");
+  res.sendfile(root + "/pages/index.html");
 });
+
+app.use('/vendor', express.static(root + '/vendor/'));
+app.use('/lib', express.static(root + '/lib/'));
 
 app.listen(PORT);
 console.log('Listening on port ' + PORT);
