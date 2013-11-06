@@ -23,14 +23,14 @@ schema.methods.placeTile = function(x, y, tile) {
   }
 }
 
-schema.methods.canPlaceTile = function(x, y, tile) {
-  if (this.getNumberOfTiles() == 0) {                     // OK -- This is the first tile of the game
+schema.methods.canPlaceTile = function(x, y, tile, rotation) {
+  if (this.getNumberOfTiles() == 0) { // OK -- This is the first tile of the game
     return true;
   }
 
-  if ( this.hasTile(x, y) ||                               // NOT OK -- Coordinate taken
-      !this.hasAdjacentTile(x, y) ||                       // NOT OK -- No adjacent tiles
-      !this.adjacentTilesHasMatchingEdges(x, y, tile)) {   // NOT OK -- Adjacent tiles' edges doesn't match
+  if ( this.hasTile(x, y) ||  // NOT OK -- Coordinate taken
+      !this.hasAdjacentTile(x, y) ||  // NOT OK -- No adjacent tiles
+      !this.adjacentTilesHasMatchingEdges(x, y, tile, rotation)) {   // NOT OK -- Adjacent tiles' edges doesn't match
     return false;
   } else {
     return true;
@@ -47,10 +47,35 @@ schema.methods.hasTile = function(x, y) {
   return (this.tiles[x] && this.tiles[x][y]);
 }
 
-schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
+schema.methods.rotateEdges = function(edges, rotation) {
+  for (var i = 0; i < rotation % 4; i++) {
+    var north = edges.north;
+    var east = edges.east;
+    var south = edges.south;
+    var west = edges.west;
+    edges.north = west;
+    edges.east = north;
+    edges.south = east;
+    edges.west = south;
+  }
+  return edges;
+}
+
+schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile, rotation) {
+  var edges = {
+    north : tile.getEdges()["north"],
+    east : tile.getEdges()["east"],
+    south : tile.getEdges()["south"],
+    west : tile.getEdges()["west"]
+  };
+
+  if (rotation) {
+    edges = this.rotateEdges(edges, rotation);
+  }
+
   /* Checking east edge of placed tile */
   if (this.hasTile(x + 1, y)) {
-    var matches = this.getTile(x + 1, y).getEdges()["west"] == tile.getEdges()["east"];
+    var matches = this.getTile(x + 1, y).getEdges()["west"] == edges.east;
     if (!matches) {
       return false;
     }
@@ -58,7 +83,7 @@ schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
 
   /* Checking west edge of placed tile */
   if (this.hasTile(x - 1, y)) {
-    var matches = this.getTile(x - 1, y).getEdges()["east"] == tile.getEdges()["west"];
+    var matches = this.getTile(x - 1, y).getEdges()["east"] == edges.west;
     if (!matches) {
       return false;
     }
@@ -66,7 +91,7 @@ schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
 
   /* Checking north edge of placed tile */
   if (this.hasTile(x, y + 1)) {
-    var matches = this.getTile(x, y + 1).getEdges()["south"] == tile.getEdges()["north"];
+    var matches = this.getTile(x, y + 1).getEdges()["south"] == edges.north;
     if (!matches) {
       return false;
     }
@@ -74,7 +99,7 @@ schema.methods.adjacentTilesHasMatchingEdges = function(x, y, tile) {
 
   /* Checking south edge of placed tile */
   if (this.hasTile(x, y - 1)) {
-    var matches = this.getTile(x, y - 1).getEdges()["north"] == tile.getEdges()["south"];
+    var matches = this.getTile(x, y - 1).getEdges()["north"] == edges.south;
     if (!matches) {
       return false;
     }
