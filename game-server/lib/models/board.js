@@ -16,26 +16,27 @@ schema.methods.getTiles = function() {
 }
 
 schema.methods.placeTile = function(x, y, tile) {
-  /* OK -- This is the first tile of the game */
-  if (this.getNumberOfTiles() == 0) {
+  if (this.canPlaceTile(x, y, tile)) {
     if (!this.tiles[x]) {
       this.tiles[x] = [];
     }
     this.tiles[x][y] = tile;
-  } else if (this.hasTile(x, y)) {
-    throw new Error("Tile could not be placed: A tile is already there.");
   } else {
-    if (!this.hasAdjacentTile(x, y)) {
-      throw new Error("Tile could not be placed: No tiles are placed adjacent.");
-    } else if (!this.adjacentTilesHasMatchingEdges(x, y, tile)) {
-      throw new Error("Tile could not be placed: Adjacent tiles' edges don't match.");
-    /* OK -- Empty spot with adjacent tiles with matching edges */
-    } else {
-      if (!this.tiles[x]) {
-        this.tiles[x] = [];
-      }
-      this.tiles[x][y] = tile;
-    }
+    throw new Error("Cannot place tile there.");
+  }
+}
+
+schema.methods.canPlaceTile = function(x, y, tile) {
+  if (this.getNumberOfTiles() == 0) {                     // OK -- This is the first tile of the game
+    return true;
+  }
+
+  if ( this.hasTile(x, y) ||                               // NOT OK -- Coordinate taken
+      !this.hasAdjacentTile(x, y) ||                       // NOT OK -- No adjacent tiles
+      !this.adjacentTilesHasMatchingEdges(x, y, tile)) {   // NOT OK -- Adjacent tiles' edges doesn't match
+    return false;
+  } else {
+    return true;
   }
 }
 
