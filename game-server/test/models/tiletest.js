@@ -18,7 +18,7 @@ describe('Tile', function() {
     });
   });
 
-  it("edgetypes should exist", function() {
+  it("should have edgetypes", function() {
     should.exist(Tile.EdgeTypes);
     should.exist(Tile.EdgeTypes.GRASS);
     should.exist(Tile.EdgeTypes.ROAD);
