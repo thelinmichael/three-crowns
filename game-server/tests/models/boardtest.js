@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
-var Board = require("../../lib/models/board");
-var Tile = require("../../lib/models/tile");
+var Board = require("../../libs/models/board");
+var Tile = require("../../libs/models/tile");
 var should = require("should");
 var assert = require("assert");
 
@@ -59,7 +59,7 @@ describe('Board', function() {
     placedTile.should.equal(tile1);
   });
 
-  it("should be able to place several tiles next to eachother", function() {
+  it("should not be able to place a tile unless it is adjacent to another tile", function() {
     var unit = new Board({ "tiles" : {} });
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
@@ -93,7 +93,7 @@ describe('Board', function() {
     tile3.should.equal(thirdPlacedTile);
   });
 
-  it("should not allow a tile to be placed adjacent to another tile unless the edges match", function() {
+  it("should only be able to place a tile if adjacent tiles have matching edges", function() {
     var unit = new Board({ "tiles" : {} });
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
@@ -124,7 +124,7 @@ describe('Board', function() {
     should.not.exist(noTile);
   });
 
-  it("should be able to rotate tiles", function() {
+  it("should be able to test if a tile match by rotating it", function() {
     var unit = new Board({ "tiles" : {} });
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});

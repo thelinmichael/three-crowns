@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var Game = require("../../lib/models/player");
+var Game = require("../../libs/models/player");
 var should = require("should");
 
 describe('Player', function() {

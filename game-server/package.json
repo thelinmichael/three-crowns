@@ -16,6 +16,6 @@
     "mocha-istanbul": "~0.2.0"
   },
   "scripts": {
-    "coverage" : "istanbul cover --dir ./reports _mocha -- -R spec test --recursive"
+    "coverage" : "istanbul cover --dir ./reports _mocha -- -R spec tests --recursive"
   }
 }
