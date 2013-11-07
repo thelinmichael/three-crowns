@@ -146,6 +146,30 @@ describe('Board', function() {
     unit.canPlaceTile(0, 1, tile2, 5).should.equal(true);
   });
 
+  it("should be possible to place a tile with rotation", function() {
+    var unit = new Board({ "tiles" : {} });
+
+    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.ROAD }});
+
+    unit.placeTile(0, 0, tile1);
+
+    (function() {
+      unit.placeTile(0, 1, tile2);
+    }).should.throw();
+
+    (function() {
+      unit.placeTile(0, 1, tile2, 1);
+    }).should.not.throw();
+
+    unit.hasTile(0, 1).should.equal(true);
+    var placedTile = unit.getTile(0, 1);
+
+    should.exist(placedTile);
+
+    // TODO: Compare tiles. Logic in Tile model
+  });
+
   it("should be able to check if there's a tile placed at a specific coordinate", function() {
     var unit = new Board({ "tiles" : {} });
 

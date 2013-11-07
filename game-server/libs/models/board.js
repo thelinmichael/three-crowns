@@ -12,8 +12,8 @@ schema.methods.hasAdjacentTile = function(x, y) {
           this.hasTile(x, y + 1));
 }
 
-schema.methods.placeTile = function(x, y, tile) {
-  if (this.canPlaceTile(x, y, tile)) {
+schema.methods.placeTile = function(x, y, tile, rotation) {
+  if (this.canPlaceTile(x, y, tile, rotation)) {
     if (!this.tiles[x]) {
       this.tiles[x] = [];
     }
