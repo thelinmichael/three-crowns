@@ -166,8 +166,7 @@ describe('Board', function() {
     var placedTile = unit.getTile(0, 1);
 
     should.exist(placedTile);
-
-    // TODO: Compare tiles. Logic in Tile model
+    placedTile.sameAs(tile2).should.equal(true);
   });
 
   it("should be able to check if there's a tile placed at a specific coordinate", function() {

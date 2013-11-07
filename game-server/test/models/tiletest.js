@@ -25,7 +25,7 @@ describe('Tile', function() {
     should.exist(Tile.EdgeTypes.CASTLE);
   });
 
-  it("a tile can be instantiated with four edges", function() {
+  it("should be created with four edges", function() {
     var unit = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
     var edges = unit.getEdges();
     should.exist(edges);
@@ -34,4 +34,18 @@ describe('Tile', function() {
     edges["south"].should.equal(Tile.EdgeTypes.CASTLE);
     edges["west"].should.equal(Tile.EdgeTypes.GRASS);
   });
+
+  it("should be able to compare tiles even if rotated", function() {
+    var unit = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
+
+    var identicalTileButRotated = new Tile({ "edges" : { "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.CASTLE, "north" : Tile.EdgeTypes.GRASS } });
+    var differentTile = new Tile({ "edges" : { "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.CASTLE, "north" : Tile.EdgeTypes.GRASS } })
+
+    var isSameTile = unit.sameAs(identicalTileButRotated);
+    isSameTile.should.equal(true);
+
+    var isNotSameTile = unit.sameAs(differentTile);
+    isNotSameTile.should.equal(false);
+  });
+
 });
