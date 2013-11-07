@@ -124,15 +124,15 @@ describe('Board', function() {
     should.not.exist(noTile);
   });
 
-  it("should be able to test if a tile match by rotating it", function() {
+  it("should be able to test if a tile can be placed by rotating it without placing it", function() {
     var unit = new Board({ "tiles" : {} });
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
     var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.ROAD }});
 
     unit.placeTile(0, 0, tile1);
-    unit.canPlaceTile(0, 1, tile2).should.equal(false);
 
+    unit.canPlaceTile(0, 1, tile2).should.equal(false);
     tile2.edges.north.should.equal(Tile.EdgeTypes.GRASS);
     tile2.edges.west.should.equal(Tile.EdgeTypes.ROAD);
     unit.canPlaceTile(0, 1, tile2, 1).should.equal(true);
@@ -144,6 +144,21 @@ describe('Board', function() {
     unit.canPlaceTile(0, 1, tile2, 3).should.equal(true);
     unit.canPlaceTile(0, 1, tile2, 4).should.equal(false);
     unit.canPlaceTile(0, 1, tile2, 5).should.equal(true);
+  });
+
+  it("should be able to check if there's a tile placed at a specific coordinate", function() {
+    var unit = new Board({ "tiles" : {} });
+
+    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+
+    var emptyCoordinate = unit.hasTile(0, 0);
+    should.exist(emptyCoordinate);
+    emptyCoordinate.should.equal(false);
+
+    unit.placeTile(0, 0, tile1);
+    var takenCoordinate = unit.hasTile(0, 0);
+    should.exist(takenCoordinate);
+    takenCoordinate.should.equal(true);
   });
 
 });

@@ -44,7 +44,7 @@ schema.methods.getTile = function(x, y) {
 }
 
 schema.methods.hasTile = function(x, y) {
-  return (this.tiles[x] && this.tiles[x][y]);
+  return (this.tiles[x] !== undefined && this.tiles[x][y] !== undefined);
 }
 
 schema.methods.rotateEdges = function(edges, rotation) {
