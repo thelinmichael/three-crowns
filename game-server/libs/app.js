@@ -5,16 +5,38 @@ var Game = require("./models/game.js");
 mongoose.connect('mongodb://localhost/game');
 
 io.sockets.on('connection', function (socket) {
+
   socket.emit('connection', { status: 'success' });
 
-  socket.on('games', function(data) {
-    Game.find(function (err, games) {
+  socket.on('create', function() {
+    Game.create({}, function(err) {
+      var params;
       if (err) {
-        throw new Error("Could not fetch games from database");
+        params = {
+          error : true
+        }
       } else {
-        socket.emit('games', { 'games' : games });
+        params = {
+          success : true
+        }
       }
+      socket.emit('create', params);
+      sendServerStatus();
     });
   });
+
+  socket.on('server-status', function() {
+    sendServerStatus();
+  });
+
+  var sendServerStatus = function() {
+    var status = {};
+    Game.count(function(err, count) {
+      var numberOfGames = count;
+      status.numberOfGames = count;
+
+      socket.emit('server-status', status);
+    });
+  }
 
 });
