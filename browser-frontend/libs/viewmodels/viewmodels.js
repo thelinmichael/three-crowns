@@ -1,5 +1,9 @@
-define(['/vendor/knockout-3.0.0.js'], function(ko) {
-  return function appViewModel() {
-    this.numberOfGames = ko.observable(0);
-  };
-});
+var ko = require('../../vendor/knockout-3.0.0.js');
+
+var Status = {
+  numberOfGames : ko.observable(0),
+  games : ko.observable()
+}
+
+
+exports.Status = Status;

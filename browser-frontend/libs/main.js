@@ -1,21 +1,21 @@
-require(['/vendor/knockout-3.0.0.js', './viewmodels/viewmodels'], function(ko, viewModels) {
-  var models = new viewModels();
-  ko.applyBindings(models);
+var ko = require('../vendor/knockout-3.0.0.js');
+var viewModels = require('./viewmodels/viewmodels');
 
-  // Move all these actions to some other module.
-  var socket = io.connect('http://localhost:8090');
+ko.applyBindings(viewModels.Status);
 
-  socket.on('connection', function (data) {
-    socket.emit('server-status', {});
-  });
+// Move all these actions to some other module.
+var socket = io.connect('http://localhost:8090');
 
-  socket.on('server-status', function(status) {
-    models.numberOfGames(status.numberOfGames);
-  });
-
-  // TODO: Move this away to some module or use a framework.
-  document.getElementById("createGame").onclick = function() {
-    socket.emit('create', {});
-  }
-
+socket.on('connection', function (data) {
+  socket.emit('server-status', {});
 });
+
+socket.on('server-status', function(status) {
+  viewModels.Status.numberOfGames(status.numberOfGames);
+  viewModels.Status.games(status.games);
+});
+
+// TODO: Move this away to some module or use a framework.
+document.getElementById("createGame").onclick = function() {
+  socket.emit('create', {});
+}

@@ -9,8 +9,11 @@
   <div id="gameInfo">
     Currently <span id="numberOfGames" data-bind="text: numberOfGames"></span> games in progress.
   </div>
+  <br />
+  <div id="games" data-bind="text: games"></div>
 
   <script type='text/javascript' src="http://localhost:8090/socket.io/socket.io.js"></script>
-  <script type='text/javascript' data-main="/libs/main" src="/vendor/require.js"></script>
+  <script type='text/javascript' src="/libs/bundle.js"></script>
+
 </body>
 </html>
