@@ -31,12 +31,11 @@ io.sockets.on('connection', function (socket) {
 
   var sendServerStatus = function() {
     var status = {};
-    Game.count(function(err, count) {
-      var numberOfGames = count;
-      status.numberOfGames = count;
-
+    Game.find({}).exec(function(err, games) {
+      status.numberOfGames = games.length;
+      status.games = games;
       socket.emit('server-status', status);
     });
-  }
+  };
 
 });
