@@ -13,9 +13,10 @@
     "should" : "*",
     "sinon" : "*",
     "istanbul": "~0.1.36",
-    "mocha-istanbul": "~0.2.0"
-  },
-  "scripts": {
-    "coverage" : "istanbul cover --dir ./reports _mocha -- -R spec test --recursive"
+    "mocha-istanbul": "~0.2.0",
+    "load-grunt-tasks": "0.1.x",
+    "grunt-exec": "0.4.x",
+    "grunt": "0.4.x",
+    "grunt-contrib-watch": "0.5.x"
   }
 }

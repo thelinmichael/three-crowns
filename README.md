@@ -1,79 +1,70 @@
-Three Crowns
-================================
+# Three Crowns
 
 **Caution:** Boardgames are best played in person on a real table.
 
-Three Crowns is a planned to be a [Carcassonne](http://boardgamegeek.com/boardgame/822/) clone. Its server will be written in JavaScript only and will speak to clients using Websockets, and use [MongoDB](http://www.mongodb.org/) for persistence. A demo client for browsers will also be built, but anything Websocket enabled should be able to be a game client.
+Three Crowns is planned to be a [Carcassonne](http://boardgamegeek.com/boardgame/822/) clone. Its server will be written in JavaScript only and will speak to clients using Websockets, and use MongoDB for persistence. A demo client for browsers will also be built, but anything Websocket enabled should be able to be a game client.
 
 This project was created for what I suspect is the most common on GitHub - to fiddle around with tools and languages. Worst case scenario if the project doesn't complete is that everyone has learned something.
 
 
-Set up the development environment
-================================
+## Set up the development environment
 
-Game server development requires MongoDB and Node.js.
+The frontend is found in /browser-frontend and the backend in /game-server.
+
+General requirements: Node and MongoDB.
+
+### Game server
 
 Clone this repository, and change directory to game-server.
-
-Install the game server's dependencies - 
+```
+git clone https://github.com/thelinmichael/three-crowns.git
+cd three-crowns/game-server/
+```
+Install the game server's dependencies
 ```
 npm install
 ```
 
-Start the MongoDB server.
-
-Run the tests - 
+Start MongoDB.
 ```
-mocha test/ --recursive
+mongod
 ```
 
-Run the tests and generate code coverage data -
+Run the tests (or run them and get code coverage)
 ```
-npm run-script coverage
+grunt test
+grunt coverage
 ```
 
-Game server API - Draft
-================================
+Start the webserver
+```
+grunt start
+```
 
-This is a draft for the API that clients can use to communicate with the game server. Please note that it's also limited to a minimal working version, so functionality is purposely stripped down. To begin with, this draft will only contain the name of the events. The body of the event message still needs to be documented.
+### Front end
 
+Clone this repository, and change directory to browser-frontend.
+```
+git clone https://github.com/thelinmichael/three-crowns.git
+cd three-crowns/browser-frontend/
+```
+Install the frontend's dependencies
+```
+npm install
+npm install -g browserify
+```
+Start the webserver
+```
+grunt start
+```
+Watch for changes in script files and recompile using Browserify when they change
+```
+grunt dev
+```
 
-**Event types sent from client to server**
-
-- Game setup
-  * join
-  * leave
-  * start
-
-- Turn
-  * isItMyTurn
-  * nextTurn
-  * activePlayer
-  * activeTile
-
-- Game state
-  * tilesLeft
-  * timeSinceStart
-  * isGameStarted
-  * isGameEnded
-
-- Player actions
-  * placeTile
-  * placeMeeple
-  * isPossibleCoordinate
-  * allPossibleCoordinates
-
-**Events types sent from server to client**
-
-- Game timing events
-  * gameStarted
-  * gameEnded
-
-- Turn timing events
-  * turnStarted
-  * turnEnded
-
-- Player actions
-  * tilePlacement
-  * meeplePlacement
-  * constructionCompleted
+In order to do any work on the frontend that requires communication with the game server, you need to start the game server up as well, which in turn needs MongoDB.
+```
+mongod
+cd ../game-server
+grunt start
+```

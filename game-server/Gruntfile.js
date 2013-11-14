@@ -7,29 +7,25 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     exec: {
-      browserify: {
+      coverage: {
         cmd: function() {
-          return 'browserify libs/main.js -o libs/bundle.js';
+          return 'istanbul cover --dir ./reports _mocha -- -R spec test --recursive';
         }
-      }, webserver: {
+      },
+      test: {
+        cmd: function() {
+          return 'mocha test/ --recursive';
+        }
+      },
+      webserver: {
         cmd: function() {
           return 'node libs/app.js';
         }
       }
-    },
-
-    watch: {
-      tests: {
-        files: [
-          'libs/*.js', 'libs/viewmodels/*.js'
-        ],
-        tasks: 'exec:browserify'
-      }
     }
-
   });
 
   grunt.registerTask('start', ['exec:webserver'])
-  grunt.registerTask('dev', ['watch', 'exec:browserify']);
-  grunt.registerTask('browserify', ['exec:browserify']);
+  grunt.registerTask('coverage', ['exec:coverage']);
+  grunt.registerTask('test', ['exec:test']);
 };
