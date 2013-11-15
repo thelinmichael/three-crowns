@@ -272,4 +272,4 @@ var generateGenericGame = function() {
     var startingTiles = [tile1, tile2, tile3, tile4];
 
     return new Game({ "tileQueue" : startingTiles, "players" : players });
-}
+};

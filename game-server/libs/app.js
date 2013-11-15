@@ -14,11 +14,11 @@ io.sockets.on('connection', function (socket) {
       if (err) {
         params = {
           error : true
-        }
+        };
       } else {
         params = {
           success : true
-        }
+        };
       }
       socket.emit('create', params);
       sendServerStatus();

@@ -10,7 +10,7 @@ var schema = mongoose.Schema({
 
 schema.methods.getEdges = function() {
   return this.edges;
-}
+};
 
 schema.methods.sameAs = function(otherTile) {
   var edges = otherTile.getEdges();
@@ -25,7 +25,7 @@ schema.methods.sameAs = function(otherTile) {
     }
   }
   return false;
-}
+};
 
 schema.methods.rotatedEdges = function(edges) {
   var rotated = {
@@ -35,7 +35,7 @@ schema.methods.rotatedEdges = function(edges) {
     west : edges.south
   };
   return rotated;
-}
+};
 
 module.exports = mongoose.model('Tile', schema);
 

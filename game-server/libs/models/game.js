@@ -16,7 +16,7 @@ var schema = mongoose.Schema({
 schema.methods.nextTurn = function() {
   /* If there are no more tiles at the end of the turn,
      the game ends. */
-  if (this.getQueuedTiles().length == 0) {
+  if (this.getQueuedTiles().length === 0) {
     this.end();
   }
 
@@ -25,7 +25,7 @@ schema.methods.nextTurn = function() {
 
   /* Change active tile to the tile that's currently at the top of the stack */
   this.currentRound.tile = this.getQueuedTiles()[0];
-}
+};
 
 /* Places a tile on the specified coordinate
    on the board.
@@ -33,14 +33,14 @@ schema.methods.nextTurn = function() {
 schema.methods.placeTile = function (x, y) {
   this.board.placeTile(x, y, this.tileQueue[0]);
   this.tileQueue = this.tileQueue.splice(1);
-}
+};
 
 schema.methods.start = function() {
   if (!this.isStarted()) {
-	 this.startTime = Date.now();
-   this.board = new Board();
-   this.currentRound.player = this.players[0];
-   this.currentRound.tile = this.tileQueue[0];
+    this.startTime = Date.now();
+    this.board = new Board();
+    this.currentRound.player = this.players[0];
+    this.currentRound.tile = this.tileQueue[0];
   } else {
     throw new Error("Game has already been started");
   }
@@ -55,11 +55,11 @@ schema.methods.end = function() {
 };
 
 schema.methods.isEnded = function() {
-	return (this.endTime != undefined);
+	return (this.endTime !== undefined);
 };
 
 schema.methods.isStarted = function() {
-	return (this.startTime != undefined);
+	return (this.startTime !== undefined);
 };
 
 schema.methods.inProgress = function() {
@@ -72,7 +72,7 @@ schema.methods.getStartingTime = function() {
   } else {
     throw new Error("Game has not been started");
   }
-}
+};
 
 schema.methods.getEndTime = function() {
   if (this.isEnded()) {
@@ -80,7 +80,7 @@ schema.methods.getEndTime = function() {
   } else {
     throw new Error("Game has not ended");
   }
-}
+};
 
 schema.methods.addPlayer = function(player) {
   if (this.isStarted()) {
@@ -98,7 +98,7 @@ schema.methods.getQueuedTiles = function() {
   } else {
     throw new Error("Cannot get tile queue as game hasn't started");
   }
-}
+};
 
 schema.methods.getBoard = function() {
   if (this.isStarted()) {
@@ -106,7 +106,7 @@ schema.methods.getBoard = function() {
   } else {
     throw new Error("Cannot get board as game hasn't started");
   }
-}
+};
 
 schema.methods.getActivePlayer = function() {
   if (!this.inProgress()) {
@@ -114,11 +114,11 @@ schema.methods.getActivePlayer = function() {
   } else {
     return this.currentRound.player;
   }
-}
+};
 
 schema.methods.getActiveTile = function() {
   return this.currentRound.tile;
-}
+};
 
 schema.methods.getPlayers = function() {
   return this.players;

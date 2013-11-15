@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('start', ['exec:webserver'])
+  grunt.registerTask('start', ['exec:webserver']);
   grunt.registerTask('coverage', ['exec:coverage']);
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('lint', ['jshint:all']);
