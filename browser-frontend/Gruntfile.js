@@ -17,7 +17,6 @@ module.exports = function(grunt) {
         }
       }
     },
-
     watch: {
       tests: {
         files: [
@@ -25,11 +24,14 @@ module.exports = function(grunt) {
         ],
         tasks: 'exec:browserify'
       }
+    },
+    jshint: {
+      all: ['Gruntfile.js', 'libs/**/*.js', 'libs/*.js']
     }
-
   });
 
   grunt.registerTask('start', ['exec:webserver'])
   grunt.registerTask('dev', ['watch', 'exec:browserify']);
   grunt.registerTask('browserify', ['exec:browserify']);
+  grunt.registerTask('lint', ['jshint:all']);
 };
