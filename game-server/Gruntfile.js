@@ -22,10 +22,14 @@ module.exports = function(grunt) {
           return 'node libs/app.js';
         }
       }
+    },
+    jshint: {
+      all: ['Gruntfile.js', 'libs/**/*.js', 'libs/*.js', 'test/**/*.js']
     }
   });
 
   grunt.registerTask('start', ['exec:webserver'])
   grunt.registerTask('coverage', ['exec:coverage']);
   grunt.registerTask('test', ['exec:test']);
+  grunt.registerTask('lint', ['jshint:all']);
 };
