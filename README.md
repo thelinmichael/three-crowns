@@ -6,6 +6,8 @@ Three Crowns is planned to be a [Carcassonne](http://boardgamegeek.com/boardgame
 
 This project was created for what I suspect is the most common on GitHub - to fiddle around with tools and languages. Worst case scenario if the project doesn't complete is that everyone has learned something.
 
+## Status
+[![Build Status](https://travis-ci.org/thelinmichael/three-crowns.png?branch=master)](https://travis-ci.org/thelinmichael/three-crowns)
 
 ## Set up the development environment
 
