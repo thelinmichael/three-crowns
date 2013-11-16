@@ -18,4 +18,4 @@ socket.on('server-status', function(status) {
 // TODO: Move this away to some module or use a framework.
 document.getElementById("createGame").onclick = function() {
   socket.emit('create', {});
-}
+};

@@ -26,11 +26,14 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      all: ['Gruntfile.js', 'libs/**/*.js', 'libs/*.js']
+      all: ['Gruntfile.js', 'libs/**/*.js', 'libs/*.js'],
+      options: {
+        ignores: ['libs/bundle.js']
+      }
     }
   });
 
-  grunt.registerTask('start', ['exec:webserver'])
+  grunt.registerTask('start', ['exec:webserver']);
   grunt.registerTask('dev', ['watch', 'exec:browserify']);
   grunt.registerTask('browserify', ['exec:browserify']);
   grunt.registerTask('lint', ['jshint:all']);
