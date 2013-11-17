@@ -21,6 +21,7 @@
     "grunt-contrib-watch": "0.5.x",
     "grunt-contrib-jshint" : "0.7.1",
     "grunt-cli" : "0.1.11",
-    "socket.io-client" : "0.9.x"
+    "socket.io-client" : "0.9.x",
+    "grunt-simple-mocha" : "0.4.x"
   }
 }

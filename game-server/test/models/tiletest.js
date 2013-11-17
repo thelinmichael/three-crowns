@@ -8,7 +8,7 @@ describe('Tile', function() {
     if (mongoose.connection.db) {
         return done();
     }
-    mongoose.connect('mongodb://localhost/game_test', done);
+    mongoose.connect('mongodb://localhost/game', done);
   });
 
 	beforeEach(function(done){

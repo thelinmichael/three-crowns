@@ -1,4 +1,5 @@
 var assert = require('assert');
+var mongoose = require("mongoose");
 
 /* Start the Express server */
 var app = require('../libs/app');
@@ -8,21 +9,17 @@ var socket;
 
 describe("Websocket API", function() {
 
-  this.timeout(5000);
-
-  var options = {
-    'force new connection' : true
-  };
-
   beforeEach(function(done) {
-    socket = io.connect('http://localhost:8090', options);
+    socket = io.connect('http://localhost:8090', { 'force new connection' : true });
     socket.on('connect', function(data) {
       done();
     });
   });
 
+  this.timeout(5000);
+
   it("should be able to connect", function() {
-    if (!(socket && socket.connected)) {
+    if (!(socket && socket.socket && socket.socket.connected)) {
       assert.fail("Could not connect");
     }
   });

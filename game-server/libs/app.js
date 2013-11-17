@@ -2,7 +2,7 @@ var io = require('socket.io').listen(8090, { log : false });
 var mongoose = require("mongoose");
 var Game = require("./models/game.js");
 
-mongoose.connect('mongodb://localhost/game');
+mongoose.createConnection('mongodb://localhost/game');
 
 io.sockets.on('connection', function (socket) {
 
