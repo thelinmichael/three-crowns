@@ -1,4 +1,4 @@
-var io = require('socket.io').listen(8090);
+var io = require('socket.io').listen(8090, { log : false });
 var mongoose = require("mongoose");
 var Game = require("./models/game.js");
 

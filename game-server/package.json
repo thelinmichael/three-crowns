@@ -11,6 +11,7 @@
     "grunt" : "*",
     "mocha" : "*",
     "should" : "*",
+    "assert" : "*",
     "sinon" : "*",
     "istanbul": "~0.1.36",
     "mocha-istanbul": "~0.2.0",
@@ -19,6 +20,7 @@
     "grunt": "0.4.x",
     "grunt-contrib-watch": "0.5.x",
     "grunt-contrib-jshint" : "0.7.1",
-    "grunt-cli" : "0.1.11"
+    "grunt-cli" : "0.1.11",
+    "socket.io-client" : "0.9.x"
   }
 }
