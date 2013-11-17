@@ -53,7 +53,6 @@ cd three-crowns/browser-frontend/
 Install the frontend's dependencies
 ```
 npm install
-npm install -g browserify
 ```
 Start the webserver
 ```

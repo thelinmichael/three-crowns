@@ -1,40 +1,43 @@
 module.exports = function(grunt) {
 
-  // Load all npm grunt tasks
   require('load-grunt-tasks')(grunt);
 
-  // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     exec: {
-      browserify: {
-        cmd: function() {
-          return 'browserify libs/main.js -o libs/bundle.js';
-        }
-      }, webserver: {
+      /* Start webserver */
+      webserver: {
         cmd: function() {
           return 'node libs/app.js';
         }
       }
     },
+    /* Run JavaScript linting and recompile */
     watch: {
-      tests: {
+      main: {
         files: [
-          'libs/*.js', 'libs/viewmodels/*.js'
+          'libs/main.js', 'libs/viewmodels/*.js'
         ],
-        tasks: 'exec:browserify'
+        tasks: ['jshint:all', 'browserify']
       }
     },
+    /* Javascript linting */
     jshint: {
       all: ['Gruntfile.js', 'libs/**/*.js', 'libs/*.js'],
       options: {
         ignores: ['libs/bundle.js']
       }
+    },
+    /* Compile dependencies into a bundle */
+    browserify: {
+      main: {
+        src: ['libs/main.js'],
+        dest: 'libs/bundle.js'
+      }
     }
   });
 
   grunt.registerTask('start', ['exec:webserver']);
-  grunt.registerTask('dev', ['watch', 'exec:browserify']);
-  grunt.registerTask('browserify', ['exec:browserify']);
-  grunt.registerTask('lint', ['jshint:all']);
+  grunt.registerTask('dev', ['browserify', 'watch']);
+  grunt.registerTask('lint', ['jshint']);
 };
