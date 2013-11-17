@@ -25,20 +25,30 @@ cd three-crowns/game-server/
 Install the game server's dependencies
 ```
 npm install
+npm install -g grunt-cli
 ```
 
-Start MongoDB.
+Start MongoDB
 ```
 mongod
 ```
 
-Run the tests (or run them and get code coverage)
+#### Useful Grunt tasks
+
+Run the tests (and get code coverage)
 ```
 grunt test
 grunt coverage
 ```
-
-Start the webserver
+JavaScript linting
+```
+grunt lint
+```
+Watch for changes in models, and run linting and tests when changes occur
+```
+grunt dev
+```
+It's only necessary to start the webserver when working on the websocket api or the frontend. Start it with
 ```
 grunt start
 ```
@@ -58,7 +68,11 @@ Start the webserver
 ```
 grunt start
 ```
-Watch for changes in script files and recompile using Browserify when they change
+JavaScript linting
+```
+grunt lint
+```
+Run linting and recompile using Browserify when main or view models change
 ```
 grunt dev
 ```
