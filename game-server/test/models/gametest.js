@@ -23,7 +23,7 @@ describe('Game', function() {
   });
 
   it("should know when game is started and not", function() {
-    unit = new Game();
+    var unit = new Game();
     unit.isStarted().should.equal(false);
     unit.start();
     unit.isStarted().should.equal(true);
@@ -32,7 +32,7 @@ describe('Game', function() {
   });
 
   it("should know when the game is ended and not", function() {
-    unit = new Game();
+    var unit = new Game();
     unit.isEnded().should.equal(false);
     unit.start();
     unit.isEnded().should.equal(false);
@@ -41,7 +41,7 @@ describe('Game', function() {
   });
 
   it("should not be able to reset the starting time", function() {
-    unit = new Game();
+    var unit = new Game();
     (function() {
         unit.getStartingTime();
     }).should.throw();
@@ -62,7 +62,7 @@ describe('Game', function() {
   });
 
   it("should not be able to end game if it hasn't started", function() {
-    unit = new Game();
+    var unit = new Game();
 
     (function() {
         unit.end();
@@ -80,7 +80,7 @@ describe('Game', function() {
   });
 
 	it("should know when the game is in progress and not", function() {
-		unit = new Game();
+		var unit = new Game();
 		unit.inProgress().should.equal(false);
 		unit.start();
 		unit.inProgress().should.equal(true);
