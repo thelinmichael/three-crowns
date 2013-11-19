@@ -31,18 +31,44 @@ module.exports = function(grunt) {
     /* Rerun linting and tests when models or model tests change */
     watch: {
       models: {
-        files: ['libs/server.js', 'libs/models/*.js', 'test/models/*.js', 'test/*.js'],
+        files: ['libs/models/*.js', 'test/models/*.js'],
         tasks: ['lint', 'test']
+      },
+      server: {
+        files: ['libs/server.js', 'test/servertest.js'],
+        tasks: ['restart', 'test']
       }
     }
   });
+
+  var server;
+  var PORT = 8090;
 
   grunt.registerTask('start', 'Start the server', function() {
     var done = this.async();
 
     var GameServer = require('./libs/server.js');
-    var server = new GameServer();
-    server.start(done, 8090);
+    server = new GameServer();
+    server.start(done, PORT);
+  });
+
+  grunt.registerTask('stop', 'Stop the server', function() {
+    if (server && server.isRunning()) {
+      server.stop();
+    } else {
+      grunt.fail.fatal("No server instance has been created.");
+    }
+  });
+
+  grunt.registerTask('restart', 'Restart the server', function() {
+    var done = this.async();
+    if (server && server.isRunning()) {
+      server.stop(function() {
+        server.start(done, PORT);
+      });
+    } else {
+      done();
+    }
   });
 
   grunt.registerTask('coverage', ['exec:coverage']);
