@@ -10,12 +10,6 @@ module.exports = function(grunt) {
         cmd: function() {
           return 'istanbul cover --dir ./reports _mocha -- -R spec test --recursive';
         }
-      },
-      /* Start the Express webserver  */
-      webserver: {
-        cmd: function() {
-          return 'node libs/app.js';
-        }
       }
     },
     /* Run tests */
@@ -37,13 +31,20 @@ module.exports = function(grunt) {
     /* Rerun linting and tests when models or model tests change */
     watch: {
       models: {
-        files: ['libs/app.js', 'libs/models/*.js', 'test/models/*.js', 'test/apptest.js'],
+        files: ['libs/server.js', 'libs/models/*.js', 'test/models/*.js', 'test/*.js'],
         tasks: ['lint', 'test']
       }
     }
   });
 
-  grunt.registerTask('start', ['exec:webserver']);
+  grunt.registerTask('start', 'Start the server', function() {
+    var done = this.async();
+
+    var GameServer = require('./libs/server.js');
+    var server = new GameServer();
+    server.start(done, 8090);
+  });
+
   grunt.registerTask('coverage', ['exec:coverage']);
   grunt.registerTask('test', ['simplemocha']);
   grunt.registerTask('lint', ['jshint:all']);

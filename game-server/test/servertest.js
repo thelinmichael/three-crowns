@@ -1,13 +1,17 @@
 var assert = require('assert');
 var mongoose = require("mongoose");
-
-/* Start the Express server */
-var app = require('../libs/app');
-
 var io = require('socket.io-client');
+
+var GameServer = require('../libs/server');
+var server = new GameServer();
+
 var socket;
 
 describe("Websocket API", function() {
+
+  before(function() {
+    server.start(null, 8090, { log : false});
+  });
 
   beforeEach(function(done) {
     socket = io.connect('http://localhost:8090', { 'force new connection' : true });
@@ -27,6 +31,10 @@ describe("Websocket API", function() {
   afterEach(function(done) {
     socket.disconnect();
     done();
+  });
+
+  after(function() {
+    server.stop();
   });
 
 });
