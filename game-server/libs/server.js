@@ -54,7 +54,7 @@ GameServer.prototype.stop = function() {
 
 GameServer.prototype.isRunning = function() {
   return this.running;
-}
+};
 
 var sendServerStatus = function() {
   var status = {};
