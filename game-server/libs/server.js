@@ -32,12 +32,16 @@ GameServer.prototype.start = function(stopCallback, port, options) {
           };
         }
         socket.emit('create', params);
-        sendServerStatus();
+        sendServerStatus(socket);
       });
     });
 
     socket.on('server-status', function() {
-      sendServerStatus();
+      sendServerStatus(socket);
+    });
+
+    socket.on('ping', function() {
+      socket.emit('pong', { message : 'pong!'});
     });
   });
 };
@@ -56,7 +60,7 @@ GameServer.prototype.isRunning = function() {
   return this.running;
 };
 
-var sendServerStatus = function() {
+var sendServerStatus = function(socket) {
   var status = {};
   Game.find({}).exec(function(err, games) {
     status.numberOfGames = games.length;
