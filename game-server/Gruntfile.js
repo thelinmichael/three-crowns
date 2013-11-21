@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         tasks: ['lint', 'test']
       },
       server: {
-        files: ['libs/server.js', 'test/servertest.js'],
+        files: ['libs/*.js', 'test/servertest.js'],
         tasks: ['restart', 'lint', 'test']
       }
     }

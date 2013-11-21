@@ -5,6 +5,9 @@ var should = require('should');
 
 var Game = require('../libs/models/game');
 
+var SocketHelper = require('../libs/sockethelper');
+var sockethelper;
+
 var GameServer = require('../libs/server');
 var server = new GameServer();
 
@@ -28,6 +31,7 @@ describe("Websocket API", function() {
       if (err) return done(err);
 
       socket = io.connect('http://localhost:8090', { 'force new connection' : true });
+      sockethelper = new SocketHelper(socket);
       socket.on('connect', function(data) {
         done();
       });
@@ -42,8 +46,7 @@ describe("Websocket API", function() {
   });
 
   it("should be able to ping server", function(done) {
-    socket.emit('ping');
-    socket.on('pong', function(pong) {
+    sockethelper.ping(function(pong) {
       should.exist(pong);
       should.exist(pong.message);
       "pong!".should.equal(pong.message);
