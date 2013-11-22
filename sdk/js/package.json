@@ -1,0 +1,16 @@
+{
+  "name" : "threecrowns-sdk",
+  "description": "SDK in JavaScript for Three Crowns, a Carcassonne clone.",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "socket.io-client" : "*",
+    "mongoose" : "*"
+  },
+  "devDependencies": {
+    "mocha" : "*",
+    "should" : "*",
+    "assert" : "*",
+    "threecrowns-gameserver" : "0.0.1"
+  }
+}

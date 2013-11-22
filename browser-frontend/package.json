@@ -1,5 +1,5 @@
 {
-  "name" : "threecrowns",
+  "name" : "threecrowns-browser-frontend-demo",
   "description": "Client for Three Crowns, a Carcassonne clone.",
   "version": "0.0.1",
   "private": true,

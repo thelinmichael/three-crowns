@@ -3,10 +3,11 @@ var mongoose = require("mongoose");
 var io = require('socket.io-client');
 var should = require('should');
 
-var Game = require('../libs/models/game');
+var Api = require('../libs/api');
+var api;
 
-var GameServer = require('../libs/server');
-var server = new GameServer();
+var Server = require('threecrowns-gameserver');
+var server = new Server();
 
 var socket;
 
@@ -26,10 +27,13 @@ describe("Websocket API", function() {
   beforeEach(function(done) {
     mongoose.connection.db.dropDatabase(function(err){
       if (err) return done(err);
+
       socket = io.connect('http://localhost:8090', { 'force new connection' : true });
+      api = new Api(socket);
       socket.on('connect', function(data) {
         done();
       });
+
     });
   });
 
@@ -40,11 +44,10 @@ describe("Websocket API", function() {
   });
 
   it("should be able to ping server", function(done) {
-    socket.emit('ping', {});
-    socket.on('pong', function(pong) {
+    api.ping(function(pong) {
       should.exist(pong);
       should.exist(pong.message);
-      pong.message.should.equal("pong!");
+      "pong!".should.equal(pong.message);
       done();
     });
   });

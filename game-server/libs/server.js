@@ -65,6 +65,7 @@ var sendServerStatus = function(socket) {
   Game.find({}).exec(function(err, games) {
     status.numberOfGames = games.length;
     status.games = games;
+    console.log("Server: Sending status with " + status.numberOfGames + " games.");
     socket.emit('server-status', status);
   });
 };
