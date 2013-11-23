@@ -1,5 +1,5 @@
 {
-  "name" : "threecrowns",
+  "name" : "threecrowns-gameserver",
   "description": "Game server for Three Crowns, a Carcassonne clone.",
   "version": "0.0.1",
   "private": true,
