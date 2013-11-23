@@ -5,7 +5,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    /* Run tests */
     simplemocha: {
       options: {
         globals: ['should'],
@@ -17,11 +16,9 @@ module.exports = function(grunt) {
         src: ['test/*.js']
       }
     },
-    /* Javascript linting */
     jshint: {
       all: ['Gruntfile.js', 'libs/*.js']
     },
-    /* Rerun linting and tests when models or model tests change */
     watch: {
       models: {
         files: ['libs/*.js', 'test/*.js'],
@@ -33,5 +30,4 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['simplemocha']);
   grunt.registerTask('lint', ['jshint:all']);
   grunt.registerTask('dev', ['watch']);
-  grunt.registerTask('travis', ['lint','test']);
 };
