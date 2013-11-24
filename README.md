@@ -11,17 +11,20 @@ This project was created for what I suspect is the most common on GitHub - to fi
 
 ## Set up the development environment
 
-The frontend is found in /browser-frontend and the backend in /game-server.
+The demo frontend is found in /browser-frontend and the backend in /game-server. A JavaScript SDK that basically wraps the WebSocket calls is found in /sdk/js/.
 
-General requirements: Node and MongoDB.
+**General requirements:** Node and MongoDB.
 
-### Game server
+**General Grunt tasks:**
 
-Clone this repository, and change directory to game-server.
-```
-git clone https://github.com/thelinmichael/three-crowns.git
-cd three-crowns/game-server/
-```
+`grunt lint` Run JavaScript linting
+
+`grunt test` Run tests
+
+`grunt dev`  Run linting and tests on file changes. game-server restarts if necessary, and browser-frontend runs browserify to compile sources.
+
+### Game server (/game-server)
+
 Install the game server's dependencies
 ```
 npm install
@@ -33,49 +36,28 @@ Start MongoDB
 mongod
 ```
 
-#### Useful Grunt tasks
+#### Extra Grunt tasks
 
-Run the tests (and get code coverage)
-```
-grunt test
-grunt coverage
-```
-JavaScript linting
-```
-grunt lint
-```
-Watch for changes in models, and run linting and tests when changes occur
-```
-grunt dev
-```
-It's only necessary to start the webserver when working on the websocket api or the frontend. Start it with
-```
-grunt start
-```
+`grunt coverage` Get code coverage
 
-### Front end
+`grunt start` Start server
 
-Clone this repository, and change directory to browser-frontend.
-```
-git clone https://github.com/thelinmichael/three-crowns.git
-cd three-crowns/browser-frontend/
-```
-Install the frontend's dependencies
+
+### JavaScript SDK (/sdk/js)
+
+`mongod` Start MongoDB
+
+Install the module and link to the game-server package
 ```
 npm install
+npm link ../../game-server
 ```
-Start the webserver
-```
-grunt start
-```
-JavaScript linting
-```
-grunt lint
-```
-Run linting and recompile using Browserify when main or view models change
-```
-grunt dev
-```
+
+### Front end (/browser-frontend)
+
+#### Extra Grunt tasks
+
+`grunt start` Start the webserver
 
 In order to do any work on the frontend that requires communication with the game server, you need to start the game server up as well, which in turn needs MongoDB.
 ```
