@@ -73,4 +73,17 @@ describe("Websocket API", function() {
     });
   });
 
+  it("should be able to create games", function(done) {
+    Game.find({}).exec(function(err, games) {
+      var numberOfGames = games.length;
+      socket.emit('create', {});
+      socket.on('create', function() {
+        Game.find({}).exec(function(err, games) {
+          (games.length).should.equal(numberOfGames + 1);
+          done()
+        });
+      });
+    });
+  });
+
 });
