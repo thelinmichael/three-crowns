@@ -18,7 +18,7 @@ describe("Websocket API", function() {
     server.start(null, 8090, { log : false });
 
     mongoose.connection.once("open", function() {
-      mongoose.connection.db.dropDatabase(function(err){
+      mongoose.connection.db.dropDatabase(function(err) {
         if (err) return done(err);
         socket = io.connect('http://localhost:8090', { 'force new connection' : true });
         socket.on('connect', function(data) {
@@ -28,9 +28,13 @@ describe("Websocket API", function() {
     });
   });
 
-  afterEach(function() {
-    socket.disconnect();
-    server.stop();
+  afterEach(function(done) {
+    mongoose.connection.db.dropDatabase(function(err) {
+      if (err) return done(err);
+      socket.disconnect();
+      server.stop();
+      done();
+    });
   });
 
   it("should be able to connect", function() {
@@ -46,6 +50,26 @@ describe("Websocket API", function() {
       should.exist(pong.message);
       pong.message.should.equal("pong!");
       done();
+    });
+  });
+
+  it("should be able to get games count", function(done) {
+    Game.find({}).exec(function(err,games) {
+      var actualNumberOfGames = games.length;
+
+      socket.emit('server-status', {});
+      socket.on('server-status', function(status) {
+        (status.numberOfGames).should.equal(actualNumberOfGames);
+        socket.removeAllListeners('server-status');
+
+        Game.create({}, function(err) {
+          socket.emit('server-status', {});
+          socket.on('server-status', function(status) {
+            (status.numberOfGames).should.equal(actualNumberOfGames + 1);
+            done();
+          });
+        });
+      });
     });
   });
 
