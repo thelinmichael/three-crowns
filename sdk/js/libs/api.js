@@ -4,14 +4,14 @@ function GameServer(socket) {
 
 GameServer.prototype.ping = function(callback) {
   this.socket.emit('ping');
-  this.socket.on('pong', function(pong) {
+  this.socket.once('pong', function(pong) {
     callback(pong);
   });
 };
 
 GameServer.prototype.numberOfGames = function(callback) {
   this.socket.emit('server-status');
-  this.socket.on('server-status', function(status) {
+  this.socket.once('server-status', function(status) {
     callback(status.numberOfGames);
   });
 };

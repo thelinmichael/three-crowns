@@ -15,6 +15,7 @@ describe("Websocket API", function() {
   this.timeout(5000);
 
   beforeEach(function(done) {
+    mongoose.connection.close();
     server.start(null, 8090, { log : false });
 
     mongoose.connection.once("open", function() {
@@ -45,7 +46,7 @@ describe("Websocket API", function() {
 
   it("should be able to ping server", function(done) {
     socket.emit('ping', {});
-    socket.on('pong', function(pong) {
+    socket.once('pong', function(pong) {
       should.exist(pong);
       should.exist(pong.message);
       pong.message.should.equal("pong!");
@@ -58,13 +59,12 @@ describe("Websocket API", function() {
       var actualNumberOfGames = games.length;
 
       socket.emit('server-status', {});
-      socket.on('server-status', function(status) {
+      socket.once('server-status', function(status) {
         (status.numberOfGames).should.equal(actualNumberOfGames);
-        socket.removeAllListeners('server-status');
 
         Game.create({}, function(err) {
           socket.emit('server-status', {});
-          socket.on('server-status', function(status) {
+          socket.once('server-status', function(status) {
             (status.numberOfGames).should.equal(actualNumberOfGames + 1);
             done();
           });
@@ -77,7 +77,7 @@ describe("Websocket API", function() {
     Game.find({}).exec(function(err, games) {
       var numberOfGames = games.length;
       socket.emit('create', {});
-      socket.on('create', function() {
+      socket.once('create', function() {
         Game.find({}).exec(function(err, games) {
           (games.length).should.equal(numberOfGames + 1);
           done()
