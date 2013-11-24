@@ -15,25 +15,15 @@ describe("Websocket API", function() {
 
   this.timeout(5000);
 
-  before(function(done) {
+  before(function() {
     server.start(null, 8090, { log : false});
-    if (mongoose.connection.db) {
-        return done();
-    } else {
-      mongoose.connect('mongodb://localhost/game', done);
-    }
   });
 
   beforeEach(function(done) {
-    mongoose.connection.db.dropDatabase(function(err){
-      if (err) return done(err);
-
-      socket = io.connect('http://localhost:8090', { 'force new connection' : true });
-      api = new Api(socket);
-      socket.on('connect', function(data) {
-        done();
-      });
-
+    socket = io.connect('http://localhost:8090', { 'force new connection' : true });
+    api = new Api(socket);
+    socket.on('connect', function(data) {
+      done();
     });
   });
 
@@ -48,6 +38,13 @@ describe("Websocket API", function() {
       should.exist(pong);
       should.exist(pong.message);
       "pong!".should.equal(pong.message);
+      done();
+    });
+  });
+
+  it("should get number of games", function(done) {
+    api.numberOfGames(function(numberOfGames) {
+      (numberOfGames).should.equal(0);
       done();
     });
   });

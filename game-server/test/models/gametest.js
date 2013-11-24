@@ -9,9 +9,6 @@ var assert = require("assert");
 describe('Game', function() {
 
   before(function(done) {
-    if (mongoose.connection.db) {
-        return done();
-    }
     mongoose.connect('mongodb://localhost/game', done);
   });
 
@@ -19,6 +16,12 @@ describe('Game', function() {
     mongoose.connection.db.dropDatabase(function(err){
       if (err) return done(err);
       done();
+    });
+  });
+
+  after(function(done) {
+    mongoose.connection.db.dropDatabase(function() {
+      mongoose.connection.close(done);
     });
   });
 

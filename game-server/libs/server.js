@@ -10,7 +10,7 @@ GameServer.prototype.start = function(stopCallback, port, options) {
 
   this.stopCallback = stopCallback;
 
-  mongoose.createConnection('mongodb://localhost/game');
+  mongoose.connect('mongodb://localhost/game');
 
   io = require('socket.io').listen(port, options);
   this.running = true;
@@ -32,17 +32,22 @@ GameServer.prototype.start = function(stopCallback, port, options) {
           };
         }
         socket.emit('create', params);
-        sendServerStatus(socket);
       });
     });
 
     socket.on('server-status', function() {
-      sendServerStatus(socket);
+      var status = {};
+      Game.find({}).exec(function(err, games) {
+        status.numberOfGames = games.length;
+        status.games = games;
+        socket.emit('server-status', status);
+      });
     });
 
     socket.on('ping', function() {
       socket.emit('pong', { message : 'pong!'});
     });
+
   });
 };
 
@@ -50,6 +55,7 @@ GameServer.prototype.stop = function() {
   var that = this;
   io.server.close(function() {
     that.running = false;
+    mongoose.disconnect();
     if (this.stopCallback) {
       this.stopCallback();
     }
@@ -58,16 +64,6 @@ GameServer.prototype.stop = function() {
 
 GameServer.prototype.isRunning = function() {
   return this.running;
-};
-
-var sendServerStatus = function(socket) {
-  var status = {};
-  Game.find({}).exec(function(err, games) {
-    status.numberOfGames = games.length;
-    status.games = games;
-    console.log("Server: Sending status with " + status.numberOfGames + " games.");
-    socket.emit('server-status', status);
-  });
 };
 
 exports = module.exports = GameServer;
