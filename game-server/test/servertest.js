@@ -15,7 +15,6 @@ describe("Websocket API", function() {
   this.timeout(5000);
 
   beforeEach(function(done) {
-    mongoose.connection.close();
     server.start(null, 8090, { log : false });
 
     mongoose.connection.once("open", function() {

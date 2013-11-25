@@ -17,5 +17,6 @@
     "grunt-contrib-jshint" : "0.7.1",
     "grunt-cli" : "0.1.11",
     "grunt-simple-mocha" : "0.4.x"
-  }
+  },
+  "main" : "libs/api.js"
 }
