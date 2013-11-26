@@ -1,5 +1,4 @@
 var assert = require('assert');
-var mongoose = require("mongoose");
 var io = require('socket.io-client');
 var should = require('should');
 
@@ -27,6 +26,15 @@ describe("Websocket API", function() {
     });
   });
 
+  afterEach(function(done) {
+    socket.disconnect();
+    done();
+  });
+
+  after(function() {
+    server.stop();
+  });
+
   it("should be able to connect", function() {
     if (!(socket && socket.socket && socket.socket.connected)) {
       assert.fail("Could not connect");
@@ -42,20 +50,45 @@ describe("Websocket API", function() {
     });
   });
 
-  it("should get number of games", function(done) {
-    api.numberOfGames(function(numberOfGames) {
-      (numberOfGames).should.equal(0);
+  it("should extend listening functionality for the socket", function(done) {
+    api.on('pong', function(pong) {
+      should.exist(pong);
+      should.exist(pong.message);
+      "pong!".should.equal(pong.message);
+      done();
+    });
+    api.ping();
+  });
+
+  it("should get socket from the sdk", function() {
+    var socket = api.getSocket();
+    should.exist(socket);
+  });
+
+  it("only passing hostname should create socket", function(done) {
+    var api = new Api("http://localhost:8090");
+    api.connect(function() {
       done();
     });
   });
 
-  afterEach(function(done) {
-    socket.disconnect();
-    done();
+  it("can create games", function(done) {
+    api.numberOfGames(function(firstNumberOfGames) {
+      api.createGame({}, function() {
+        api.numberOfGames(function(secondNumberOfGames) {
+          (secondNumberOfGames).should.equal(firstNumberOfGames + 1);
+          done();
+        });
+      });
+    });
   });
 
-  after(function() {
-    server.stop();
+  it("can get server status", function(done) {
+    api.getServerStatus(function(status) {
+      should.exist(status.games);
+      should.exist(status.numberOfGames);
+      done();
+    });
   });
 
 });

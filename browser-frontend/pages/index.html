@@ -3,9 +3,9 @@
   <title>Three Crowns</title>
 </head>
 <body>
-  <div>
-    <span id="createGame">Create game</span>
-  </div>
+  <p><input id="gameId" type="text" /><input id="watch" type="button" value="Watch board" /></p>
+  <p><input id="createGame" type="button" value="Create game" /></p>
+
   <div id="gameInfo">
     Currently <span id="numberOfGames" data-bind="text: numberOfGames"></span> games in progress.
   </div>
@@ -14,6 +14,5 @@
 
   <script type='text/javascript' src="http://localhost:8090/socket.io/socket.io.js"></script>
   <script type='text/javascript' src="/libs/bundle.js"></script>
-
 </body>
 </html>
