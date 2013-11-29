@@ -79,7 +79,7 @@ describe("Websocket API", function() {
       socket.once('create', function() {
         Game.find({}).exec(function(err, games) {
           (games.length).should.equal(numberOfGames + 1);
-          done()
+          done();
         });
       });
     });
