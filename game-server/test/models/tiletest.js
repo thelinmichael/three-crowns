@@ -26,29 +26,43 @@ describe('Tile', function() {
     should.exist(Tile.EdgeTypes.GRASS);
     should.exist(Tile.EdgeTypes.ROAD);
     should.exist(Tile.EdgeTypes.CASTLE);
+    should.exist(Tile.EdgeTypes.CATHEDRAL);
   });
 
-  it("should be created with four edges", function() {
-    var unit = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
-    var edges = unit.getEdges();
-    should.exist(edges);
-    edges.north.should.equal(Tile.EdgeTypes.ROAD);
-    edges.east.should.equal(Tile.EdgeTypes.GRASS);
-    edges.south.should.equal(Tile.EdgeTypes.CASTLE);
-    edges.west.should.equal(Tile.EdgeTypes.GRASS);
+  it("should be created with 13 components, twelve borders and a optional internal", function() {
+    var borders = [
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS,       // North
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,      // East
+      Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE,   // South
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS       // West
+    ];
+    var internal = Tile.EdgeTypes.CATHEDRAL;  // Middle of tile
+
+    var unit = new Tile({ "components" : {
+                            "borders" : borders,
+                           "internal" : internal
+                        }
+    });
+
+    var tileInternal = unit.getInternal();
+    (Tile.EdgeTypes.CATHEDRAL).should.equal(tileInternal);
+
+    var tileBorders = unit.getBorders();
+    should.exist(tileBorders);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[0]);
+    (Tile.EdgeTypes.ROAD).should.equal(tileBorders[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[2]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[3]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[4]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[5]);
+    (Tile.EdgeTypes.CASTLE).should.equal(tileBorders[6]);
+    (Tile.EdgeTypes.CASTLE).should.equal(tileBorders[7]);
+    (Tile.EdgeTypes.CASTLE).should.equal(tileBorders[8]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[9]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[10]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBorders[11]);
   });
 
-  it("should be able to compare tiles even if rotated", function() {
-    var unit = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
-
-    var identicalTileButRotated = new Tile({ "edges" : { "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.CASTLE, "north" : Tile.EdgeTypes.GRASS } });
-    var differentTile = new Tile({ "edges" : { "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.CASTLE, "north" : Tile.EdgeTypes.GRASS } });
-
-    var isSameTile = unit.sameAs(identicalTileButRotated);
-    isSameTile.should.equal(true);
-
-    var isNotSameTile = unit.sameAs(differentTile);
-    isNotSameTile.should.equal(false);
-  });
+  it("should be able to compare tiles even if rotated");
 
 });
