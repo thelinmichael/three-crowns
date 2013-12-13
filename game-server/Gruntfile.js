@@ -31,7 +31,7 @@ module.exports = function(grunt) {
     /* Rerun linting and tests when models or model tests change */
     watch: {
       models: {
-        files: ['libs/models/*.js', 'test/models/*.js'],
+        files: ['libs/models/*.js', 'test/**/*.js'],
         tasks: ['lint', 'test']
       },
       server: {

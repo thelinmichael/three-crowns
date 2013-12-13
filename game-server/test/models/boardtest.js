@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Board = require("../../libs/models/board");
 var Tile = require("../../libs/models/tile");
+var Fixtures = require("../fixtures/fixtures");
 var should = require("should");
 var assert = require("assert");
 
@@ -23,7 +24,7 @@ describe('Board', function() {
     });
   });
 
-  it("should be able to place a tile on a board on an empty board", function() {
+  it("should be able to place a tile on an empty board", function() {
     var unit = new Board({ "tiles" : [] });
     should.exist(unit);
     var tiles = unit.getTiles();
@@ -31,7 +32,7 @@ describe('Board', function() {
 
     unit.getNumberOfTiles().should.equal(0);
 
-    var tile = new Tile({ "edges" : [ Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS ]});
+    var tile = Fixtures.generateTile();
 
     var noTile = unit.getTile(0, 0);
     should.not.exist(noTile);
