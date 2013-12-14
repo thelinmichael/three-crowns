@@ -45,13 +45,14 @@ schema.statics.matchingBorders = function(borders1, borders2) {
     return false;
   }
 
+  var bordersMatched = true;
   borders1.forEach(function(border, index) {
     if (border != borders2[index]) {
-      return false;
+       bordersMatched = false;
     }
   });
 
-  return true;
+  return bordersMatched;
 };
 
 module.exports = mongoose.model('Tile', schema);

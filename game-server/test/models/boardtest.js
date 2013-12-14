@@ -100,16 +100,17 @@ describe('Board', function() {
   it("should only be able to place a tile if adjacent tiles have matching edges", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
-    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
+    var tile1 = Fixtures.generateCrossroadsTile();
+    var tile2 = Fixtures.generateWestNorthCorner();
 
-    // Edges do not match (GRASS and CASTLE)
     unit.placeTile(0, 0, tile1);
+
+    // Edges do not match
     (function() {
       unit.placeTile(-1, 0, tile2);
     }).should.throw();
 
-    // Edges match (GRASS and GRASS)
+    // Edges match (ROAD and ROAD)
     (function() {
       unit.placeTile(1, 0, tile2);
     }).should.not.throw();
@@ -128,7 +129,7 @@ describe('Board', function() {
     should.not.exist(noTile);
   });
 
-  it("should be able to test if a tile can be placed by rotating it without placing it", function() {
+  it.only("should be able to test if a tile can be placed by rotating it without placing it", function() {
     var unit = new Board({ "tiles" : {} });
 
     var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});

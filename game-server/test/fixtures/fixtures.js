@@ -31,4 +31,17 @@ exports.generateCrossroadsTile = function() {
   });
 };
 
+exports.generateWestNorthCorner = function() {
+  var borders = [
+    Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS,
+    Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+    Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+    Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS
+  ];
+  return new Tile({ "components" : {
+                      "borders" : borders
+                  }
+  });
+};
+
 module.exports = exports;
