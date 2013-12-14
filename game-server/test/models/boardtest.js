@@ -32,7 +32,7 @@ describe('Board', function() {
 
     unit.getNumberOfTiles().should.equal(0);
 
-    var tile = Fixtures.generateTile();
+    var tile = Fixtures.generateCrossroadsTile();
 
     var noTile = unit.getTile(0, 0);
     should.not.exist(noTile);
@@ -46,8 +46,8 @@ describe('Board', function() {
 
   it("should not be able to place a tile on the same coordinate as an existing tile", function() {
     var unit = new Board({ "tiles" : {} });
-    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.GRASS }});
-    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.GRASS, "west" : Tile.EdgeTypes.GRASS }});
+    var tile1 = Fixtures.generateCrossroadsTile();
+    var tile2 = Fixtures.generateCrossroadsTile();
 
     unit.placeTile(0, 0, tile1);
     var placedTile = unit.getTile(0, 0);
@@ -66,9 +66,9 @@ describe('Board', function() {
   it("should not be able to place a tile unless it is adjacent to another tile", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
-    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS }});
-    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.CASTLE, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.CASTLE }});
+    var tile1 = Fixtures.generateCrossroadsTile();
+    var tile2 = Fixtures.generateCrossroadsTile();
+    var tile3 = Fixtures.generateCrossroadsTile();
 
     unit.getNumberOfTiles().should.equal(0);
     unit.placeTile(0, 0, tile1);
