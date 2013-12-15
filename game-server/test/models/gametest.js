@@ -144,7 +144,7 @@ describe('Game', function() {
   });
 
   it("should know which player is in control each turn", function() {
-    var game = generateGenericGame();
+    var game = Fixtures.generateGenericGame();
     (function() {
       game.getActivePlayer();
     }).should.throw();
@@ -178,7 +178,7 @@ describe('Game', function() {
   });
 
   it("tiles should decrease every turn", function() {
-    var game = generateGenericGame();
+    var game = Fixtures.generateGenericGame();
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
@@ -206,7 +206,7 @@ describe('Game', function() {
   });
 
   it("should end the game when moving to the next turn after all tiles are used", function() {
-    var game = generateGenericGame();
+    var game = Fixtures.generateGenericGame();
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
@@ -232,7 +232,7 @@ describe('Game', function() {
   });
 
   it("should know which tile is going to be placed every turn", function() {
-    var game = generateGenericGame();
+    var game = Fixtures.generateGenericGame();
     game.start();
 
     var tile1 = game.getQueuedTiles()[0];
@@ -263,17 +263,3 @@ describe('Game', function() {
   });
 
 });
-
-var generateGenericGame = function() {
-    var player1 = new Player({ name : "Michael" });
-    var player2 = new Player({ name : "Jenni"});
-    var players = [player1, player2];
-
-    var tile1 = Fixtures.generateCrossroadsTile();
-    var tile2 = Fixtures.generateCrossroadsTile();
-    var tile3 = Fixtures.generateWestNorthCorner();
-    var tile4 = Fixtures.generateWestNorthCorner();
-    var startingTiles = [tile1, tile2, tile3, tile4];
-
-    return new Game({ "tileQueue" : startingTiles, "players" : players });
-};
