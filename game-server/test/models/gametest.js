@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var Game = require("../../libs/models/game");
 var Player = require("../../libs/models/player");
 var Tile = require("../../libs/models/tile");
+var Fixtures = require("../fixtures/fixtures");
 var sinon = require("sinon");
 var should = require("should");
 var assert = require("assert");
@@ -176,12 +177,12 @@ describe('Game', function() {
     activePlayerFourthRound.should.equal(secondPlayer);
   });
 
-  it("should end the game that tiles decrease every turn", function() {
+  it("tiles should decrease every turn", function() {
     var game = generateGenericGame();
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
-    game.placeTile(0, 0);
+    game.placeTile(0, 0, 0);
     game.getQueuedTiles().length.should.equal(3);
     game.getBoard().getNumberOfTiles().should.equal(1);
 
@@ -189,18 +190,18 @@ describe('Game', function() {
     game.getQueuedTiles().length.should.equal(3);
     game.getBoard().getNumberOfTiles().should.equal(1);
 
-    game.placeTile(1, 0);
+    game.placeTile(1, 0, 0);
     game.getQueuedTiles().length.should.equal(2);
     game.getBoard().getNumberOfTiles().should.equal(2);
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(2);
-    game.placeTile(0, 1);
+    game.placeTile(0, 1, 2);
     game.getQueuedTiles().length.should.equal(1);
 
     game.nextTurn();
     game.getQueuedTiles().length.should.equal(1);
-    game.placeTile(0, 2);
+    game.placeTile(0, 2, 0);
     game.getQueuedTiles().length.should.equal(0);
   });
 
@@ -268,10 +269,10 @@ var generateGenericGame = function() {
     var player2 = new Player({ name : "Jenni"});
     var players = [player1, player2];
 
-    var tile1 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.GRASS, "south" : Tile.EdgeTypes.CASTLE, "west" : Tile.EdgeTypes.GRASS } });
-    var tile2 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.GRASS, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
-    var tile3 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.CASTLE, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
-    var tile4 = new Tile({ "edges" : { "north" : Tile.EdgeTypes.ROAD, "east" : Tile.EdgeTypes.ROAD, "south" : Tile.EdgeTypes.ROAD, "west" : Tile.EdgeTypes.GRASS } });
+    var tile1 = Fixtures.generateCrossroadsTile();
+    var tile2 = Fixtures.generateCrossroadsTile();
+    var tile3 = Fixtures.generateWestNorthCorner();
+    var tile4 = Fixtures.generateWestNorthCorner();
     var startingTiles = [tile1, tile2, tile3, tile4];
 
     return new Game({ "tileQueue" : startingTiles, "players" : players });

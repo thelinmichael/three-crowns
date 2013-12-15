@@ -30,8 +30,8 @@ schema.methods.nextTurn = function() {
 /* Places a tile on the specified coordinate
    on the board.
    Side effect: Removes the first tile from the tile queue */
-schema.methods.placeTile = function (x, y) {
-  this.board.placeTile(x, y, this.tileQueue[0]);
+schema.methods.placeTile = function (x, y, rotation) {
+  this.board.placeTile(x, y, this.tileQueue[0], rotation);
   this.tileQueue = this.tileQueue.splice(1);
 };
 

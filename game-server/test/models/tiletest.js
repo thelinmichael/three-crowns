@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Tile = require("../../libs/models/tile");
+var Fixtures = require("../fixtures/fixtures");
 var should = require("should");
 
 describe('Tile', function() {
@@ -61,6 +62,87 @@ describe('Tile', function() {
     (Tile.EdgeTypes.GRASS).should.equal(tileBorders[9]);
     (Tile.EdgeTypes.GRASS).should.equal(tileBorders[10]);
     (Tile.EdgeTypes.GRASS).should.equal(tileBorders[11]);
+  });
+
+  it("can get a tiles borders when rotated", function() {
+    var unit = Fixtures.generateWestNorthCorner();
+    var northernBorder = unit.getNorthernBorder(0); // No rotation
+
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorder[0]);
+    (Tile.EdgeTypes.ROAD).should.equal(northernBorder[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorder[2]);
+
+    var northernBorderAfterOneRotation = unit.getNorthernBorder(1);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterOneRotation[0]);
+    (Tile.EdgeTypes.ROAD).should.equal(northernBorderAfterOneRotation[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterOneRotation[2]);
+
+    var northernBorderAfterTwoRotations = unit.getNorthernBorder(2);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterTwoRotations[0]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterTwoRotations[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterTwoRotations[2]);
+
+    var northernBorderAfterThreeRotations = unit.getNorthernBorder(3);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterThreeRotations[0]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterThreeRotations[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterThreeRotations[2]);
+
+    var northernBorderAfterFourRotations = unit.getNorthernBorder(4);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterFourRotations[0]);
+    (Tile.EdgeTypes.ROAD).should.equal(northernBorderAfterFourRotations[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorderAfterFourRotations[2]);
+  });
+
+  it("can set a tiles borders specified after sides", function() {
+    var unit = Fixtures.generateWestNorthCorner();
+    var northernBorder = unit.getNorthernBorder(0);
+    var easternBorder = unit.getEasternBorder(0);
+
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorder[0]);
+    (Tile.EdgeTypes.ROAD).should.equal(northernBorder[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(northernBorder[2]);
+
+    (Tile.EdgeTypes.GRASS).should.equal(easternBorder[0]);
+    (Tile.EdgeTypes.GRASS).should.equal(easternBorder[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(easternBorder[2]);
+
+    unit.setNorthernBorder([ Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE ]);
+    var northernBorderAfterChange = unit.getNorthernBorder(0);
+    var easternBorderAfterChange = unit.getEasternBorder(0);
+
+    (Tile.EdgeTypes.CASTLE).should.equal(northernBorderAfterChange[0]);
+    (Tile.EdgeTypes.CASTLE).should.equal(northernBorderAfterChange[1]);
+    (Tile.EdgeTypes.CASTLE).should.equal(northernBorderAfterChange[2]);
+
+    (Tile.EdgeTypes.GRASS).should.equal(easternBorderAfterChange[0]);
+    (Tile.EdgeTypes.GRASS).should.equal(easternBorderAfterChange[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(easternBorderAfterChange[2]);
+  });
+
+  it("should modify its borders if rotated", function() {
+    var unit = Fixtures.generateWestNorthCorner();
+    var originalTileBorders = unit.getBorders();
+
+    unit.rotate(0);
+
+    var tileBordersNoRotation = unit.getBorders();
+    (tileBordersNoRotation).should.equal(originalTileBorders);
+
+    unit.rotate(1);
+
+    var tileBordersOneRotation = unit.getBorders();
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[0]);
+    (Tile.EdgeTypes.ROAD).should.equal(tileBordersOneRotation[1]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[2]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[3]);
+    (Tile.EdgeTypes.ROAD).should.equal(tileBordersOneRotation[4]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[5]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[6]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[7]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[8]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[9]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[10]);
+    (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[11]);
   });
 
   it("should be able to compare tiles even if rotated");
