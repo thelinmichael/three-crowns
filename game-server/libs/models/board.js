@@ -21,7 +21,7 @@ schema.methods.placeTile = function(x, y, tile, rotation) {
     if (!this.tiles[x]) {
       this.tiles[x] = [];
     }
-    tile = tile.rotate(rotation);
+    tile.rotate(rotation);
     this.tiles[x][y] = tile;
   } else {
     throw new Error("Cannot place tile there");

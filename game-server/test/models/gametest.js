@@ -210,22 +210,22 @@ describe('Game', function() {
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
-    game.placeTile(0, 0);
+    game.placeTile(0, 0, 0);
     game.nextTurn();
     game.isEnded().should.equal(false);
 
     game.getQueuedTiles().length.should.equal(3);
-    game.placeTile(1, 0);
+    game.placeTile(1, 0, 0);
     game.nextTurn();
     game.isEnded().should.equal(false);
 
     game.getQueuedTiles().length.should.equal(2);
-    game.placeTile(0, 1);
+    game.placeTile(0, 1, 2);
     game.nextTurn();
     game.isEnded().should.equal(false);
 
     game.getQueuedTiles().length.should.equal(1);
-    game.placeTile(0, 2);
+    game.placeTile(0, 2, 0);
     game.getQueuedTiles().length.should.equal(0);
     game.nextTurn();
     game.isEnded().should.equal(true);
@@ -241,23 +241,23 @@ describe('Game', function() {
     var tile4 = game.getQueuedTiles()[3];
 
     var activeTile_roundOne = game.getActiveTile();
-    game.placeTile(0, 0);
+    game.placeTile(0, 0, 0);
     should.exist(activeTile_roundOne);
     activeTile_roundOne.should.equal(game.getBoard().getTile(0, 0));
     game.nextTurn();
 
     var activeTile_roundTwo = game.getActiveTile();
-    game.placeTile(1, 0);
+    game.placeTile(1, 0, 0);
     activeTile_roundTwo.should.equal(game.getBoard().getTile(1, 0));
     game.nextTurn();
 
     var activeTile_roundThree = game.getActiveTile();
-    game.placeTile(0, 1);
+    game.placeTile(0, 1, 2);
     activeTile_roundThree.should.equal(game.getBoard().getTile(0, 1));
     game.nextTurn();
 
     var activeTile_roundFour = game.getActiveTile();
-    game.placeTile(0, 2);
+    game.placeTile(0, 2, 0);
     activeTile_roundFour.should.equal(game.getBoard().getTile(0, 2));
     game.nextTurn();
   });

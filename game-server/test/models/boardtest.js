@@ -37,7 +37,10 @@ describe('Board', function() {
     var noTile = unit.getTile(0, 0);
     should.not.exist(noTile);
 
-    unit.placeTile(0, 0, tile);
+    (function() {
+      unit.placeTile(0, 0, tile, 0);
+    }).should.not.throw();
+
     unit.getTiles().length.should.equal(1);
     var placedTile = unit.getTile(0, 0);
     should.exist(placedTile);
@@ -53,7 +56,7 @@ describe('Board', function() {
     should.exist(emptyCoordinate);
     emptyCoordinate.should.equal(false);
 
-    unit.placeTile(0, 0, tile1, 0);
+    unit.placeTile(0, 0, tile, 0, 0);
     var takenCoordinate = unit.hasTile(0, 0);
     should.exist(takenCoordinate);
     takenCoordinate.should.equal(true);
@@ -64,13 +67,13 @@ describe('Board', function() {
     var tile1 = Fixtures.generateCrossroadsTile();
     var tile2 = Fixtures.generateCrossroadsTile();
 
-    unit.placeTile(0, 0, tile1);
+    unit.placeTile(0, 0, tile1, 0);
     var placedTile = unit.getTile(0, 0);
     should.exist(placedTile);
     placedTile.should.equal(tile1);
 
     (function() {
-      unit.placeTile(0, 0, tile2);
+      unit.placeTile(0, 0, tile2, 0);
     }).should.throw();
 
     var placedTile_secondCheck = unit.getTile(0,0);
@@ -86,27 +89,27 @@ describe('Board', function() {
     var tile3 = Fixtures.generateCrossroadsTile();
 
     unit.getNumberOfTiles().should.equal(0);
-    unit.placeTile(0, 0, tile1);
+    unit.placeTile(0, 0, tile1, 0);
     unit.getNumberOfTiles().should.equal(1);
     var firstPlacedTile = unit.getTile(0, 0);
     tile1.should.equal(firstPlacedTile);
 
     /* Two steps east of first tile -- Cannot place it there */
     (function() {
-      unit.placeTile(2, 0, tile2);
+      unit.placeTile(2, 0, tile2, 0);
     }).should.throw();
     unit.getNumberOfTiles().should.equal(1);
     var noTile = unit.getTile(2, 0);
     should.not.exist(noTile);
 
     /* One step east of tile -- Can be placed there */
-    unit.placeTile(1, 0, tile2);
+    unit.placeTile(1, 0, tile2, 0);
     unit.getNumberOfTiles().should.equal(2);
     var secondPlacedTile = unit.getTile(1, 0);
     tile2.should.equal(secondPlacedTile);
 
     /* Two steps east of tile -- Can now be placed there */
-    unit.placeTile(2, 0, tile3);
+    unit.placeTile(2, 0, tile3, 0);
     unit.getNumberOfTiles().should.equal(3);
     var thirdPlacedTile = unit.getTile(2, 0);
     tile3.should.equal(thirdPlacedTile);
@@ -118,16 +121,16 @@ describe('Board', function() {
     var tile1 = Fixtures.generateCrossroadsTile();
     var tile2 = Fixtures.generateWestNorthCorner();
 
-    unit.placeTile(0, 0, tile1);
+    unit.placeTile(0, 0, tile1, 0);
 
     // Edges do not match
     (function() {
-      unit.placeTile(-1, 0, tile2);
+      unit.placeTile(-1, 0, tile2, 0);
     }).should.throw();
 
     // Edges match (ROAD and ROAD)
     (function() {
-      unit.placeTile(1, 0, tile2);
+      unit.placeTile(1, 0, tile2, 0);
     }).should.not.throw();
 
     var firstPlacedTile = unit.getTile(0, 0);
