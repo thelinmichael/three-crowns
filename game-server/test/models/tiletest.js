@@ -65,7 +65,7 @@ describe('Tile', function() {
   });
 
   it("can get a tiles borders when rotated", function() {
-    var unit = Fixtures.generateWestNorthCorner();
+    var unit = Fixtures.Tiles.westNorthCorner();
     var northernBorder = unit.getNorthernBorder(0); // No rotation
 
     (Tile.EdgeTypes.GRASS).should.equal(northernBorder[0]);
@@ -94,7 +94,7 @@ describe('Tile', function() {
   });
 
   it("can set a tiles borders specified after sides", function() {
-    var unit = Fixtures.generateWestNorthCorner();
+    var unit = Fixtures.Tiles.westNorthCorner();
     var northernBorder = unit.getNorthernBorder(0);
     var easternBorder = unit.getEasternBorder(0);
 
@@ -120,7 +120,7 @@ describe('Tile', function() {
   });
 
   it("should modify its borders if rotated", function() {
-    var unit = Fixtures.generateWestNorthCorner();
+    var unit = Fixtures.Tiles.westNorthCorner();
     var originalTileBorders = unit.getBorders();
 
     unit.rotate(0);
@@ -146,9 +146,9 @@ describe('Tile', function() {
   });
 
   it("should be able to compare tiles", function() {
-    var tile1 = Fixtures.generateWestNorthCorner();
-    var tile2 = Fixtures.generateWestNorthCorner();
-    var tile3 = Fixtures.generateCrossroadsTile();
+    var tile1 = Fixtures.Tiles.westNorthCorner();
+    var tile2 = Fixtures.Tiles.westNorthCorner();
+    var tile3 = Fixtures.Tiles.crossroads();
 
     var areTheSameTile = tile1.sameAs(tile2);
     (areTheSameTile).should.equal(true);
@@ -163,6 +163,11 @@ describe('Tile', function() {
 
     var areStillNotTheSameTile = tile1.sameAs(tile3);
     (areStillNotTheSameTile).should.equal(false);
+  });
+
+  it("should be able to tell where a meeple can be placed on a tile", function() {
+    var tile1 = Fixtures.Tiles.crossroads();
+    (tile1.getMeeplePlacements().length).should.equal(8);
   });
 
 });

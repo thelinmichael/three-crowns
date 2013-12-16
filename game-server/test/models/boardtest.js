@@ -32,7 +32,7 @@ describe('Board', function() {
 
     unit.getNumberOfTiles().should.equal(0);
 
-    var tile = Fixtures.generateCrossroadsTile();
+    var tile = Fixtures.Tiles.crossroads();
 
     var noTile = unit.getTile(0, 0);
     should.not.exist(noTile);
@@ -50,7 +50,7 @@ describe('Board', function() {
   it("should be able to check if there's a tile placed at a specific coordinate", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile = Fixtures.generateCrossroadsTile();
+    var tile = Fixtures.Tiles.crossroads();
 
     var emptyCoordinate = unit.hasTile(0, 0);
     should.exist(emptyCoordinate);
@@ -64,8 +64,8 @@ describe('Board', function() {
 
   it("should not be able to place a tile on the same coordinate as an existing tile", function() {
     var unit = new Board({ "tiles" : {} });
-    var tile1 = Fixtures.generateCrossroadsTile();
-    var tile2 = Fixtures.generateCrossroadsTile();
+    var tile1 = Fixtures.Tiles.crossroads();
+    var tile2 = Fixtures.Tiles.crossroads();
 
     unit.placeTile(0, 0, tile1, 0);
     var placedTile = unit.getTile(0, 0);
@@ -84,9 +84,9 @@ describe('Board', function() {
   it("should not be able to place a tile unless it is adjacent to another tile", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = Fixtures.generateCrossroadsTile();
-    var tile2 = Fixtures.generateCrossroadsTile();
-    var tile3 = Fixtures.generateCrossroadsTile();
+    var tile1 = Fixtures.Tiles.crossroads();
+    var tile2 = Fixtures.Tiles.crossroads();
+    var tile3 = Fixtures.Tiles.crossroads();
 
     unit.getNumberOfTiles().should.equal(0);
     unit.placeTile(0, 0, tile1, 0);
@@ -118,8 +118,8 @@ describe('Board', function() {
   it("should only be able to place a tile if adjacent tiles have matching edges", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = Fixtures.generateCrossroadsTile();
-    var tile2 = Fixtures.generateWestNorthCorner();
+    var tile1 = Fixtures.Tiles.crossroads();
+    var tile2 = Fixtures.Tiles.westNorthCorner();
 
     unit.placeTile(0, 0, tile1, 0);
 
@@ -150,8 +150,8 @@ describe('Board', function() {
   it("should be able to test if a tile can be placed by rotating it without placing it", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = Fixtures.generateCrossroadsTile();
-    var tile2 = Fixtures.generateWestNorthCorner();
+    var tile1 = Fixtures.Tiles.crossroads();
+    var tile2 = Fixtures.Tiles.westNorthCorner();
 
     unit.placeTile(0, 0, tile1, 0);
 
@@ -166,8 +166,8 @@ describe('Board', function() {
   it("should be possible to place a tile with rotation", function() {
     var unit = new Board({ "tiles" : {} });
 
-    var tile1 = Fixtures.generateCrossroadsTile();
-    var tile2 = Fixtures.generateWestNorthCorner();
+    var tile1 = Fixtures.Tiles.crossroads();
+    var tile2 = Fixtures.Tiles.westNorthCorner();
 
     unit.placeTile(0, 0, tile1, 0);
 

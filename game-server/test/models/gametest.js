@@ -144,7 +144,7 @@ describe('Game', function() {
   });
 
   it("should know which player is in control each turn", function() {
-    var game = Fixtures.generateGenericGame();
+    var game = Fixtures.Games.genericGame();
     (function() {
       game.getActivePlayer();
     }).should.throw();
@@ -178,7 +178,7 @@ describe('Game', function() {
   });
 
   it("tiles should decrease every turn", function() {
-    var game = Fixtures.generateGenericGame();
+    var game = Fixtures.Games.genericGame();
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
@@ -206,7 +206,7 @@ describe('Game', function() {
   });
 
   it("should end the game when moving to the next turn after all tiles are used", function() {
-    var game = Fixtures.generateGenericGame();
+    var game = Fixtures.Games.genericGame();
     game.start();
 
     game.getQueuedTiles().length.should.equal(4);
@@ -232,7 +232,7 @@ describe('Game', function() {
   });
 
   it("should know which tile is going to be placed every turn", function() {
-    var game = Fixtures.generateGenericGame();
+    var game = Fixtures.Games.genericGame();
     game.start();
 
     var tile1 = game.getQueuedTiles()[0];
