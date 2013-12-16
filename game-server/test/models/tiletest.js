@@ -166,8 +166,8 @@ describe('Tile', function() {
   });
 
   it("should be able to tell where a meeple can be placed on a tile", function() {
-    var tile1 = Fixtures.Tiles.crossroads();
-    (tile1.getMeeplePlacements().length).should.equal(8);
+    var tile1 = Fixtures.Tiles.westNorthCorner();
+    (tile1.getMeeplePlacements().length).should.equal(3);
   });
 
 });

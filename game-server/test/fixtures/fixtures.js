@@ -25,10 +25,18 @@ var Tiles = {
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS
     ];
+
+    var connections = [
+      [0,11],
+      [1,10],
+      [2,3,4,5,6,7,8,9]
+    ];
+
     return new Tile({ "components" : {
                         "borders" : borders
-                    }
-    });
+                      },
+                      "connections" : connections
+                    });
   }
 
 };

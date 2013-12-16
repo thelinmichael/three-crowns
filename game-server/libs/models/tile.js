@@ -4,8 +4,9 @@ var Tile = require("./tile");
 var schema = mongoose.Schema({
   components : {
     borders : [Number],
-    internal  : Number
-  }
+    internal : Number
+  },
+  connections: []
 });
 
 /* Returns the internal component, e.g. a Cathedral */
@@ -74,7 +75,8 @@ schema.methods.setWesternBorder = function(borderComponents) {
   this.setBordersBetween(9, 12, borderComponents);
 };
 
-/* Returns true if the tiles have the same components, regardless of rotation */
+// Returns true if the tiles have the same components, regardless of rotation
+// TODO: Doesn't look at internal component or connections.
 schema.methods.sameAs = function(otherTile) {
   if (otherTile === undefined) {
     return false;
@@ -148,6 +150,10 @@ schema.statics.matchingBorders = function(borders1, borders2) {
   });
 
   return bordersMatched;
+};
+
+schema.methods.getMeeplePlacements = function() {
+  return this.connections;
 };
 
 module.exports = mongoose.model('Tile', schema);
