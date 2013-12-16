@@ -145,6 +145,24 @@ describe('Tile', function() {
     (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[11]);
   });
 
-  it("should be able to compare tiles even if rotated");
+  it("should be able to compare tiles", function() {
+    var tile1 = Fixtures.generateWestNorthCorner();
+    var tile2 = Fixtures.generateWestNorthCorner();
+    var tile3 = Fixtures.generateCrossroadsTile();
+
+    var areTheSameTile = tile1.sameAs(tile2);
+    (areTheSameTile).should.equal(true);
+
+    var areNotTheSameTile = tile1.sameAs(tile3);
+    (areNotTheSameTile).should.equal(false);
+
+    tile1.rotate(2);
+
+    var areStillTheSameTile = tile1.sameAs(tile2);
+    (areStillTheSameTile).should.equal(true);
+
+    var areStillNotTheSameTile = tile1.sameAs(tile3);
+    (areStillNotTheSameTile).should.equal(false);
+  });
 
 });
