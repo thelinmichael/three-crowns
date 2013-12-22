@@ -75,15 +75,14 @@ schema.methods.setWesternBorder = function(borderComponents) {
   this.setBordersBetween(9, 12, borderComponents);
 };
 
-// Returns true if the tiles have the same components, regardless of rotation
-// TODO: Doesn't look at internal component or connections.
+// TODO: Doesn't look at connections.
 schema.methods.sameAs = function(otherTile) {
   if (otherTile === undefined) {
     return false;
   }
 
   /* Compare internal component */
-  if (this.getInternal != otherTile.getInternal) {
+  if (this.getInternal() != otherTile.getInternal()) {
     return false;
   }
 

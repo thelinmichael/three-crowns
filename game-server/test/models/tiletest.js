@@ -145,7 +145,8 @@ describe('Tile', function() {
     (Tile.EdgeTypes.GRASS).should.equal(tileBordersOneRotation[11]);
   });
 
-  it("should be able to compare tiles", function() {
+  it("should be able to compare tile components", function() {
+    // Border components differ
     var tile1 = Fixtures.Tiles.westNorthCorner();
     var tile2 = Fixtures.Tiles.westNorthCorner();
     var tile3 = Fixtures.Tiles.crossroads();
@@ -156,6 +157,7 @@ describe('Tile', function() {
     var areNotTheSameTile = tile1.sameAs(tile3);
     (areNotTheSameTile).should.equal(false);
 
+    // Same tile but rotations differ
     tile1.rotate(2);
 
     var areStillTheSameTile = tile1.sameAs(tile2);
@@ -163,6 +165,13 @@ describe('Tile', function() {
 
     var areStillNotTheSameTile = tile1.sameAs(tile3);
     (areStillNotTheSameTile).should.equal(false);
+
+    // Internal component differs
+    var tile4 = Fixtures.Tiles.allGrass();
+    var tile5 = Fixtures.Tiles.grassCathedral();
+    var tile6 = Fixtures.Tiles.grassCathedral();
+    ((tile4).sameAs(tile5)).should.equal(false);
+    ((tile5).sameAs(tile6)).should.equal(true);
   });
 
   it("should be able to tell where a meeple can be placed on a tile", function() {

@@ -37,7 +37,38 @@ var Tiles = {
                       },
                       "connections" : connections
                     });
-  }
+  },
+
+  allGrass : function() {
+    var borders = [
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS
+    ];
+
+    return new Tile({ "components" : {
+                        "borders" : borders
+                      }
+                    });
+  },
+
+  grassCathedral : function() {
+    var borders = [
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS
+    ];
+
+    var internal = Tile.EdgeTypes.CATHEDRAL;
+
+    return new Tile({ "components" : {
+                        "borders" : borders,
+                        "internal" : internal
+                      }
+                    });
+  },
 
 };
 
