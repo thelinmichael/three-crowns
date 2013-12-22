@@ -1,18 +1,70 @@
 var mongoose = require("mongoose");
 var Board = require("./board");
 
+/**
+ * This model describes a Game. A game has general information such as start and end time, as well as
+ * what players are in the game, and the game's board. It also keeps track of what tiles are left,
+ * who'se player's turn it is, and which tile is up next.
+ *
+ * startTime {Date} The time the game started
+ * endTime   {Date} The time the game ended
+ * players   {Array} An array of {Player} who are playing the game
+ * tileQueue {Array} An array of {Tile}. This queue represent the unplayed tiles in the game
+ * startingKit {Object} Meeples and buildings that each player start out with
+ *   meeples   {Array} An array of {Meeples}, e.g. Regular Meeple, Big Meeple, Mayor, Pig
+ *   buildings {Array} An array of {Buildings}, e.g. Farm, Tower floors
+ * currentRound {Object} Things that change each round, such as active player and tile
+ *   player {Player} The active player
+ *   tile   {Tile}   The tile that is about to be placed
+ * board {Board} The game's board
+ */
 var schema = mongoose.Schema({
   startTime: Date,
   endTime : Date,
   players : ['Player'],
   tileQueue : ['Tile'],
-  currentRound : {
-    player : {}, // Type: Player
-    tile : {}    // Type: Tile
+  startingKit : {
+    meeples : [],
+    buildings : []
   },
-  board : {}     // Type: Board
+  currentRound : {
+    player : [],
+    tile : []
+  },
+  board : []
 });
 
+/**
+ * Add basegame and/or expansions to this game
+ * @param {Array} Array of gamepacks that will be added to this game
+ */
+schema.methods.addPacks = function(gamepacks) {
+  var self = this;
+  gamepacks.forEach(function(gamepack) {
+    /* Add tiles from the gamepack */
+    var tiles = gamepack.getTiles();
+    self.tileQueue.concat(tiles);
+
+    /* Add meeples (e.g. regular, and big meeple) from the gamepack to the kit that each player gets */
+    var startingMeeples = gamepack.getStartingMeeples();
+    self.startingKit.meeples.concat(startingMeeples);
+
+    /* Add buildings (e.g. tower floors, barns) from the gamepack to the kit that each player gets */
+    var startingBuildings = gamepack.getStartingBuildings();
+    self.startingKit.buildings.concat(startingBuildings);
+  });
+};
+
+/**
+ * Shuffle the tiles in the tile queue.
+ */
+schema.methods.shuffleTileQueue = function() {
+  throw new Error("Not implemented!");
+}
+
+/**
+ * Go to next turn.
+ */
 schema.methods.nextTurn = function() {
   /* If there are no more tiles at the end of the turn,
      the game ends. */
@@ -27,14 +79,19 @@ schema.methods.nextTurn = function() {
   this.currentRound.tile = this.getQueuedTiles()[0];
 };
 
-/* Places a tile on the specified coordinate
-   on the board.
-   Side effect: Removes the first tile from the tile queue */
+/**
+ *  Places a tile on the specified coordinate on the board.
+ *  Side effect: Removes the first tile from the tile queue.
+ */
 schema.methods.placeTile = function (x, y, rotation) {
   this.board.placeTile(x, y, this.tileQueue[0], rotation);
   this.tileQueue = this.tileQueue.splice(1);
 };
 
+/**
+ * Starts the game
+ * @throws Throws an error if the game has already started.
+ */
 schema.methods.start = function() {
   if (!this.isStarted()) {
     this.startTime = Date.now();
@@ -46,6 +103,10 @@ schema.methods.start = function() {
   }
 };
 
+/**
+ * Ends the game
+ * @throws Throws an error if the game has already ended.
+ */
 schema.methods.end = function() {
   if (!this.isEnded() && this.isStarted()) {
     this.endTime = Date.now();
@@ -54,34 +115,9 @@ schema.methods.end = function() {
   }
 };
 
-schema.methods.isEnded = function() {
-	return (this.endTime !== undefined);
-};
-
-schema.methods.isStarted = function() {
-	return (this.startTime !== undefined);
-};
-
-schema.methods.inProgress = function() {
-	return (this.isStarted() && !this.isEnded());
-};
-
-schema.methods.getStartingTime = function() {
-  if (this.isStarted()) {
-    return this.startTime;
-  } else {
-    throw new Error("Game has not been started");
-  }
-};
-
-schema.methods.getEndTime = function() {
-  if (this.isEnded()) {
-    return this.endTime;
-  } else {
-    throw new Error("Game has not ended");
-  }
-};
-
+/**
+ * @param {Player} The player to add to the game
+ */
 schema.methods.addPlayer = function(player) {
   if (this.isStarted()) {
     throw new Error("Players cannot be added once game has started");
@@ -122,6 +158,45 @@ schema.methods.getActiveTile = function() {
 
 schema.methods.getPlayers = function() {
   return this.players;
+};
+
+/**
+ * @returns {Boolean} True if the game has ended, otherwise false
+ */
+schema.methods.isEnded = function() {
+  return (this.endTime !== undefined);
+};
+
+/**
+ * @returns {Boolean} True if the game has started, otherwise false
+ */
+schema.methods.isStarted = function() {
+  return (this.startTime !== undefined);
+};
+
+/**
+ * @returns {Boolean} True if the game is in progress, otherwise false
+ */
+schema.methods.inProgress = function() {
+  return (this.isStarted() && !this.isEnded());
+};
+
+/**
+ * @returns {Date} The game's start time
+ */
+schema.methods.getStartingTime = function() {
+  if (this.isStarted()) {
+    return this.startTime;
+  }
+};
+
+/**
+ * @returns {Date} The game's end time
+ */
+schema.methods.getEndTime = function() {
+  if (this.isEnded()) {
+    return this.endTime;
+  }
 };
 
 module.exports = mongoose.model('Game', schema);

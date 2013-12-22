@@ -11,11 +11,10 @@ var Tiles = {
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS,
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS
     ];
+    var internal;
+    var connections = [];
 
-    return new Tile({ "components" : {
-                        "borders" : borders
-                    }
-    });
+    return getTileFrom(borders, internal, connections);
   },
 
   westNorthCorner : function() {
@@ -25,18 +24,14 @@ var Tiles = {
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.ROAD, Tile.EdgeTypes.GRASS
     ];
-
+    var internal;
     var connections = [
       [0,11],
       [1,10],
       [2,3,4,5,6,7,8,9]
     ];
 
-    return new Tile({ "components" : {
-                        "borders" : borders
-                      },
-                      "connections" : connections
-                    });
+    return getTileFrom(borders, internal, connections);
   },
 
   allGrass : function() {
@@ -46,11 +41,10 @@ var Tiles = {
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS
     ];
+    var internal;
+    var connections = [];
 
-    return new Tile({ "components" : {
-                        "borders" : borders
-                      }
-                    });
+    return getTileFrom(borders), internal, connections;
   },
 
   grassCathedral : function() {
@@ -60,16 +54,54 @@ var Tiles = {
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
       Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS
     ];
-
     var internal = Tile.EdgeTypes.CATHEDRAL;
+    var connections = [];
 
-    return new Tile({ "components" : {
-                        "borders" : borders,
-                        "internal" : internal
-                      }
-                    });
+    return getTileFrom(borders, internal, connections);
   },
 
+  dragonCastle : function() {
+    var borders = [
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE
+    ];
+    var internal;
+    var connections = [
+      [0,1,2],
+      [3,4,5,6,7,8],
+      [9,10,11]
+    ];
+
+    return getTileFrom(borders, internal, connections);
+  },
+
+  halfCircleCastle : function() {
+    var borders = [
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS, Tile.EdgeTypes.GRASS,
+      Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE, Tile.EdgeTypes.CASTLE
+    ];
+    var internal;
+    var connections = [
+      [0,1,2,3,4,5,6,7,8],
+      [9,10,11]
+    ];
+
+    return getTileFrom(borders, internal, connections);
+  }
+
+};
+
+var getTileFrom = function(borders, internal, connections) {
+  return new Tile({ "components" : {
+                      "borders" : borders,
+                      "internal" : internal
+                    },
+                    "connections" : connections
+                  });
 };
 
 var Games = {

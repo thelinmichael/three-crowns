@@ -176,12 +176,13 @@ describe('Board', function() {
     }).should.throw();
 
     (function() {
-      unit.placeTile(0, 1, tile2, 2, 0);
+      unit.placeTile(0, 1, tile2, 2);
     }).should.not.throw();
 
     unit.hasTile(0, 1).should.equal(true);
     var placedTile = unit.getTile(0, 1);
 
+    console.log(placedTile);
     should.exist(placedTile);
     placedTile.sameAs(tile2).should.equal(true);
   });

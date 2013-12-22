@@ -165,13 +165,23 @@ describe('Tile', function() {
 
     var areStillNotTheSameTile = tile1.sameAs(tile3);
     (areStillNotTheSameTile).should.equal(false);
+  });
 
-    // Internal component differs
+  it("should compare tiles that have different internal component but same borders", function() {
     var tile4 = Fixtures.Tiles.allGrass();
     var tile5 = Fixtures.Tiles.grassCathedral();
     var tile6 = Fixtures.Tiles.grassCathedral();
     ((tile4).sameAs(tile5)).should.equal(false);
     ((tile5).sameAs(tile6)).should.equal(true);
+  });
+
+  it("should compare tiles that have the same borders but different connections between them", function() {
+    var tile1 = Fixtures.Tiles.dragonCastle();
+    var tile2 = Fixtures.Tiles.halfCircleCastle();
+    var tile3 = Fixtures.Tiles.halfCircleCastle();
+
+    ((tile1).sameAs(tile2)).should.equal(false);
+    ((tile2).sameAs(tile3)).should.equal(true);
   });
 
   it("should be able to tell where a meeple can be placed on a tile", function() {
