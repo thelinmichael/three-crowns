@@ -9,7 +9,7 @@ var Board = require("../models/board");
  * startTime {Date} The time the game started
  * endTime   {Date} The time the game ended
  * players   {Array} An array of {Player} who are playing the game
- * tileQueue {Array} An array of {Tile}. This queue represent the unplayed tiles in the game
+ * tiles {Array} An array of {Tile}
  * players {Array} An array of players and what kit they've got
  *   player {Player} A player
  *   meeples {Array} The meeples the player has left
@@ -18,22 +18,22 @@ var Board = require("../models/board");
  *   meeples   {Array} An array of {Meeples}, e.g. Regular Meeple, Big Meeple, Mayor, Pig
  *   buildings {Array} An array of {Buildings}, e.g. Farm, Tower floors
  * currentRound {Object} Things that change each round, such as active player and tile
- *   player {Player} The active player
- *   tile   {Tile}   The tile that is about to be placed
+ *   player {Number} The index of the active player in the {players} array
+ *   tile   {Number} The index of the active tile in the {tiles} array
  * board {Board} The game's board
  */
 var schema = mongoose.Schema({
   startTime: Date,
   endTime : Date,
   players : [],
-  tileQueue : ['Tile'],
+  tiles : ['Tile'],
   startingKit : {
     meeples : [],
     buildings : []
   },
   currentRound : {
-    player : [],
-    tile : []
+    player : { type: Number, default: 0 },
+    tile : { type: Number, default : 0 }
   },
   board : []
 });
@@ -47,7 +47,7 @@ schema.methods.addPacks = function(gamepacks) {
   gamepacks.forEach(function(gamepack) {
     /* Add tiles from the gamepack */
     var tiles = gamepack.getTiles();
-    self.tileQueue = self.tileQueue.concat(tiles);
+    self.tiles = self.tiles.concat(tiles);
 
     /* Add meeples (e.g. regular, and big meeple) from the gamepack to the kit that each player gets */
     var startingMeeples = gamepack.getStartingMeeples();
@@ -63,17 +63,13 @@ schema.methods.addPacks = function(gamepacks) {
  * Go to next turn.
  */
 schema.methods.nextTurn = function() {
+  throw new Error("Not implemented!");
   /* If there are no more tiles at the end of the turn,
      the game ends. */
-  if (this.getQueuedTiles().length === 0) {
-    this.end();
-  }
 
   /* Change active player to the next player */
-  this.currentRound.player = this.getPlayers()[(this.getPlayers().indexOf(this.currentRound.player) + 1) % this.getPlayers().length];
 
   /* Change active tile to the tile that's currently at the top of the stack */
-  this.currentRound.tile = this.getQueuedTiles()[0];
 };
 
 /**
@@ -81,8 +77,7 @@ schema.methods.nextTurn = function() {
  *  Side effect: Removes the first tile from the tile queue.
  */
 schema.methods.placeTile = function (x, y, rotation) {
-  this.board.placeTile(x, y, this.tileQueue[0], rotation);
-  this.tileQueue = this.tileQueue.splice(1);
+  this.board.placeTile(x, y, this.tiles[this.currentRound.tile], rotation);
 };
 
 /**
@@ -93,10 +88,8 @@ schema.methods.start = function() {
   if (!this.isStarted()) {
     this.startTime = Date.now();
     this.board = new Board();
-    this.shuffleTileQueue();
+    this.shuffleTiles();
     this.distributeMeeplesAndBuildingsToPlayers();
-    this.currentRound.player = this.players[0];
-    this.currentRound.tile = this.tileQueue[0];
   } else {
     throw new Error("Game has already been started");
   }
@@ -105,8 +98,8 @@ schema.methods.start = function() {
 /**
  * Shuffle the tiles in the tile queue.
  */
-schema.methods.shuffleTileQueue = function() {
-  this.tileQueue = _shuffle(this.tileQueue);
+schema.methods.shuffleTiles = function() {
+  this.tiles = _shuffle(this.tiles);
 };
 
 /**
@@ -153,15 +146,15 @@ schema.methods.addPlayer = function(newPlayer) {
   /* Object that holds the player and the kit that the player has */
   var newPlayerContainer = {
     "player" : newPlayer,
-    "tiles"  : [],
+    "meeples"  : [],
     "buildings" : []
   };
   this.players.push(newPlayerContainer);
 };
 
-schema.methods.getQueuedTiles = function() {
+schema.methods.getTiles = function() {
   if (this.isStarted()) {
-    return this.tileQueue;
+    return this.tiles;
   } else {
     throw new Error("Cannot get tile queue as game hasn't started");
   }
@@ -179,12 +172,12 @@ schema.methods.getActivePlayer = function() {
   if (!this.inProgress()) {
     throw new Error("No active player as game isn't in progress");
   } else {
-    return this.currentRound.player;
+    return this.players[this.currentRound.player].player;
   }
 };
 
 schema.methods.getActiveTile = function() {
-  return this.currentRound.tile;
+  return this.tiles[this.currentRound.tile];
 };
 
 schema.methods.getPlayers = function() {

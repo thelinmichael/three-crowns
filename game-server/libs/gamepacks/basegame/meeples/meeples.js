@@ -1,7 +1,7 @@
 var RegularMeeple = require("./meeples/meeple-regular");
 
 /* Basepack meeple start settings */
-var REGULAR_MEEPLES = 6;
+var REGULAR_MEEPLES = 7;
 
 var Meeples = {
 
