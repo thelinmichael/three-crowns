@@ -1,11 +1,8 @@
-var _MeepleTypes = {
+var BaseSchema = require("../../../../schemas/meeple.js");
+var mongoose = require("mongoose");
 
-  /**
-   *  A regular meeple.
-   *  Roads enter from all directions, but break in the center.
-   */
-  regularMeeple : function() {
-    return new Meeple({ strength : 1 });
-  }
+/**
+ * TODO: This meeple needs to react on some stuff. The functions describing these reactions goes here.
+ */
 
-};
+module.exports = mongoose.model('RegularMeeple', BaseSchema);

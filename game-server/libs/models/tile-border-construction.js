@@ -1,12 +1,4 @@
 var mongoose = require("mongoose");
+var Schema = require("../schemas/tile-border-construction");
 
-/**
- *  Describes a tile border type, e.g. grass, road,
- *  castle and abbey.
- */
-var schema = mongoose.Schema({
-  name : { type : String },
-  extensions : {}
-});
-
-module.exports = mongoose.model('BorderConstruction', schema);
+module.exports = mongoose.model('BorderConstruction', Schema);

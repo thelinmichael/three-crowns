@@ -1,12 +1,4 @@
 var mongoose = require("mongoose");
+var Schema = require("../schemas/tile-border-construction-extra");
 
-/**
- *  Describes something that gives extra feature to a tile border construction, e.g.
- *  a Penant (the extra) to a Castle (the tile border construction), or an Inn to a Road.
- */
-var schema = mongoose.Schema({
-  name : { type : String },
-  extensions : {}
-});
-
-module.exports = mongoose.model('BorderConstructionExtra', schema);
+module.exports = mongoose.model('BorderConstructionExtra', Schema);

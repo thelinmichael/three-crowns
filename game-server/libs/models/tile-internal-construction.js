@@ -1,12 +1,4 @@
 var mongoose = require("mongoose");
+var Schema = require("../schemas/tile-internal-construction");
 
-/**
- *  Describes an internal construction, e.g. cloister or
- *  a tower.
- */
-var schema = mongoose.Schema({
-  name : { type : String },
-  extensions : {}
-});
-
-module.exports = mongoose.model('InternalConstruction', schema);
+module.exports = mongoose.model('InternalConstruction', Schema);

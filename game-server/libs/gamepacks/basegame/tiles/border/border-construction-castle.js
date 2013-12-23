@@ -1,38 +1,29 @@
-var BorderConstruction = require("../../../../models/tile-border-construction.js");
+var BaseSchema = require("../../../../schemas/tile-border-construction.js");
+var mongoose = require("mongoose");
 
-var Castle = function() {
+/**
+ * This function is run when a building of this type is completed.
+ * @returns {Object} Returns an object containing the points given
+ */
+BaseSchema.methods.onBuildingComplete = function(tilesInvolved) {
+  throw new Error("Not implemented!");
+};
 
-  return new BorderConstruction({
+/**
+* Get the number of tiles adjacent to this one
+* from the board and return a number of points
+* equalling that.
+*/
+BaseSchema.methods.onGameFinish = function(position, board) {
+  throw new Error("Not implemented!");
+};
 
-    name : "Castle",
-
-    /**
-     * This function is run when a building of this type is completed.
-     * @returns {Object} Returns an object containing the points given
-     */
-    onBuildingComplete : function(tilesInvolved) {
-      return {
-        points : 2*tilesInvolved.length
-      }
-    },
-
-    /**
-     * @returns {Boolean} True if building is completed, otherwise false
-     */
-    isBuildingCompleted : function(position, board) {
-      throw new Error("Not implemented!");
-    },
-
-    /**
-     * @param {BorderConstruction} border The border to compare this with
-     * @returns {Boolean} Returns true if {border} is another Castle, otherwise false.
-     */
-    matchesBorder : function(border) {
-      return (border.name === "Castle");
-    }
-
-  });
+/**
+* @returns {Boolean} True if building is completed, otherwise false
+*/
+BaseSchema.methods.isBuildingCompleted = function(position, board) {
+  throw new Error("Not implemented!");
 };
 
 
-exports.module = Castle;
+module.exports = mongoose.model('Castle', BaseSchema);

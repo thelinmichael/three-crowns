@@ -1,8 +1,9 @@
 var Tile = require("../../libs/models/tile");
-var TileFeatures = require("tilefeatures.js");
-var ConstructionTypes = TileFeatures.ConstructionTypes;
-var SpecialFeatureTypes = TileFeatures.SpecialFeatureTypes;
-var InternalTypes = TileFeatures.InternalTypes;
+var Grass = require("border/grass";
+var Road = require("border/road");
+var Castle = require("border/castle");
+var Penant = require("border-extras/penant");
+var Cloister = require("internal/cloister");
 
 /* Basepack tile settings */
 var CROSSROADS = 2;
@@ -48,35 +49,35 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,11 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 1 ],
-        type      : ConstructionTypes.ROAD
+        type      : ROAD
       },
       {
         positions : [ 2,3 ],
-        type      : ConstructionTypes.GRASS
+        type      : GRASS
       },
       {
         positions : [ 4 ],
-        type      : ConstructionTypes.ROAD
+        type      : Road
       },
       {
         positions : [ 5,6 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 7 ],
-        type      : ConstructionTypes.ROAD
+        type      : Road
       },
       {
         positions : [ 8,9 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 10 ],
-        type      : ConstructionTypes.ROAD
+        type      : Road
       }
     ];
 
@@ -90,15 +91,15 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,11 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 1,10 ],
-        type      : ConstructionTypes.ROAD
+        type      : Road
       },
       {
         positions : [ 2,3,4,5,6,7,8,9 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       }
     ];
 
@@ -112,11 +113,11 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,1,2,3,4,5,6,7,8,9,10,11 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       }
     ];
     var internals = [
-      InternalTypes.CLOISTER
+      Cloister
     ];
     return new Tile(constructions, internals);
   },
@@ -129,15 +130,15 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,1,2 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 3,4,5,6,7,8 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 9,10,11 ],
-        type      : ConstructionTypes.CASTLE
+        type      : Castle
       },
     ];
     return new Tile(constructions);
@@ -150,11 +151,11 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,1,2,3,4,5,6,7,8 ],
-        type      : ConstructionTypes.GRASS
+        type      : Grass
       },
       {
         positions : [ 9,10,11 ],
-        type      : ConstructionTypes.CASTLE
+        type      : Castle
       }
     ];
 
