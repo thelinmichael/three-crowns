@@ -14,8 +14,7 @@ var BaseGame = {
    * @returns {Array} Returns an array of {Meeple} that are included in the basegame.
    */
   getStartingMeeples : function() {
-    var startingMeeples = Meeples.getMeeples();
-    return startingMeeples;
+    return Meeples.getMeeples();
   },
 
   /**

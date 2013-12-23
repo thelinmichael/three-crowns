@@ -6,6 +6,8 @@ var should = require('should');
 var GameBuilder = require('../../libs/gamebuilder');
 var Player = require("../../libs/models/player");
 
+var BasePack = require("../../libs/gamepacks/basegame/main");
+
 describe("Game", function() {
 
   it("End-To-End game test", function() {
@@ -40,11 +42,12 @@ describe("Game", function() {
     (unit.isStarted()).should.equal(true);
 
     should.exist(unit.tiles);
+    (unit.tiles.length).should.equal(BasePack.getTiles().length);
 
     /* A player should have received six meeples */
     firstPlayersMeeples = players[0].meeples;
     should.exist(firstPlayersMeeples);
-    (firstPlayersMeeples.length).should.equal(7);
+    (firstPlayersMeeples.length).should.equal(BasePack.getStartingMeeples().length);
 
     /* Since we are playing with the basepack only, no buildings are given */
     firstPlayersBuildings = players[0].buildings;

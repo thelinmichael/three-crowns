@@ -35,6 +35,7 @@ var Tiles = {
       returnedTiles.push(_TileTypes.halfCircleCastle());
     }
 
+    return returnedTiles;
   }
 
 };
