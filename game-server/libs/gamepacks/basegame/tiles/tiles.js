@@ -1,9 +1,9 @@
-var Tile = require("../../libs/models/tile");
-var Grass = require("border/grass";
-var Road = require("border/road");
-var Castle = require("border/castle");
-var Penant = require("border-extras/penant");
-var Cloister = require("internal/cloister");
+var Tile = require("../../../models/tile");
+var Grass = require("./border/grass");
+var Road = require("./border/road");
+var Castle = require("./border/castle");
+var Penant = require("./border-extras/penant");
+var Cloister = require("./internal/cloister");
 
 /* Basepack tile settings */
 var CROSSROADS = 2;
@@ -53,11 +53,11 @@ var _TileTypes = {
       },
       {
         positions : [ 1 ],
-        type      : ROAD
+        type      : Road
       },
       {
         positions : [ 2,3 ],
-        type      : GRASS
+        type      : Grass
       },
       {
         positions : [ 4 ],
@@ -164,5 +164,4 @@ var _TileTypes = {
 
 };
 
-exports.Tiles = Tiles;
-module.exports = exports;
+module.exports = Tiles;

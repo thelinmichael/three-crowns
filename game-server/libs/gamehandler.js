@@ -6,16 +6,16 @@ var _defaultOptions = {
 
 function GameHandler(options) {
   this.options = _defaultOptions;
-  this.options.extend(options);
+  extend(this.options, options);
 
   this.game = new Game();
 
   var gamepacks = _loadPacks(this.options.gamepacks);
-  game.addPacks(gamepacks);
+  this.game.addPacks(gamepacks);
 };
 
 GameHandler.prototype.start = function(options) {
-
+  throw new Error("Not implemented!");
 };
 
 /**
@@ -23,9 +23,20 @@ GameHandler.prototype.start = function(options) {
  * @returns {Array} An array of the gamepacks in {gamepacks}, but the actual modules
  */
 var _loadPacks = function(gamepacks) {
-  return gamepacks.map(function(gamepack) {
+  var loadedGamePacks = gamepacks.map(function(gamepack) {
     return require('./gamepacks/' + gamepack + '/main');
   });
+  return loadedGamePacks;
 };
+
+/**
+ * Adds the source's properties to the source properties
+ */
+var extend = function(destination, source) {
+  for (var property in source) {
+    destination[property] = source[property];
+  }
+  return destination;
+}
 
 exports = module.exports = GameHandler;

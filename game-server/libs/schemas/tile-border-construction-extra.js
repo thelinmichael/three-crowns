@@ -5,6 +5,7 @@ var mongoose = require("mongoose");
  *  a Penant (the extra) to a Castle (the tile border construction), or an Inn to a Road.
  */
 var schema = mongoose.Schema({
-  name : { type : String },
-  extensions : {}
+  name : { type : String }
 });
+
+module.exports = schema;

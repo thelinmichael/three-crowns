@@ -43,15 +43,15 @@ schema.methods.addPacks = function(gamepacks) {
   gamepacks.forEach(function(gamepack) {
     /* Add tiles from the gamepack */
     var tiles = gamepack.getTiles();
-    self.tileQueue.concat(tiles);
+    self.tileQueue = self.tileQueue.concat(tiles);
 
     /* Add meeples (e.g. regular, and big meeple) from the gamepack to the kit that each player gets */
     var startingMeeples = gamepack.getStartingMeeples();
-    self.startingKit.meeples.concat(startingMeeples);
+    self.startingKit.meeples = self.startingKit.meeples.concat(startingMeeples);
 
     /* Add buildings (e.g. tower floors, barns) from the gamepack to the kit that each player gets */
     var startingBuildings = gamepack.getStartingBuildings();
-    self.startingKit.buildings.concat(startingBuildings);
+    self.startingKit.buildings = self.startingKit.buildings.concat(startingBuildings);
   });
 };
 

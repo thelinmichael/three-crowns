@@ -1,13 +1,21 @@
-var Tiles = require("tiles/tiles");
-var Meeples = require("meeples/meeples");
+var Tiles = require("./tiles/tiles");
+var Meeples = require("./meeples/meeples");
 
 var BaseGame = {
+
+  /**
+   *  @returns {Array} Returns an array of {Tile} that are included in the basegame.
+   */
+  getTiles : function() {
+    return Tiles.getTiles();
+  },
 
   /**
    * @returns {Array} Returns an array of {Meeple} that are included in the basegame.
    */
   getStartingMeeples : function() {
-    return Meeples.getTiles();
+    var startingMeeples = Meeples.getMeeples();
+    return startingMeeples;
   },
 
   /**
@@ -16,15 +24,8 @@ var BaseGame = {
    **/
   getStartingBuildings : function() {
     return [];
-  },
-
-  /**
-   *  @returns {Array} Returns an array of {Tile} that are included in the basegame.
-   */
-  getTiles : function() {
-    return Tiles.getTiles();
   }
 
 };
 
-exports.module = BaseGame;
+module.exports = BaseGame;

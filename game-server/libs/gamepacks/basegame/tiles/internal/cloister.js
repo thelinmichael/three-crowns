@@ -18,7 +18,7 @@ BaseSchema.methods.onBuildingComplete = function(tilesInvolved) {
 */
 BaseSchema.methods.onGameFinish = function(position, board) {
   return {
-    points : 1 + board.getAdjacentTiles(position).length;
+    points : 1 + board.getAdjacentTiles(position).length
   }
 };
 

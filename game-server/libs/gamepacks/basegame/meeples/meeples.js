@@ -1,4 +1,4 @@
-var RegularMeeple = require("meeples/meeple-regular");
+var RegularMeeple = require("./meeples/meeple-regular");
 
 /* Basepack meeple start settings */
 var REGULAR_MEEPLES = 6;
@@ -15,10 +15,9 @@ var Meeples = {
       returnedMeeples.push(new RegularMeeple({ strength : 1 }));
     }
 
-    return returnedMeeples();
+    return returnedMeeples;
   }
 
 };
 
-exports.Meeples = Meeples;
-module.exports = exports;
+module.exports = Meeples;

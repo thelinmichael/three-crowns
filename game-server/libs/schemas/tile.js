@@ -55,13 +55,13 @@ schema.methods.canBePlacedAt = function(x, y, board) {
 
 schema.methods.adjacentTilesBordersMatch = function(x, y, board) {
   /* Checking with each tile if they allow themselves to be placed there */
-  return (_tilesMatch(board.getTile(x+1,y), Tile.Directions.EAST) &&
-          _tilesMatch(board.getTile(x-1,y), Tile.Directions.WEST) &&
-          _tilesMatch(board.getTile(x,y+1), Tile.Directions.NORTH) &&
-          _tilesMatch(board.getTile(x,y-1), Tile.Directions.SOUTH));
-}
+  return (tilesMatch(board.getTile(x+1,y), Tile.Directions.EAST) &&
+          tilesMatch(board.getTile(x-1,y), Tile.Directions.WEST) &&
+          tilesMatch(board.getTile(x,y+1), Tile.Directions.NORTH) &&
+          tilesMatch(board.getTile(x,y-1), Tile.Directions.SOUTH));
+};
 
-var _tilesMatch : function(otherTile, directionToOtherTile) {
+schema.methods.tilesMatch = function(otherTile, directionToOtherTile) {
   /* Matching is not a problem if there's no tile to be matched against */
   if (!otherTile) {
     return true;
@@ -70,11 +70,10 @@ var _tilesMatch : function(otherTile, directionToOtherTile) {
   var otherTilesBorders = otherTile.getBorders(Tile.Directions.oppositeOf(directionToOtherTile));
   var thisTilesBorders = this.getBorders(directionToOtherTile);
 
-  var allMatches = true;
-  thisTilesBorders.forEach(function(border, index) {
+  var allMatches = thisTilesBorders.every(function(border, index) {
     if (!border.matches(otherTilesBorders[index]) &&
         !otherTilesBorders.matches(border)) {
-      allMatches = false;
+      return false;
     }
     /* Only one is OK, check if one of them is more important, such as Abbeys
      which can be placed anywhere */
@@ -83,16 +82,12 @@ var _tilesMatch : function(otherTile, directionToOtherTile) {
         (border.matches(otherTilesBorders[index] &&
         !otherTilesBorders.matches(border)))) {
       if (border.priority > otherTilesBorders[index].priority) {
-        allMatches = border.matches(otherTilesBorders[index]);
+        return border.matches(otherTilesBorders[index]);
       } else {
-        allMatches = otherTilesBorders.matches(border);
+        return otherTilesBorders.matches(border);
       }
     }
-    if (!allMatches) {
-      break;
-    }
   });
-
   return allMatches;
 };
 
@@ -141,13 +136,12 @@ schema.methods.getInternal = function() {
  *  @returns {ConstructionType} The construction type of the border at position {position}
  */
 schema.methods.getTypeAtPosition = function(position) {
-  var returnedType;
-  this.components.forEach(function(component) {
+  var componentHoldingPosition = this.components.filter(function(component) {
     if (components.positions.indexOf(position) > -1) {
-      returnedType = components.type;
-      break;
+      return true;
     }
   });
+  return componentHoldingPosition[0].type;
 };
 
 /**

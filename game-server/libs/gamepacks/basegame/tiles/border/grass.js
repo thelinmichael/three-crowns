@@ -23,5 +23,4 @@ BaseSchema.methods.isBuildingCompleted = function(position, board) {
   throw new Error("Not implemented!");
 };
 
-
 module.exports = mongoose.model('Grass', BaseSchema);

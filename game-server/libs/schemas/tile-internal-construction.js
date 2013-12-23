@@ -5,8 +5,7 @@ var mongoose = require("mongoose");
  *  a tower.
  */
 var schema = mongoose.Schema({
-  name : { type : String },
-  extensions : {}
+  name : { type : String }
 });
 
 module.exports = schema;
