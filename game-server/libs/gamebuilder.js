@@ -4,18 +4,16 @@ var _defaultOptions = {
   gamepacks : ['basegame']
 }
 
-function GameHandler(options) {
+var create = function(options) {
   this.options = _defaultOptions;
   extend(this.options, options);
 
-  this.game = new Game();
+  var game = new Game();
 
   var gamepacks = _loadPacks(this.options.gamepacks);
-  this.game.addPacks(gamepacks);
-};
+  game.addPacks(gamepacks);
 
-GameHandler.prototype.start = function(options) {
-  throw new Error("Not implemented!");
+  return game;
 };
 
 /**
@@ -39,4 +37,5 @@ var extend = function(destination, source) {
   return destination;
 }
 
-exports = module.exports = GameHandler;
+exports = module.exports;
+exports.create = create;
