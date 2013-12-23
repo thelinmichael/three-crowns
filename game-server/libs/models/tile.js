@@ -10,10 +10,13 @@ var Tile = require("./tile");
  * side of it). These constructions may also have special features. For example, constructions that are
  * made of Castles may have a Penant, and a Roads may have an Inn.
  * Tiles are also made of internal pieces, such as Cloisters.
+ * The extensions are functions that defines the special behaviour of a tile, such as which tiles it may
+ * be placed next to.
  */
 var schema = mongoose.Schema({
   constructions : {},
-  internals     : {}
+  internals     : {},
+  extensions    : {}
 });
 
 /**
@@ -40,7 +43,17 @@ schema.methods.withRotation = function(rotation) {
  * @returns {Boolean} Returns true if the tile can be placed, otherwise false.
  */
 schema.methods.canBePlacedAt = function(x, y, board) {
-  return this.adjacentTilesBordersMatch(x, y, board);
+  if (!this.adjacentTilesBordersMatch(x, y, board)) {
+    return false;
+  }
+
+  /* There may be other conditions that need to be fulfilled for this
+     tile to be valid to place here.*/
+  if (this.extensions.canBePlacedAt && !this.extensions.canBePlacedAt(x, y, board, this)) {
+    return false;
+  }
+
+  return true;
 },
 
 schema.methods.adjacentTilesBordersMatch = function(x, y, board) {

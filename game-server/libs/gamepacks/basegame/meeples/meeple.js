@@ -1,4 +1,4 @@
-var RegularMeeple = require("models/regular-meeple");
+var Meeple = require("../../models/meeple");
 
 /* Basepack meeple start settings */
 var REGULAR_MEEPLES = 6;
@@ -16,18 +16,6 @@ var Meeples = {
     }
 
     return returnedMeeples();
-  }
-
-};
-
-var _MeepleTypes = {
-
-  /**
-   *  A regular meeple.
-   *  Roads enter from all directions, but break in the center.
-   */
-  regularMeeple : function() {
-    return new RegularMeeple();
   }
 
 };

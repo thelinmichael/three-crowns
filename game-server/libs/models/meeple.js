@@ -6,7 +6,8 @@ var mongoose = require("mongoose");
  * the mayor, etc.
  */
 var schema = mongoose.Schema({
-  strength :  Number
+  strength :  Number,
+  extension : {}
 });
 
 module.exports = mongoose.model('Tile', schema);

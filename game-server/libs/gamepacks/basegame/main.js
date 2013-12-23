@@ -1,6 +1,5 @@
-var Tiles = require("tiles");
-var Meeples = require("meeples");
-var Buildings = require("buildings");
+var Tiles = require("tiles/tiles");
+var Meeples = require("meeples/meeples");
 
 var BaseGame = {
 
