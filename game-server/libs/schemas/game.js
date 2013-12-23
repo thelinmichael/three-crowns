@@ -10,6 +10,10 @@ var Board = require("../models/board");
  * endTime   {Date} The time the game ended
  * players   {Array} An array of {Player} who are playing the game
  * tileQueue {Array} An array of {Tile}. This queue represent the unplayed tiles in the game
+ * players {Array} An array of players and what kit they've got
+ *   player {Player} A player
+ *   meeples {Array} The meeples the player has left
+ *   buildings {Array} The buildings the player has left
  * startingKit {Object} Meeples and buildings that each player start out with
  *   meeples   {Array} An array of {Meeples}, e.g. Regular Meeple, Big Meeple, Mayor, Pig
  *   buildings {Array} An array of {Buildings}, e.g. Farm, Tower floors
@@ -21,7 +25,7 @@ var Board = require("../models/board");
 var schema = mongoose.Schema({
   startTime: Date,
   endTime : Date,
-  players : ['Player'],
+  players : [],
   tileQueue : ['Tile'],
   startingKit : {
     meeples : [],
@@ -54,13 +58,6 @@ schema.methods.addPacks = function(gamepacks) {
     self.startingKit.buildings = self.startingKit.buildings.concat(startingBuildings);
   });
 };
-
-/**
- * Shuffle the tiles in the tile queue.
- */
-schema.methods.shuffleTileQueue = function() {
-  throw new Error("Not implemented!");
-}
 
 /**
  * Go to next turn.
@@ -97,11 +94,31 @@ schema.methods.start = function() {
     this.startTime = Date.now();
     this.board = new Board();
     this.shuffleTileQueue();
+    this.distributeMeeplesAndBuildingsToPlayers();
     this.currentRound.player = this.players[0];
     this.currentRound.tile = this.tileQueue[0];
   } else {
     throw new Error("Game has already been started");
   }
+};
+
+/**
+ * Shuffle the tiles in the tile queue.
+ */
+schema.methods.shuffleTileQueue = function() {
+  this.tileQueue = _shuffle(this.tileQueue);
+};
+
+/**
+ * Distribute meeples and buildings to the players.
+ * RISK: This may copy the reference to the starting kit instead of cloning it.
+ */
+schema.methods.distributeMeeplesAndBuildingsToPlayers = function() {
+  var self = this;
+  this.players.forEach(function(player) {
+    player.meeples = self.startingKit.meeples;
+    player.buildings = self.startingKit.buildings;
+  });
 };
 
 /**
@@ -119,14 +136,27 @@ schema.methods.end = function() {
 /**
  * @param {Player} The player to add to the game
  */
-schema.methods.addPlayer = function(player) {
+schema.methods.addPlayer = function(newPlayer) {
   if (this.isStarted()) {
     throw new Error("Players cannot be added once game has started");
-  } else if (this.players.indexOf(player) == -1) {
-    this.players.push(player);
-  } else {
-    throw new Error("Player already exists in the game");
   }
+
+  if (this.players.length > 0) {
+    var foundPlayer = this.players.every(function(player) {
+      return (player.player === newPlayer)
+    });
+    if (foundPlayer) {
+      throw new Error("Player already exists in the game.");
+    }
+  }
+
+  /* Object that holds the player and the kit that the player has */
+  var newPlayerContainer = {
+    "player" : newPlayer,
+    "tiles"  : [],
+    "buildings" : []
+  };
+  this.players.push(newPlayerContainer);
 };
 
 schema.methods.getQueuedTiles = function() {
@@ -198,6 +228,12 @@ schema.methods.getEndTime = function() {
   if (this.isEnded()) {
     return this.endTime;
   }
+};
+
+/* Shuffles an array, courtesy of Google */
+var _shuffle = function(o) {
+  for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+  return o;
 };
 
 module.exports = schema;
