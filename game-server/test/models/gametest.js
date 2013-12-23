@@ -55,6 +55,11 @@ describe("Game", function() {
     (firstPlayersBuildings.length).should.equal(0);
 
     unit.getActivePlayer().getName().should.equal(player1.getName());
+
+    /* Place tile in origo without rotation */
+    (unit.board.hasTile(0, 0)).should.equal(false);
+    unit.placeTile(0, 0, 0);
+    (unit.board.hasTile(0, 0)).should.equal(true);
   });
 
 });

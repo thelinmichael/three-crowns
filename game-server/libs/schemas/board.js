@@ -6,9 +6,14 @@ var mongoose = require("mongoose");
  * rotation the tile was placed. It also holds helper functionality
  * necessary to place tiles, meeples, etc on the board, as well as retrieve
  * information about what's been placed.
+ * tiles
+ *   tile {Tile} The tile that is placed on the board
+ *   x {Number} The x coordinate on the board where {tile} is placed
+ *   y {Number} The y coordinate on the board where {tile} is placed
+ *   rotation {Number} The rotation of the {tile} when it has been placed
  */
 var schema = mongoose.Schema({
-  tiles : {}
+  tiles : []
 });
 
 /**
@@ -40,25 +45,24 @@ schema.methods.placeTile = function(x, y, tile, rotation) {
 };
 
 /**
- * @board {Board} board The board
  * @params {Number} x
  * @params {Number} y
  * @params {Tile} tile
  * @params {Tile.Rotations} rotation The number of rotations
  */
-schema.methods.canPlaceTile = function(board, x, y, tile, rotation) {
+schema.methods.canPlaceTile = function(x, y, tile, rotation) {
   /* Checking for first tile of the game */
-  if (board.tiles.length === 0) {
+  if (this.tiles.length === 0) {
     return true;
   }
 
   /* Checking if the tile is already taken */
-  if (board.hasTile(x, y)) {
+  if (this.hasTile(x, y)) {
     return false;
   }
 
   /* Checking if this tile has any adjacent tiles */
-  if (!board.hasAdjacentTile(x, y)) {
+  if (!this.hasAdjacentTile(x, y)) {
     return false;
   }
 

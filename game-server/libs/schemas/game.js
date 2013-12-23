@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Board = require("../models/board");
+var Player = require("../models/player");
 
 /**
  * This model describes a Game. A game has general information such as start and end time, as well as
@@ -35,7 +36,7 @@ var schema = mongoose.Schema({
     player : { type: Number, default: 0 },
     tile : { type: Number, default : 0 }
   },
-  board : []
+  board : {}
 });
 
 /**
@@ -76,7 +77,7 @@ schema.methods.nextTurn = function() {
  *  Places a tile on the specified coordinate on the board.
  *  Side effect: Removes the first tile from the tile queue.
  */
-schema.methods.placeTile = function (x, y, rotation) {
+schema.methods.placeTile = function(x, y, rotation) {
   this.board.placeTile(x, y, this.tiles[this.currentRound.tile], rotation);
 };
 
