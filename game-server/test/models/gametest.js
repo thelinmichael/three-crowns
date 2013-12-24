@@ -57,9 +57,20 @@ describe("Game", function() {
     unit.getActivePlayer().getName().should.equal(player1.getName());
 
     /* Place tile in origo without rotation */
+    (unit.currentRound.tile).should.equal(0);
     (unit.board.hasTile(0, 0)).should.equal(false);
     unit.placeTile(0, 0, 0);
     (unit.board.hasTile(0, 0)).should.equal(true);
+
+    /* Go to next turn */
+    unit.nextTurn();
+
+    (unit.currentRound.tile).should.equal(1);
+    (unit.currentRound.player).should.equal(1);
+
+    var possiblePlacements = unit.board.getPossiblePlacements();
+    (possiblePlacements).should.exist();
+    (possiblePlacements.length).should.not.equal(0);
   });
 
 });

@@ -64,13 +64,13 @@ schema.methods.addPacks = function(gamepacks) {
  * Go to next turn.
  */
 schema.methods.nextTurn = function() {
-  throw new Error("Not implemented!");
   /* If there are no more tiles at the end of the turn,
      the game ends. */
 
   /* Change active player to the next player */
-
-  /* Change active tile to the tile that's currently at the top of the stack */
+  (this.currentRound.player++) % this.players.length;
+  /* Change active tile to the next tile */
+  this.currentRound.tile++;
 };
 
 /**

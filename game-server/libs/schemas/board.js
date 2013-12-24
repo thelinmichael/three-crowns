@@ -6,11 +6,8 @@ var mongoose = require("mongoose");
  * rotation the tile was placed. It also holds helper functionality
  * necessary to place tiles, meeples, etc on the board, as well as retrieve
  * information about what's been placed.
- * tiles
- *   tile {Tile} The tile that is placed on the board
- *   x {Number} The x coordinate on the board where {tile} is placed
- *   y {Number} The y coordinate on the board where {tile} is placed
- *   rotation {Number} The rotation of the {tile} when it has been placed
+ * tiles {Array} Associative array where keys are {String} x,y,
+ * pointing to a an object {Tile} tile, {Number} rotation.
  */
 var schema = mongoose.Schema({
   tiles : []
@@ -34,14 +31,25 @@ schema.methods.hasAdjacentTile = function(x, y) {
  * @params {Tile} tile
  * @params {Tile.Rotations} rotation The number of rotations
  * @throws Will throw if {tile} cannot be placed on {x},{y} with rotation {rotation}
+ * TODO: Should be checks if the tile can indeed be placed.
  */
 schema.methods.placeTile = function(x, y, tile, rotation) {
-  if (this.canPlaceTile(x, y, tile, rotation)) {
-    if (!this.tiles[x]) {
-      this.tiles[x] = [];
+  var index = x + "," + y;
+  this.tiles[index] = {
+    "tile" : tile,
+    "rotation" : rotation
+  };
+};
+
+/**
+ * TODO!
+ */
+schema.methods.getNumberOfTiles = function() {
+  var length = 0;
+  for (var key in this.tiles) {
     }
-    this.tiles[x][y] = tile;
   }
+  return length;
 };
 
 /**
@@ -51,8 +59,9 @@ schema.methods.placeTile = function(x, y, tile, rotation) {
  * @params {Tile.Rotations} rotation The number of rotations
  */
 schema.methods.canPlaceTile = function(x, y, tile, rotation) {
+
   /* Checking for first tile of the game */
-  if (this.tiles.length === 0) {
+  if (this.getNumberOfTiles() === 0) {
     return true;
   }
 
@@ -75,18 +84,34 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
 };
 
 /**
+ *  @returns {Array} Returns an array of arrays, consisting of a {Number} x and  a {Number} y coordinate
+ *  where no tile is placed, but adjacent to some other tile
+ */
+schema.methods.getPossiblePositions = function() {
+  var possiblePositions = [];
+  throw new Error("Not implemented!");
+};
+
+/**
+ * @params {Tile} tile The tile to be placed on the board
+ * @returns {Array} Returns an array of objects consisting of {Number} x and {Number} y coordinates
+ * where the {tile} can be placed
+ */
+schema.methods.getPossiblePlacementsForTile = function(tile) {
+  throw new Error("Not implemented!");
+};
+
+/**
  * @params {Number} x
  * @params {Number} y
  * @returns {Tile|undefined} The tile at position {x},{y}, otherwise undefined
  */
 schema.methods.getTile = function(x, y) {
-  if (this.hasTile(x, y)) {
-    return this.tiles[x][y];
-  }
+  return this.tiles[x + "," + y];
 };
 
 schema.methods.hasTile = function(x, y) {
-  return (this.tiles[x] !== undefined && this.tiles[x][y] !== undefined);
+  return (this.getTile(x,y) !== undefined);
 };
 
 module.exports = schema;
