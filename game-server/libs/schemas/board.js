@@ -6,11 +6,11 @@ var mongoose = require("mongoose");
  * rotation the tile was placed. It also holds helper functionality
  * necessary to place tiles, meeples, etc on the board, as well as retrieve
  * information about what's been placed.
- * tiles {Array} Associative array where keys are {String} x,y,
- * pointing to a an object {Tile} tile, {Number} rotation.
+ * tiles {Object} Object where keys are {String} x,y,
+ * holding an object {Tile} tile, {Number} rotation.
  */
 var schema = mongoose.Schema({
-  tiles : []
+  tiles : { "type" : {}, "default" : [] }
 });
 
 /**
@@ -41,15 +41,8 @@ schema.methods.placeTile = function(x, y, tile, rotation) {
   };
 };
 
-/**
- * TODO!
- */
 schema.methods.getNumberOfTiles = function() {
-  var length = 0;
-  for (var key in this.tiles) {
-    }
-  }
-  return length;
+  return Object.keys(this.tiles).length;
 };
 
 /**
@@ -84,12 +77,33 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
 };
 
 /**
- *  @returns {Array} Returns an array of arrays, consisting of a {Number} x and  a {Number} y coordinate
+ *  @returns {Array} Returns an array containing {Number} x, {Number} y for coordinates
  *  where no tile is placed, but adjacent to some other tile
  */
 schema.methods.getPossiblePositions = function() {
-  var possiblePositions = [];
-  throw new Error("Not implemented!");
+  var possiblePositions = [],
+      key;
+
+  for (key in this.tiles) {
+    var coordinates = key.split(",");
+    var x = coordinates[0];
+    var y = coordinates[1];
+
+    if (!this.hasTile(parseInt(x+1), y)) {
+      possiblePositions.push(parseInt(x+1) + "," + y);
+    }
+    if (!this.hasTile(parseInt(x-1), y)) {
+      possiblePositions.push(parseInt(x-1) + "," + y);
+    }
+    if (!this.hasTile(x, parseInt(y-1))) {
+      possiblePositions.push(x + "," + parseInt(y-1));
+    }
+    if (!this.hasTile(x, parseInt(y+1))) {
+      possiblePositions.push(x + "," + parseInt(y+1));
+    }
+  }
+
+  return possiblePositions;
 };
 
 /**
@@ -111,7 +125,8 @@ schema.methods.getTile = function(x, y) {
 };
 
 schema.methods.hasTile = function(x, y) {
-  return (this.getTile(x,y) !== undefined);
+  var tileAtPosition = this.getTile(x,y);
+  return (tileAtPosition !== undefined);
 };
 
 module.exports = schema;
