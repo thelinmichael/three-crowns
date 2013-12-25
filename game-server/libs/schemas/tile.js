@@ -30,7 +30,7 @@ schema.methods.sameAs = function(otherTile) {
  */
 schema.methods.withRotation = function(rotation) {
   throw new Error("Not implemented!");
-}
+};
 
 /**
  * Tile specific requirements when being placed on the board.
@@ -51,14 +51,15 @@ schema.methods.canBePlacedAt = function(x, y, board) {
   }
 
   return true;
-},
+};
 
 schema.methods.adjacentTilesBordersMatch = function(x, y, board) {
   /* Checking with each tile if they allow themselves to be placed there */
-  return (tilesMatch(board.getTile(x+1,y), Tile.Directions.EAST) &&
-          tilesMatch(board.getTile(x-1,y), Tile.Directions.WEST) &&
-          tilesMatch(board.getTile(x,y+1), Tile.Directions.NORTH) &&
-          tilesMatch(board.getTile(x,y-1), Tile.Directions.SOUTH));
+  var eastMatch = tilesMatch(board.getTile(x+1,y), Tile.Directions.EAST);
+  var westMatch = tilesMatch(board.getTile(x-1,y), Tile.Directions.WEST);
+  var northMatch = tilesMatch(board.getTile(x,y+1), Tile.Directions.NORTH);
+  var southMatch = tilesMatch(board.getTile(x,y-1), Tile.Directions.SOUTH);
+  return eastMatch && westMatch && northMatch && southMatch;
 };
 
 schema.methods.tilesMatch = function(otherTile, directionToOtherTile) {

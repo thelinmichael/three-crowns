@@ -19,19 +19,19 @@ var Tiles = {
   getTiles : function() {
     var returnedTiles = [];
 
-    for (var i = 0; i < CROSSROADS; i++) {
+    for (i = 0; i < CROSSROADS; i++) {
       returnedTiles.push(_TileTypes.crossroads());
     }
 
-    for (var i = 0; i < NORTHWEST_ROAD; i++) {
+    for (i = 0; i < NORTHWEST_ROAD; i++) {
       returnedTiles.push(_TileTypes.westNorthRoad());
     }
 
-    for (var i = 0; i < DRAGON_CASTLE; i++) {
+    for (i = 0; i < DRAGON_CASTLE; i++) {
       returnedTiles.push(_TileTypes.dragonCastle());
     }
 
-    for (var i = 0; i < HALF_CIRCLE_CASTLE; i++) {
+    for (i = 0; i < HALF_CIRCLE_CASTLE; i++) {
       returnedTiles.push(_TileTypes.halfCircleCastle());
     }
 

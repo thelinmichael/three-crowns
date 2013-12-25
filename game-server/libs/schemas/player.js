@@ -6,6 +6,6 @@ var schema = mongoose.Schema({
 
 schema.methods.getName = function() {
   return this.name;
-}
+};
 
 module.exports = schema;

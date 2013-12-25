@@ -2,7 +2,7 @@ var Game = require("./models/game.js");
 
 var _defaultOptions = {
   gamepacks : ['basegame']
-}
+};
 
 var create = function(options) {
   this.options = _defaultOptions;
@@ -35,7 +35,7 @@ var extend = function(destination, source) {
     destination[property] = source[property];
   }
   return destination;
-}
+};
 
 exports = module.exports;
 exports.create = create;

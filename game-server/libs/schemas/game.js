@@ -68,7 +68,8 @@ schema.methods.nextTurn = function() {
      the game ends. */
 
   /* Change active player to the next player */
-  (this.currentRound.player++) % this.players.length;
+  this.currentRound.player++;
+  this.currentRound.player = this.currentRound.player % (this.players.length);
   /* Change active tile to the next tile */
   this.currentRound.tile++;
 };
@@ -137,7 +138,7 @@ schema.methods.addPlayer = function(newPlayer) {
 
   if (this.players.length > 0) {
     var foundPlayer = this.players.every(function(player) {
-      return (player.player === newPlayer)
+      return (player.player === newPlayer);
     });
     if (foundPlayer) {
       throw new Error("Player already exists in the game.");
