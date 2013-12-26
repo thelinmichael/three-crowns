@@ -1,4 +1,4 @@
-var BaseSchema = require("../../../../schemas/tile-border-construction.js");
+var BaseSchema = require("../../../../schemas/base-schemas/tile-border-construction.js");
 var mongoose = require("mongoose");
 
 /**
@@ -30,7 +30,9 @@ BaseSchema.methods.matches = function(constructionType) {
 };
 
 BaseSchema.methods.getName = function() {
-  return "Road";
+  return this.name;
 };
 
-module.exports = mongoose.model('Road', BaseSchema);
+var Road = mongoose.model('Road', BaseSchema);
+
+module.exports = new Road({ "name" : "Road" });

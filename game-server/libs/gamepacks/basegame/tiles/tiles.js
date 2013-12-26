@@ -50,35 +50,35 @@ var TileTypes = {
     var constructions = [
       {
         positions : [ 0,11 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 1 ],
-        constructionType      : new Road()
+        constructionType      : Road
       },
       {
         positions : [ 2,3 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 4 ],
-        constructionType      : new Road()
+        constructionType      : Road
       },
       {
         positions : [ 5,6 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 7 ],
-        constructionType      : new Road()
+        constructionType      : Road
       },
       {
         positions : [ 8,9 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 10 ],
-        constructionType      : new Road()
+        constructionType      : Road
       }
     ];
 
@@ -94,15 +94,15 @@ var TileTypes = {
     var constructions = [
       {
         positions : [ 0,11 ],
-        constructionType : new Grass()
+        constructionType : Grass
       },
       {
         positions : [ 1,10 ],
-        constructionType : new Road()
+        constructionType : Road
       },
       {
         positions : [ 2,3,4,5,6,7,8,9 ],
-        constructionType : new Grass()
+        constructionType : Grass
       }
     ];
     var tile = new Tile();
@@ -111,13 +111,13 @@ var TileTypes = {
   },
 
   /**
-   * A Cloister that is surround by new Grass().
+   * A Cloister that is surround by Grass.
    */
   cloisterSurroundByGrass : function() {
     var constructions = [
       {
         positions : [ 0,1,2,3,4,5,6,7,8,9,10,11 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       }
     ];
     var internals = [
@@ -138,15 +138,15 @@ var TileTypes = {
     var constructions = [
       {
         positions : [ 0,1,2 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 3,4,5,6,7,8 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 9,10,11 ],
-        constructionType      : new Castle()
+        constructionType      : Castle
       },
     ];
     var tile = new Tile();
@@ -161,11 +161,11 @@ var TileTypes = {
     var constructions = [
       {
         positions : [ 0,1,2,3,4,5,6,7,8 ],
-        constructionType      : new Grass()
+        constructionType      : Grass
       },
       {
         positions : [ 9,10,11 ],
-        constructionType      : new Castle()
+        constructionType      : Castle
       }
     ];
 
