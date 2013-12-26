@@ -14,10 +14,8 @@ var Player = require("../models/player");
  * players {Array} An array of players and what kit they've got
  *   player {Player} A player
  *   meeples {Array} The meeples the player has left
- *   buildings {Array} The buildings the player has left
- * startingKit {Object} Meeples and buildings that each player start out with
+ * startingKit {Object} Meeples each player start out with
  *   meeples   {Array} An array of {Meeples}, e.g. Regular Meeple, Big Meeple, Mayor, Pig
- *   buildings {Array} An array of {Buildings}, e.g. Farm, Tower floors
  * currentRound {Object} Things that change each round, such as active player and tile
  *   player {Number} The index of the active player in the {players} array
  *   tile   {Number} The index of the active tile in the {tiles} array
@@ -29,8 +27,7 @@ var schema = mongoose.Schema({
   players : [],
   tiles : ['Tile'],
   startingKit : {
-    meeples : [],
-    buildings : []
+    meeples : []
   },
   currentRound : {
     player : { type: Number, default: 0 },
@@ -87,7 +84,7 @@ schema.methods.start = function() {
     this.startTime = Date.now();
     this.board = new Board();
     this.shuffleTiles();
-    this.distributeMeeplesAndBuildingsToPlayers();
+    this.distributeStartingKitToPlayers();
   } else {
     throw new Error("Game has already been started");
   }
@@ -101,14 +98,13 @@ schema.methods.shuffleTiles = function() {
 };
 
 /**
- * Distribute meeples and buildings to the players.
+ * Distribute meeples to the players.
  * RISK: This may copy the reference to the starting kit instead of cloning it.
  */
-schema.methods.distributeMeeplesAndBuildingsToPlayers = function() {
+schema.methods.distributeStartingKitToPlayers = function() {
   var self = this;
   this.players.forEach(function(player) {
     player.meeples = self.startingKit.meeples;
-    player.buildings = self.startingKit.buildings;
   });
 };
 
@@ -144,8 +140,7 @@ schema.methods.addPlayer = function(newPlayer) {
   /* Object that holds the player and the kit that the player has */
   var newPlayerContainer = {
     "player" : newPlayer,
-    "meeples"  : [],
-    "buildings" : []
+    "meeples"  : []
   };
   this.players.push(newPlayerContainer);
 };

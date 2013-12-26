@@ -31,11 +31,6 @@ describe("Game", function() {
     should.exist(firstPlayersMeeples);
     (firstPlayersMeeples.length).should.equal(0);
 
-    /* Players should not have any buildings prior to start */
-    var firstPlayersBuildings = players[0].buildings;
-    should.exist(firstPlayersBuildings);
-    (firstPlayersBuildings.length).should.equal(0);
-
     /* Starting the game */
     (unit.isStarted()).should.equal(false);
     unit.start();
@@ -48,11 +43,6 @@ describe("Game", function() {
     firstPlayersMeeples = players[0].meeples;
     should.exist(firstPlayersMeeples);
     (firstPlayersMeeples.length).should.equal(BasePack.getStartingMeeples().length);
-
-    /* Since we are playing with the basepack only, no buildings are given */
-    firstPlayersBuildings = players[0].buildings;
-    should.exist(firstPlayersBuildings);
-    (firstPlayersBuildings.length).should.equal(0);
 
     unit.getActivePlayer().getName().should.equal(player1.getName());
 
