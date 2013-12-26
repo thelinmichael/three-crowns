@@ -1,0 +1,14 @@
+{
+  "name" : "Basepack",
+  "meeples" : {
+    "regular-meeple"    : 7
+  },
+  "tiles" : {
+    "crossroads"        : 2,
+    "dragon-castle"     : 1,
+    "grass-cloister"    : 4,
+    "road-to-cloister"  : 2,
+    "westnorth-road"    : 4,
+    "halfcircle-castle" : 4
+  }
+}

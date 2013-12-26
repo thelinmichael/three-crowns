@@ -61,7 +61,7 @@ describe("Board", function() {
   it("Can get possible positions for specific tile", function() {
     var unit = new Board();
 
-    var crossRoadsTile = BaseGame.Tiles.TileTypes.crossroads();
+    var crossRoadsTile = require("../../libs/gamepacks/basegame/tiles/crossroads");
     var possiblePositions = unit.getPossiblePlacementsForTile(crossRoadsTile);
     (possiblePositions.length).should.equal(1);
     var foundPosition1 = possiblePositions.some(function(position) {
@@ -71,8 +71,8 @@ describe("Board", function() {
 
     unit.placeTile(0, 0, crossRoadsTile, 0);
 
-    var northWestRoadTile = BaseGame.Tiles.TileTypes.westNorthRoad();
-    possiblePositions = unit.getPossiblePlacementsForTile(northWestRoadTile);
+    var westNorthRoadTile = require("../../libs/gamepacks/basegame/tiles/westnorth-road");
+    possiblePositions = unit.getPossiblePlacementsForTile(westNorthRoadTile);
     (possiblePositions.length).should.equal(2);
     var foundPosition2 = possiblePositions.some(function(position) {
       return (position.x == 1 && position.y === 0);

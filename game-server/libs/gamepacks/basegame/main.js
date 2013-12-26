@@ -1,5 +1,4 @@
-var Tiles = require("./tiles/tiles");
-var Meeples = require("./meeples/meeples");
+var config = require("./config.json");
 
 var BaseGame = {
 
@@ -7,26 +6,31 @@ var BaseGame = {
    *  @returns {Array} Returns an array of {Tile} that are included in the basegame.
    */
   getTiles : function() {
-    return Tiles.getTiles();
+    var startingTiles = [];
+    for (var tileId in config.tiles) {
+      if (config.tiles.hasOwnProperty(tileId)) {
+        var tile = require("./tiles/" + tileId);
+        startingTiles.push(tile);
+      }
+    }
+    return startingTiles;
   },
 
   /**
-   * @returns {Array} Returns an array of {Meeple} that are included in the basegame.
+   * @returns {Array} Returns an array of {Meeple} that each player starts with when playing
+   * with the basegame.
    */
   getStartingMeeples : function() {
-    return Meeples.getMeeples();
-  },
-
-  /**
-   *  No buildings are included in the basegame.
-   *  @returns {Array} Returns an array of {Building} that are included in the base game.
-   **/
-  getStartingBuildings : function() {
-    return [];
+    var startingMeeples = [];
+    for (var meepleId in config.meeples) {
+      if (config.meeples.hasOwnProperty(meepleId)) {
+        var meeple = require("./meeples/" + meepleId);
+        startingMeeples.push(meeple);
+      }
+    }
+    return startingMeeples;
   }
 
 };
 
 module.exports = BaseGame;
-module.exports.Tiles = Tiles;
-module.exports.Meeples = Meeples;
