@@ -12,8 +12,11 @@ var Tile = require("./tile");
  * Tiles are also made of internal pieces, such as Cloisters.
  */
 var schema = mongoose.Schema({
-  constructions : {},
-  internals     : {}
+  constructions : [{
+    "positions" : [Number],
+    "constructionType" : {}
+  }],
+  internals : {}
 });
 
 /**
@@ -33,32 +36,26 @@ schema.methods.withRotation = function(rotation) {
 };
 
 /**
- * Tile specific requirements when being placed on the board.
+ * Tile specific requirements when being placed on the board,
+ * used by for example the Abbey which demands that tiles are placed orthogonally
+ * to it
  * @params {Number} x The coordinate where the tile is placed on the board.
  * @params {Number} y The coordinate where the tile is placed on the board.
  * @params {Board} board The board onto which the tile is placed.
  * @returns {Boolean} Returns true if the tile can be placed, otherwise false.
+ * TODO: Should call the tile's own checking function.
  */
 schema.methods.canBePlacedAt = function(x, y, board) {
-  if (!this.adjacentTilesBordersMatch(x, y, board)) {
-    return false;
-  }
-
-  /* There may be other conditions that need to be fulfilled for this
-     tile to be valid to place here.*/
-  if (this.extensions.canBePlacedAt && !this.extensions.canBePlacedAt(x, y, board, this)) {
-    return false;
-  }
-
-  return true;
+  return this.adjacentTilesBordersMatch(x, y, board);
 };
 
 schema.methods.adjacentTilesBordersMatch = function(x, y, board) {
   /* Checking with each tile if they allow themselves to be placed there */
-  var eastMatch = tilesMatch(board.getTile(x+1,y), Tile.Directions.EAST);
-  var westMatch = tilesMatch(board.getTile(x-1,y), Tile.Directions.WEST);
-  var northMatch = tilesMatch(board.getTile(x,y+1), Tile.Directions.NORTH);
-  var southMatch = tilesMatch(board.getTile(x,y-1), Tile.Directions.SOUTH);
+  var eastMatch = this.tilesMatch(board.getTile(x+1,y), Directions.EAST);
+  var westMatch = this.tilesMatch(board.getTile(x-1,y), Directions.WEST);
+  var northMatch = this.tilesMatch(board.getTile(x,y+1), Directions.NORTH);
+  var southMatch = this.tilesMatch(board.getTile(x,y-1), Directions.SOUTH);
+
   return eastMatch && westMatch && northMatch && southMatch;
 };
 
@@ -68,27 +65,22 @@ schema.methods.tilesMatch = function(otherTile, directionToOtherTile) {
     return true;
   }
 
-  var otherTilesBorders = otherTile.getBorders(Tile.Directions.oppositeOf(directionToOtherTile));
+  /* TODO: This is traversing the other tile from the wrong side */
+  var otherTilesBorders = otherTile.tile.getBorders(Directions.oppositeOf(directionToOtherTile));
   var thisTilesBorders = this.getBorders(directionToOtherTile);
+  var allMatches = true;
+  for (var i = 0; i < thisTilesBorders.length; i++) {
+    if (!thisTilesBorders[i].matches(otherTilesBorders[i]) ||
+        !otherTilesBorders[i].matches(thisTilesBorders[i])) {
+      allMatches = false;
+      break;
+    }
 
-  var allMatches = thisTilesBorders.every(function(border, index) {
-    if (!border.matches(otherTilesBorders[index]) &&
-        !otherTilesBorders.matches(border)) {
-      return false;
-    }
-    /* Only one is OK, check if one of them is more important, such as Abbeys
-     which can be placed anywhere */
-    if ((!border.matches(otherTilesBorders[index]) &&
-        otherTilesBorders.matches(border)) ||
-        (border.matches(otherTilesBorders[index] &&
-        !otherTilesBorders.matches(border)))) {
-      if (border.priority > otherTilesBorders[index].priority) {
-        return border.matches(otherTilesBorders[index]);
-      } else {
-        return otherTilesBorders.matches(border);
-      }
-    }
-  });
+    /* TODO:
+      Only one is OK, check if one of them is more important, such as Abbeys
+      which can be placed anywhere */
+  }
+
   return allMatches;
 };
 
@@ -129,7 +121,7 @@ schema.methods.getBorders = function(direction) {
  *  @returns {Number} Returns the internal component's type, e.g. a Cathedral
  */
 schema.methods.getInternal = function() {
-  return this.components.internal;
+  return this.internals;
 };
 
 /**
@@ -137,12 +129,13 @@ schema.methods.getInternal = function() {
  *  @returns {ConstructionType} The construction type of the border at position {position}
  */
 schema.methods.getTypeAtPosition = function(position) {
-  var componentHoldingPosition = this.components.filter(function(component) {
-    if (components.positions.indexOf(position) > -1) {
-      return true;
-    }
+  var componentHoldingPosition = this.constructions.filter(function(construction) {
+    var containedPosition = construction.positions.some(function(pos) {
+      return pos == position;
+    });
+    return containedPosition;
   });
-  return componentHoldingPosition[0].type;
+  return componentHoldingPosition[0].constructionType;
 };
 
 /**
@@ -162,7 +155,7 @@ var Directions = {
   WEST  : 3,
 
   oppositeOf : function(direction) {
-    return direction + 2 % 4;
+    return (direction + 2) % 4;
   }
 };
 

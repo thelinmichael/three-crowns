@@ -6,11 +6,14 @@ var mongoose = require("mongoose");
  * rotation the tile was placed. It also holds helper functionality
  * necessary to place tiles, meeples, etc on the board, as well as retrieve
  * information about what's been placed.
- * tiles {Object} Object where keys are {String} x,y,
- * holding an object {Tile} tile, {Number} rotation.
  */
 var schema = mongoose.Schema({
-  tiles : { "type" : {}, "default" : [] }
+  tiles : [{
+    "x" : { "type" : Number },
+    "y" : { "type" : Number },
+    "tile" : ['Tile'], // This is bogus. There must surely be an easy way to define another Schema without creating an array.
+    "rotation" : { "type": Number }
+  }]
 });
 
 /**
@@ -34,15 +37,17 @@ schema.methods.hasAdjacentTile = function(x, y) {
  * TODO: Should be checks if the tile can indeed be placed.
  */
 schema.methods.placeTile = function(x, y, tile, rotation) {
-  var index = x + "," + y;
-  this.tiles[index] = {
+  var newTileOnBoard = {
+    "x" : x,
+    "y" : y,
     "tile" : tile,
     "rotation" : rotation
   };
+  this.tiles.push(newTileOnBoard);
 };
 
 schema.methods.getNumberOfTiles = function() {
-  return Object.keys(this.tiles).length;
+  return this.tiles.length;
 };
 
 /**
@@ -50,6 +55,7 @@ schema.methods.getNumberOfTiles = function() {
  * @params {Number} y
  * @params {Tile} tile
  * @params {Tile.Rotations} rotation The number of rotations
+ * TODO: Needs to pass rotation.
  */
 schema.methods.canPlaceTile = function(x, y, tile, rotation) {
 
@@ -69,7 +75,7 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
   }
 
   /* Checking for tile specific requirements */
-  if (!tile.withRotation(rotation).canBePlacedAt(x, y, board)) {
+  if (!tile.canBePlacedAt(x, y, this)) {
     return false;
   }
 
@@ -81,38 +87,67 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
  *  where no tile is placed, but adjacent to some other tile
  */
 schema.methods.getPossiblePositions = function() {
-  var possiblePositions = [],
+  var self = this,
+      possiblePositions = [],
       key;
 
-  for (key in this.tiles) {
-    var coordinates = key.split(",");
-    var x = coordinates[0];
-    var y = coordinates[1];
+  this.tiles.forEach(function(tileOnBoard) {
+    var x = tileOnBoard.x;
+    var y = tileOnBoard.y;
 
-    if (!this.hasTile(parseInt(x+1), y)) {
-      possiblePositions.push(parseInt(x+1) + "," + y);
+    if (!self.hasTile(x+1, y)) {
+      possiblePositions.push({ "x" : x+1, "y" : y });
     }
-    if (!this.hasTile(parseInt(x-1), y)) {
-      possiblePositions.push(parseInt(x-1) + "," + y);
+    if (!self.hasTile(x-1, y)) {
+      possiblePositions.push({ "x" : x-1, "y": y });
     }
-    if (!this.hasTile(x, parseInt(y-1))) {
-      possiblePositions.push(x + "," + parseInt(y-1));
+    if (!self.hasTile(x, y-1)) {
+      possiblePositions.push({ "x" : x, "y" : (y-1) });
     }
-    if (!this.hasTile(x, parseInt(y+1))) {
-      possiblePositions.push(x + "," + parseInt(y+1));
+    if (!self.hasTile(x, y+1)) {
+      possiblePositions.push({ "x" : x, "y" : (y+1) });
     }
-  }
+
+  });
 
   return possiblePositions;
 };
 
 /**
  * @params {Tile} tile The tile to be placed on the board
- * @returns {Array} Returns an array of objects consisting of {Number} x and {Number} y coordinates
- * where the {tile} can be placed
+ * @returns {Array} Returns an array of objects that consists of x : {Number}, y : {Number}.
+ * TODO: Add rotation parameter, needs to pass it on.
  */
 schema.methods.getPossiblePlacementsForTile = function(tile) {
-  throw new Error("Not implemented!");
+  var self = this,
+      possiblePositions = [];
+
+  /* There are no tiles on the board. The only available place is origo. */
+  if (this.getNumberOfTiles() === 0) {
+    possiblePositions.push({ "x" : 0, "y" : 0 });
+    return possiblePositions;
+  }
+
+  /* Check all tiles that are placed on the board, and if they match with {tile} */
+  this.tiles.forEach(function(tileOnBoard) {
+    var x = tileOnBoard.x;
+    var y = tileOnBoard.y;
+
+    if (self.canPlaceTile(x+1, y, tile)) {
+      possiblePositions.push({ "x" : x+1, "y" : y });
+    }
+    if (self.canPlaceTile(x-1, y, tile)) {
+      possiblePositions.push({ "x" : x-1, "y": y });
+    }
+    if (self.canPlaceTile(x, y-1, tile)) {
+      possiblePositions.push({ "x" : x, "y" : (y-1) });
+    }
+    if (self.canPlaceTile(x, y+1, tile)) {
+      possiblePositions.push({ "x" : x, "y" : (y+1) });
+    }
+  });
+
+  return possiblePositions;
 };
 
 /**
@@ -121,12 +156,24 @@ schema.methods.getPossiblePlacementsForTile = function(tile) {
  * @returns {Tile|undefined} The tile at position {x},{y}, otherwise undefined
  */
 schema.methods.getTile = function(x, y) {
-  return this.tiles[x + "," + y];
+  var tileWithPosition = this.tiles.filter(function(tileOnBoard) {
+    return (tileOnBoard.x === x && tileOnBoard.y === y);
+  });
+  if (tileWithPosition.length == 1) {
+    return {
+      "tile" : tileWithPosition[0].tile[0],
+      "rotation" : tileWithPosition[0].rotation
+    };
+  } else if (tileWithPosition.length > 1) {
+    throw new Error("Should never get here!");
+  }
 };
 
+/**
+ * TODO
+ */
 schema.methods.hasTile = function(x, y) {
-  var tileAtPosition = this.getTile(x,y);
-  return (tileAtPosition !== undefined);
+  return (this.getTile(x,y) !== undefined);
 };
 
 module.exports = schema;

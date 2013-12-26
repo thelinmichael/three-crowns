@@ -23,4 +23,12 @@ BaseSchema.methods.isBuildingCompleted = function(position, board) {
   throw new Error("Not implemented!");
 };
 
+BaseSchema.methods.matches = function(constructionType) {
+  return (constructionType.getName() === "Grass");
+};
+
+BaseSchema.methods.getName = function() {
+  return "Grass";
+};
+
 module.exports = mongoose.model('Grass', BaseSchema);

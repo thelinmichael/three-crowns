@@ -36,10 +36,52 @@ describe("Board", function() {
 
     var possiblePositions = unit.getPossiblePositions();
     (possiblePositions.length).should.equal(4);
-    possiblePositions.indexOf("1,0").should.not.equal(-1);
-    possiblePositions.indexOf("-1,0").should.not.equal(-1);
-    possiblePositions.indexOf("0,1").should.not.equal(-1);
-    possiblePositions.indexOf("0,-1").should.not.equal(-1);
+    var foundPosition1 = possiblePositions.some(function(position) {
+        return (position.x == 1 && position.y === 0);
+    });
+    (foundPosition1).should.equal(true);
+    var foundPosition2 = possiblePositions.some(function(position) {
+        return (position.x == -1 && position.y === 0);
+    });
+    (foundPosition2).should.equal(true);
+    var foundPosition3 = possiblePositions.some(function(position) {
+        return (position.x === 0 && position.y == 1);
+    });
+    (foundPosition3).should.equal(true);
+    var foundPosition4 = possiblePositions.some(function(position) {
+        return (position.x === 0 && position.y == -1);
+    });
+    (foundPosition4).should.equal(true);
+    var foundPosition5 = possiblePositions.some(function(position) {
+        return (position.x == -1 && position.y == -1);
+    });
+    (foundPosition5).should.equal(false);
+  });
+
+  it("Can get possible positions for specific tile", function() {
+    var unit = new Board();
+
+    var crossRoadsTile = BaseGame.Tiles.TileTypes.crossroads();
+    var possiblePositions = unit.getPossiblePlacementsForTile(crossRoadsTile);
+    (possiblePositions.length).should.equal(1);
+    var foundPosition1 = possiblePositions.some(function(position) {
+      return (position.x === 0 && position.y === 0);
+    });
+    (foundPosition1).should.equal(true);
+
+    unit.placeTile(0, 0, crossRoadsTile, 0);
+
+    var northWestRoadTile = BaseGame.Tiles.TileTypes.westNorthRoad();
+    possiblePositions = unit.getPossiblePlacementsForTile(northWestRoadTile);
+    (possiblePositions.length).should.equal(2);
+    var foundPosition2 = possiblePositions.some(function(position) {
+      return (position.x == 1 && position.y === 0);
+    });
+    (foundPosition2).should.equal(true);
+    var foundPosition3 = possiblePositions.some(function(position) {
+      return (position.x === 0 && position.y == -1);
+    });
+    (foundPosition3).should.equal(true);
   });
 
 });

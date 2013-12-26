@@ -28,3 +28,5 @@ var BaseGame = {
 };
 
 module.exports = BaseGame;
+module.exports.Tiles = Tiles;
+module.exports.Meeples = Meeples;

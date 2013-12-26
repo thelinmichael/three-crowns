@@ -20,19 +20,19 @@ var Tiles = {
     var returnedTiles = [];
 
     for (i = 0; i < CROSSROADS; i++) {
-      returnedTiles.push(_TileTypes.crossroads());
+      returnedTiles.push(TileTypes.crossroads());
     }
 
     for (i = 0; i < NORTHWEST_ROAD; i++) {
-      returnedTiles.push(_TileTypes.westNorthRoad());
+      returnedTiles.push(TileTypes.westNorthRoad());
     }
 
     for (i = 0; i < DRAGON_CASTLE; i++) {
-      returnedTiles.push(_TileTypes.dragonCastle());
+      returnedTiles.push(TileTypes.dragonCastle());
     }
 
     for (i = 0; i < HALF_CIRCLE_CASTLE; i++) {
-      returnedTiles.push(_TileTypes.halfCircleCastle());
+      returnedTiles.push(TileTypes.halfCircleCastle());
     }
 
     return returnedTiles;
@@ -40,7 +40,7 @@ var Tiles = {
 
 };
 
-var _TileTypes = {
+var TileTypes = {
 
   /**
    *  A crossroads tile.
@@ -50,39 +50,41 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,11 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 1 ],
-        type      : Road
+        constructionType      : new Road()
       },
       {
         positions : [ 2,3 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 4 ],
-        type      : Road
+        constructionType      : new Road()
       },
       {
         positions : [ 5,6 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 7 ],
-        type      : Road
+        constructionType      : new Road()
       },
       {
         positions : [ 8,9 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 10 ],
-        type      : Road
+        constructionType      : new Road()
       }
     ];
 
-    return new Tile(constructions);
+    var tile = new Tile();
+    tile.constructions = constructions;
+    return tile;
   },
 
   /**
@@ -92,57 +94,64 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,11 ],
-        type      : Grass
+        constructionType : new Grass()
       },
       {
         positions : [ 1,10 ],
-        type      : Road
+        constructionType : new Road()
       },
       {
         positions : [ 2,3,4,5,6,7,8,9 ],
-        type      : Grass
+        constructionType : new Grass()
       }
     ];
-
-    return new Tile(constructions);
+    var tile = new Tile();
+    tile.constructions = constructions;
+    return tile;
   },
 
   /**
-   * A Cloister that is surround by grass.
+   * A Cloister that is surround by new Grass().
    */
   cloisterSurroundByGrass : function() {
     var constructions = [
       {
         positions : [ 0,1,2,3,4,5,6,7,8,9,10,11 ],
-        type      : Grass
+        constructionType      : new Grass()
       }
     ];
     var internals = [
       Cloister
     ];
-    return new Tile(constructions, internals);
+
+    var tile = new Tile();
+    tile.constructions = constructions;
+    tile.internals = internals;
+    return tile;
   },
 
   /**
    * A castle that stretches to the north east corner,
-   * where it cuts of the grass into two different fields.
+   * where it cuts of the Grass into two different fields.
    */
   dragonCastle : function() {
     var constructions = [
       {
         positions : [ 0,1,2 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 3,4,5,6,7,8 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 9,10,11 ],
-        type      : Castle
+        constructionType      : new Castle()
       },
     ];
-    return new Tile(constructions);
+    var tile = new Tile();
+    tile.constructions = constructions;
+    return tile;
   },
 
   /**
@@ -152,17 +161,20 @@ var _TileTypes = {
     var constructions = [
       {
         positions : [ 0,1,2,3,4,5,6,7,8 ],
-        type      : Grass
+        constructionType      : new Grass()
       },
       {
         positions : [ 9,10,11 ],
-        type      : Castle
+        constructionType      : new Castle()
       }
     ];
 
-    return new Tile(constructions);
+    var tile = new Tile();
+    tile.constructions = constructions;
+    return tile;
   }
 
 };
 
 module.exports = Tiles;
+module.exports.TileTypes = TileTypes;
