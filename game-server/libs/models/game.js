@@ -60,12 +60,15 @@ schema.methods.addPacks = function(gamepacks) {
 schema.methods.nextTurn = function() {
   /* If there are no more tiles at the end of the turn,
      the game ends. */
-
-  /* Change active player to the next player */
-  this.currentRound.player++;
-  this.currentRound.player = this.currentRound.player % (this.players.length);
-  /* Change active tile to the next tile */
-  this.currentRound.tile++;
+  if (this.currentRound.tile == (this.tiles.length - 1)) {
+    this.end();
+  } else {
+    /* Change active player to the next player */
+    this.currentRound.player++;
+    this.currentRound.player = this.currentRound.player % (this.players.length);
+    /* Change active tile to the next tile */
+    this.currentRound.tile++;
+  }
 };
 
 /**

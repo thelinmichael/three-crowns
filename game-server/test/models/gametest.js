@@ -38,31 +38,30 @@ describe("Game", function() {
     unit.start();
     unit.isStarted().should.equal(true);
 
-    should.exist(unit.tiles);
-    unit.tiles.length.should.equal(BasePack.getTiles().length + River.getTiles().length);
-
-    /* A player should have received six meeples */
+    /* A player should have received meeples */
     firstPlayersMeeples = players[0].meeples;
     should.exist(firstPlayersMeeples);
     firstPlayersMeeples.length.should.equal(BasePack.getMeeples().length);
 
     unit.getActivePlayer().getName().should.equal(player1.getName());
 
-    /* Place tile in origo without rotation */
-    unit.currentRound.tile.should.equal(0);
-    unit.board.hasTile(0, 0).should.equal(false);
-    unit.placeTile(0, 0, Rotations.NONE);
-    unit.board.hasTile(0, 0).should.equal(true);
+    /* Place tiles on the first available placement until they run out */
+    var previousRoundPlayer;
+    for (var i = 0; i < unit.tiles.length; i++) {
+      var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
+      unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, Rotations.NONE);
 
-    /* Go to next turn */
-    unit.nextTurn();
+      unit.isEnded().should.equal(false);
+      if (previousRoundPlayer) {
+        unit.currentRound.player.should.equal((currentPlayerIndex+1) % 2);
+      }
 
-    unit.currentRound.tile.should.equal(1);
-    unit.currentRound.player.should.equal(1);
+      unit.nextTurn();
+      currentPlayerIndex = unit.currentRound.player;
+    }
 
-    var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
-    should.exist(possiblePlacements);
-    possiblePlacements.length.should.not.equal(0);
+    unit.board.getNumberOfTiles().should.equal(unit.tiles.length);
+    unit.isEnded().should.equal(true);
   });
 
 });
