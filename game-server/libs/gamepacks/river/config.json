@@ -1,0 +1,17 @@
+{
+  "name" : "River",
+  "tiles" : {
+    "mountain" : {
+      "amount"   : 1,
+      "priority" : 4
+    },
+    "lake" : {
+      "amount"   : 1,
+      "priority" : 2
+    },
+    "westnorth-river" : {
+      "amount"   : 1,
+      "priority" : 3
+    }
+  }
+}

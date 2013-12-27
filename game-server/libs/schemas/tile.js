@@ -10,13 +10,17 @@ var Tile = require("./tile");
  * side of it). These constructions may also have special features. For example, constructions that are
  * made of Castles may have a Penant, and a Roads may have an Inn.
  * Tiles are also made of internal pieces, such as Cloisters.
+ * @params {Number} priority The priority for this tile. Default is 1, which goes for all regular tiles.
+ * Staring tiles (e.g. River) should have a priority of 2 or higher. For example, the River Lake has a priority
+ * of 2, the regular rivers have a priority of 3, and the Mountain 4.
  */
 var schema = mongoose.Schema({
   constructions : [{
     "positions" : [Number],
     "constructionType" : {}
   }],
-  internals : {}
+  internals : {},
+  priority : { "type" : Number, "default" : 1 }
 });
 
 /**

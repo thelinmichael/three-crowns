@@ -4,12 +4,26 @@
     "regular-meeple"    : 7
   },
   "tiles" : {
-    "crossroads"        : 2,
-    "dragon-castle"     : 1,
-    "grass-cloister"    : 4,
-    "road-to-cloister"  : 2,
-    "westnorth-road"    : 4,
-    "westeast-road"     : 4,
-    "halfcircle-castle" : 4
+    "crossroads" : {
+      "amount" : 2
+    },
+    "dragon-castle" : {
+      "amount" : 1
+    },
+    "grass-cloister" : {
+      "amount" : 4
+    },
+    "road-to-cloister" : {
+      "amount" : 2
+    },
+    "westnorth-road" : {
+      "amount" : 4
+    },
+    "westeast-road" : {
+      "amount" : 4
+    },
+    "halfcircle-castle" : {
+      "amount" : 4
+    }
   }
 }
