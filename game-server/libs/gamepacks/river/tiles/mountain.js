@@ -1,6 +1,10 @@
 var Tile = require("../../../models/tile");
-var River = require("../tile-components/road");
+var River = require("../../basegame/tile-components/road");
 var Grass = require("../../basegame/tile-components/grass");
+
+/* This is a starting tile (priority > 2), but has the highest priority in the river expansion,
+ * and will thus be shuffled before any other tile. */
+var priority = 4;
 
 /**
  *  The Mountain tile, where the River expansion river starts.
@@ -16,6 +20,6 @@ var constructions = [
   }
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "priority" : priority, "name" : "Mountain" });
 tile.constructions = constructions;
 module.exports = tile;

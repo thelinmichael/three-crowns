@@ -20,6 +20,6 @@ var constructions = [
   }
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "name" : "Westnorth road" });
 tile.constructions = constructions;
 module.exports = tile;

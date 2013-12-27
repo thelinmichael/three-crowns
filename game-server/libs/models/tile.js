@@ -15,6 +15,7 @@ var Tile = require("./tile");
  * of 2, the regular rivers have a priority of 3, and the Mountain 4.
  */
 var schema = mongoose.Schema({
+  name : { type : String },
   constructions : [{
     "positions" : [Number],
     "constructionType" : {}

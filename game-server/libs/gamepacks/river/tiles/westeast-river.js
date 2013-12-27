@@ -1,6 +1,8 @@
 var Tile = require("../../../models/tile");
-var River = require("../tile-components/road");
+var River = require("../../basegame/tile-components/road");
 var Grass = require("../../basegame/tile-components/grass");
+
+var priority = 3;
 
 /**
  *  A river that flows from west to east, or the other way around. It dun' matter.
@@ -16,6 +18,6 @@ var constructions = [
   }
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "priority" : priority, "name" : "Westeast river" });
 tile.constructions = constructions;
 module.exports = tile;

@@ -8,17 +8,16 @@ var Player = require("../../libs/models/player");
 var Tile = require("../../libs/models/tile");
 var Rotations = require("../../libs/models/tile").Rotations;
 var BasePack = require("../../libs/gamepacks/basegame/main");
+var River = require("../../libs/gamepacks/river/main")
 
 describe("Game", function() {
 
   /**
-   *  This is a test that creates a game with a test gamepack
-   *  for two players. The testpack consists of the same types of tiles
-   *  as the basegame, but with much fewer tiles. All tiles are placed,
-   *  and the final score is counted.
+   *  This is a test that creates a game with a the basepack and the river
+   *  and plays the tiles to the end with two players.
    */
   it("Should be played the game from end to end", function() {
-    var unit = GameBuilder.create({ gamepacks : ['basegame'] });
+    var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
 
     var players = unit.getPlayers();
     players.length.should.equal(0);
@@ -40,7 +39,7 @@ describe("Game", function() {
     unit.isStarted().should.equal(true);
 
     should.exist(unit.tiles);
-    unit.tiles.length.should.equal(BasePack.getTiles().length);
+    unit.tiles.length.should.equal(BasePack.getTiles().length + River.getTiles().length);
 
     /* A player should have received six meeples */
     firstPlayersMeeples = players[0].meeples;

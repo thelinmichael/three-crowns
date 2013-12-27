@@ -16,7 +16,7 @@ var internals = [
   Cloister
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "name" : "Grass cloister" });
 tile.constructions = constructions;
 tile.internals = internals;
 module.exports = tile;

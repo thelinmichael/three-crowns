@@ -88,8 +88,7 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
  */
 schema.methods.getPossiblePositions = function() {
   var self = this,
-      possiblePositions = [],
-      key;
+      possiblePositions = [];
 
   this.tiles.forEach(function(tileOnBoard) {
     var x = tileOnBoard.x;

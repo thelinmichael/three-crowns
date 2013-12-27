@@ -15,7 +15,23 @@ var schema = mongoose.Schema({
  * and random if priority is equal between several tiles.
  */
 schema.statics.shuffle = function(tiles) {
+  var shuffledTiles = _randomise(tiles);
+  shuffledTiles.sort(function(tile1, tile2) {
+    if (tile1.priority > tile2.priority) {
+      return -1;
+    } else if (tile1.priority < tile2.priority) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
   return tiles;
+};
+
+/* Randomises the elements in an array, courtesy of Google */
+var _randomise = function(o) {
+  for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+  return o;
 };
 
 module.exports = mongoose.model('DrawpileShufflingStrategy', schema);

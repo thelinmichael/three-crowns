@@ -41,6 +41,6 @@ var constructions = [
   }
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "name" : "Crossroads" });
 tile.constructions = constructions;
 module.exports = tile;

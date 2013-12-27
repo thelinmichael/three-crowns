@@ -21,7 +21,7 @@ var internals = [
   Cloister
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "name" : "Road to cloister" });
 tile.constructions = constructions;
 tile.internals = internals;
 module.exports = tile;

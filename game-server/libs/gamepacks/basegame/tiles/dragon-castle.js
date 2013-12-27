@@ -22,6 +22,6 @@ var constructions = [
   },
 ];
 
-var tile = new Tile();
+var tile = new Tile({ "name" : "Dragoncastle" });
 tile.constructions = constructions;
 module.exports = tile;
