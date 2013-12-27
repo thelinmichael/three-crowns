@@ -54,11 +54,11 @@ describe("Game", function() {
 
       unit.isEnded().should.equal(false);
       if (previousRoundPlayer) {
-        unit.currentRound.player.should.equal((currentPlayerIndex+1) % 2);
+        unit.currentRound.player.should.equal((previousRoundPlayer+1) % 2);
       }
 
       unit.nextTurn();
-      currentPlayerIndex = unit.currentRound.player;
+      previousRoundPlayer = unit.currentRound.player;
     }
 
     unit.board.getNumberOfTiles().should.equal(unit.tiles.length);

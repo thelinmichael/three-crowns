@@ -64,8 +64,7 @@ schema.methods.nextTurn = function() {
     this.end();
   } else {
     /* Change active player to the next player */
-    this.currentRound.player++;
-    this.currentRound.player = this.currentRound.player % (this.players.length);
+    this.currentRound.player = this.currentRound.player++ % (this.players.length);
     /* Change active tile to the next tile */
     this.currentRound.tile++;
   }
