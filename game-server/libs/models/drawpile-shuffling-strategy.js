@@ -5,27 +5,25 @@ var mongoose = require("mongoose");
  * The purpose of having this as a separate module is to be able to insert a
  * different strategy that makes testing easier (e.g. doesn't shuffle).
  */
-var schema = mongoose.Schema({
-  name : { "type" : String, "default" : "DefaultDeckShufflingStrategy" }
-});
-
-/**
- * @params {Array} tiles Tiles that will be shuffled.
- * @returns {Array} Returns an array of tiles placed in order of priority,
- * and random if priority is equal between several tiles.
- */
-schema.statics.shuffle = function(tiles) {
-  var shuffledTiles = _randomise(tiles);
-  shuffledTiles.sort(function(tile1, tile2) {
-    if (tile1.priority > tile2.priority) {
-      return -1;
-    } else if (tile1.priority < tile2.priority) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-  return tiles;
+var DrawpileShufflingStrategy = {
+  /**
+   * @params {Array} tiles Tiles that will be shuffled.
+   * @returns {Array} Returns an array of tiles placed in order of priority,
+   * and random if priority is equal between several tiles.
+   */
+  shuffle : function(tiles) {
+    var shuffledTiles = _randomise(tiles);
+    shuffledTiles.sort(function(tile1, tile2) {
+      if (tile1.priority > tile2.priority) {
+        return -1;
+      } else if (tile1.priority < tile2.priority) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    return tiles;
+  }
 };
 
 /* Randomises the elements in an array, courtesy of Google */
@@ -34,5 +32,4 @@ var _randomise = function(o) {
   return o;
 };
 
-module.exports = mongoose.model('DrawpileShufflingStrategy', schema);
-module.exports.schema = schema;
+module.exports = DrawpileShufflingStrategy;

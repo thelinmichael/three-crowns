@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
-var Board = require("../models/board");
-var Player = require("../models/player");
+var Board = require("./board");
+var Player = require("./player");
+var DrawpileShufflingStrategy = require("./drawpile-shuffling-strategy");
 
 /**
  * This model describes a Game. A game has general information such as start and end time, as well as
@@ -94,7 +95,7 @@ schema.methods.start = function() {
  * Shuffle the tiles in the tile queue.
  */
 schema.methods.shuffleTiles = function() {
-  this.tiles = _shuffle(this.tiles);
+  this.tiles = DrawpileShufflingStrategy.shuffle(this.tiles);
 };
 
 /**
@@ -214,12 +215,6 @@ schema.methods.getEndTime = function() {
   if (this.isEnded()) {
     return this.endTime;
   }
-};
-
-/* Shuffles an array, courtesy of Google */
-var _shuffle = function(o) {
-  for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-  return o;
 };
 
 module.exports = mongoose.model('Game', schema);
