@@ -1,7 +1,7 @@
-var Tile = require("../../../models/tile");
+var mongoose = require("mongoose");
+var BaseSchema = require("../../../models/tile").schema;
 var Grass = require("../tile-components/grass");
 var Castle = require("../tile-components/castle");
-
 
 /**
  * Castle that takes up a half circle.
@@ -17,6 +17,5 @@ var constructions = [
   }
 ];
 
-var tile = new Tile({ "name" : "Halfcircle castle" });
-tile.constructions = constructions;
-module.exports = tile;
+var HalfCircleCastleTile = mongoose.model('HalfCircleCastleTile', BaseSchema);
+module.exports = new HalfCircleCastleTile({ "name" : "HalfCircleCastle", "constructions" : constructions });

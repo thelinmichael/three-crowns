@@ -1,4 +1,5 @@
-var Tile = require("../../../models/tile");
+var mongoose = require("mongoose");
+var BaseSchema = require("../../../models/tile").schema;
 var River = require("../../basegame/tile-components/road");
 var Grass = require("../../basegame/tile-components/grass");
 
@@ -20,6 +21,13 @@ var constructions = [
   }
 ];
 
-var tile = new Tile({ "priority" : priority, "name" : "Mountain" });
-tile.constructions = constructions;
-module.exports = tile;
+BaseSchema.methods.canBePlacedAt = function(x, y, board) {
+  return this.adjacentTilesBordersMatch(x, y, board) && this.isConnectedToOtherRiver(x, y, board);
+};
+
+BaseSchema.methods.isConnectedToOtherRiver = function(x, y, board) {
+  return true;
+};
+
+var MountainTile = mongoose.model('MountainTile', BaseSchema);
+module.exports = new MountainTile({ "priority" : priority, "name" : "Mountain", "constructions" : constructions });

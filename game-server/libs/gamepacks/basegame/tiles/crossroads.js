@@ -1,4 +1,5 @@
-var Tile = require("../../../models/tile");
+var mongoose = require("mongoose");
+var BaseSchema = require("../../../models/tile").schema;
 var Grass = require("../tile-components/grass");
 var Road = require("../tile-components/road");
 
@@ -41,6 +42,5 @@ var constructions = [
   }
 ];
 
-var tile = new Tile({ "name" : "Crossroads" });
-tile.constructions = constructions;
-module.exports = tile;
+var CrossroadsTile = mongoose.model('CrossroadsTile', BaseSchema);
+module.exports = new CrossroadsTile({ "name" : "Crossroads", "constructions" : constructions });

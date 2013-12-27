@@ -1,4 +1,5 @@
-var Tile = require("../../../models/tile");
+var mongoose = require("mongoose");
+var BaseSchema = require("../../../models/tile").schema;
 var Grass = require("../tile-components/grass");
 var Castle = require("../tile-components/castle");
 
@@ -22,6 +23,5 @@ var constructions = [
   },
 ];
 
-var tile = new Tile({ "name" : "Dragoncastle" });
-tile.constructions = constructions;
-module.exports = tile;
+var DragonCastleTile = mongoose.model('DragonCastleTile', BaseSchema);
+module.exports = new DragonCastleTile({ "name" : "DragonCastle", "constructions" : constructions });

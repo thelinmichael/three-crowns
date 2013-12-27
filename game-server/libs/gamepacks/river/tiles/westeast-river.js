@@ -1,7 +1,10 @@
-var Tile = require("../../../models/tile");
+var mongoose = require("mongoose");
+var BaseSchema = require("../../../models/tile").schema;
 var River = require("../../basegame/tile-components/road");
 var Grass = require("../../basegame/tile-components/grass");
 
+/* This is a starting tile (priority > 2), but has the highest priority in the river expansion,
+ * and will thus be shuffled before any other tile. */
 var priority = 3;
 
 /**
@@ -18,6 +21,13 @@ var constructions = [
   }
 ];
 
-var tile = new Tile({ "priority" : priority, "name" : "Westeast river" });
-tile.constructions = constructions;
-module.exports = tile;
+BaseSchema.methods.canBePlacedAt = function(x, y, board) {
+  return this.adjacentTilesBordersMatch(x, y, board) && this.isConnectedToOtherRiver(x, y, board);
+};
+
+BaseSchema.methods.isConnectedToOtherRiver = function(x, y, board) {
+  return true;
+};
+
+var WestEastRiverTile = mongoose.model('WestEastRiver', BaseSchema);
+module.exports = new WestEastRiverTile({ "priority" : priority, "name" : "WestEast River", "constructions" : constructions });

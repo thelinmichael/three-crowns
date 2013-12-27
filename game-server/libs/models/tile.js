@@ -41,14 +41,15 @@ schema.methods.withRotation = function(rotation) {
 };
 
 /**
- * Tile specific requirements when being placed on the board,
- * used by for example the Abbey which demands that tiles are placed orthogonally
- * to it
+ * This function is used to check if this tile can be placed on a specific
+ * position. Some tiles, such as the River tile expansions, and the Abbey,
+ * have special requirements. For example, the River tiles needs to have
+ * matching borders, but they also have to be connected to another river.
+ * This function should be overriden by such tiles.
  * @params {Number} x The coordinate where the tile is placed on the board.
  * @params {Number} y The coordinate where the tile is placed on the board.
  * @params {Board} board The board onto which the tile is placed.
  * @returns {Boolean} Returns true if the tile can be placed, otherwise false.
- * TODO: Should call the tile's own checking function.
  */
 schema.methods.canBePlacedAt = function(x, y, board) {
   return this.adjacentTilesBordersMatch(x, y, board);
@@ -164,7 +165,6 @@ var Directions = {
   }
 };
 
-module.exports = mongoose.model('Tile', schema);
 module.exports.schema = schema;
 module.exports.Rotations = Rotations;
 module.exports.Directions = Directions;
