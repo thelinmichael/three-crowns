@@ -24,10 +24,6 @@
     },
     "halfcircle-castle" : {
       "amount" : 4
-    },
-    "starttile" : {
-      "amount"   : 1,
-      "priority" : 2
     }
   }
 }
