@@ -81,10 +81,6 @@ schema.methods.tilesMatch = function(otherTile, directionToOtherTile) {
       allMatches = false;
       break;
     }
-
-    /* TODO:
-      Only one is OK, check if one of them is more important, such as Abbeys
-      which can be placed anywhere */
   }
 
   return allMatches;
@@ -160,8 +156,27 @@ var Directions = {
   SOUTH : 2,
   WEST  : 3,
 
+  /* Directions opposite to {direction} */
   oppositeOf : function(direction) {
     return (direction + 2) % 4;
+  },
+
+  /* Direction that is in the same direction as {position} */
+  forPositions : function(positions) {
+    var directions = [];
+    if (positions.indexOf(0) != -1|| positions.indexOf(1) != -1 || positions.indexOf(2) != -1) {
+      directions.push(0);
+    }
+    if (positions.indexOf(3) != -1|| positions.indexOf(4) != -1 || positions.indexOf(5) != -1) {
+      directions.push(1);
+    }
+    if (positions.indexOf(6) != -1|| positions.indexOf(7) != -1 || positions.indexOf(8) != -1) {
+      directions.push(2);
+    }
+    if (positions.indexOf(9) != -1|| positions.indexOf(10) != -1 || positions.indexOf(11) != -1) {
+      directions.push(3);
+    }
+    return directions;
   }
 };
 

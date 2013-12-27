@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-
+var Directions = require("./tile").Directions;
 /**
  * This model describes the board.
  * The board knows about the tiles placed on it, and in which
@@ -22,10 +22,32 @@ var schema = mongoose.Schema({
  * @returns {Boolean} Returns true if there are tiles adjacent to the position {x},{y}.
  */
 schema.methods.hasAdjacentTile = function(x, y) {
-  return (this.hasTile(x - 1, y) ||
-          this.hasTile(x + 1, y) ||
-          this.hasTile(x, y - 1) ||
-          this.hasTile(x, y + 1));
+  return (this.hasTile(x-1, y) ||
+          this.hasTile(x+1, y) ||
+          this.hasTile(x, y-1) ||
+          this.hasTile(x, y+1));
+};
+
+/**
+ * @params {Number} x The coordinate on the x axis
+ * @params {Number} y The coordinate on the y axis
+ * @returns {Object} Returns an object containing the tiles adjacent to {x},{y}.
+ */
+schema.methods.getAdjacentTiles = function(x, y) {
+  var adjacentTiles = {};
+  if (this.hasTile(x-1, y)) {
+    adjacentTiles.west = this.getTile(x-1, y);
+  }
+  if (this.hasTile(x+1, y)) {
+    adjacentTiles.east = this.getTile(x+1, y);
+  }
+  if (this.hasTile(x, y+1)) {
+    adjacentTiles.north = this.getTile(x, y+1);
+  }
+  if (this.hasTile(x, y-1)) {
+    adjacentTiles.south = this.getTile(x, y-1);
+  }
+  return adjacentTiles;
 };
 
 /**
@@ -168,6 +190,25 @@ schema.methods.getTile = function(x, y) {
   }
 };
 
+schema.methods.getTileInDirection = function(x, y, direction) {
+  switch (direction) {
+    case Directions.NORTH:
+      return this.getTile(x, y+1);
+      break;
+    case Directions.EAST:
+      return this.getTile(x+1, y);
+      break;
+    case Directions.SOUTH:
+      return this.getTile(x, y-1);
+      break;
+    case Directions.WEST:
+      return this.getTile(x-1, y);
+      break;
+    default:
+      throw new Error("I should never get here!");
+  }
+};
+
 /**
  * @params {Number} x
  * @params {Number} y
@@ -175,6 +216,11 @@ schema.methods.getTile = function(x, y) {
  */
 schema.methods.hasTile = function(x, y) {
   return (this.getTile(x,y) !== undefined);
+};
+
+
+schema.methods.hasTileInDirection = function(x, y, direction) {
+  return (this.getTileInDirection(x, y, direction) !== undefined);
 };
 
 

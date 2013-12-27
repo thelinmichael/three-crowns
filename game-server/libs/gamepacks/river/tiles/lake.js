@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
-var BaseSchema = require("../../../models/tile").schema;
+var RiverSchema = require("./rivertile").schema;
+var Directions = require("../../../models/tile").Directions;
 var River = require("../tile-components/river");
 var Grass = require("../../basegame/tile-components/grass");
 
@@ -21,13 +22,5 @@ var constructions = [
   }
 ];
 
-BaseSchema.methods.canBePlacedAt = function(x, y, board) {
-  return this.adjacentTilesBordersMatch(x, y, board) && this.isConnectedToOtherRiver(x, y, board);
-};
-
-BaseSchema.methods.isConnectedToOtherRiver = function(x, y, board) {
-  return true;
-}
-
-var LakeTile = mongoose.model('LakeTile', BaseSchema);
+var LakeTile = mongoose.model('LakeTile', RiverSchema);
 module.exports = new LakeTile({ "priority" : priority, "name" : "Lake", "constructions" : constructions });
