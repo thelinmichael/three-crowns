@@ -12,7 +12,7 @@ GameServer.prototype.start = function(stopCallback, port, options) {
 
   mongoose.connect('mongodb://localhost/game');
 
-  io = require('socket.io').listen(port, options);
+  io =  require('socket.io').listen(port, options);
   this.running = true;
 
   io.sockets.on('connection', function (socket) {
@@ -52,14 +52,16 @@ GameServer.prototype.start = function(stopCallback, port, options) {
 };
 
 GameServer.prototype.stop = function() {
-  var that = this;
-  io.server.close(function() {
-    that.running = false;
+  var self = this;
+  if (io) {
     mongoose.disconnect();
-    if (this.stopCallback) {
-      this.stopCallback();
-    }
-  });
+    io.server.close(function() {
+      self.running = false;
+      if (this.stopCallback) {
+        this.stopCallback();
+      }
+    });
+  }
 };
 
 GameServer.prototype.isRunning = function() {
