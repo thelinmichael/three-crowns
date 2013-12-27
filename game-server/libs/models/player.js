@@ -1,4 +1,12 @@
 var mongoose = require("mongoose");
-var PlayerSchema = require("../schemas/player");
 
-module.exports = mongoose.model('Player', PlayerSchema);
+var schema = mongoose.Schema({
+  name : { type : String }
+});
+
+schema.methods.getName = function() {
+  return this.name;
+};
+
+module.exports = mongoose.model('Player', schema);
+module.exports.schema = schema;

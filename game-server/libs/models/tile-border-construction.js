@@ -19,4 +19,4 @@ schema.methods.meeplesCanBePlaced = function() {
   return this.meeplePlaceable;
 };
 
-module.exports = schema;
+module.exports.schema = schema;

@@ -9,7 +9,7 @@ var CrossroadsTile = require("../../libs/gamepacks/basegame/tiles/crossroads.js"
 var WestNorthRoadTile = require("../../libs/gamepacks/basegame/tiles/westnorth-road.js");
 var WestEastRoadTile = require("../../libs/gamepacks/basegame/tiles/westeast-road.js");
 
-var Rotations = require("../../libs/schemas/tile").Rotations;
+var Rotations = require("../../libs/models/tile").Rotations;
 
 describe("Deck shuffling", function() {
 

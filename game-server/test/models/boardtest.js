@@ -6,7 +6,7 @@ var should = require('should');
 var Board = require('../../libs/models/board');
 
 var BaseGame = require("../../libs/gamepacks/basegame/main");
-var Rotations = require("../../libs/schemas/tile").Rotations;
+var Rotations = require("../../libs/models/tile").Rotations;
 
 describe("Board", function() {
 

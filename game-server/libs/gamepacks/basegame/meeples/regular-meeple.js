@@ -1,4 +1,4 @@
-var BaseSchema = require("../../../schemas/base-schemas/meeple.js");
+var BaseSchema = require("../../../models/meeple.js").schema;
 var mongoose = require("mongoose");
 
 /**
