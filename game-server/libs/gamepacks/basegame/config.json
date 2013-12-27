@@ -1,7 +1,7 @@
 {
   "name" : "Basepack",
   "meeples" : {
-    "regular-meeple"    : 7
+    "regular-meeple" : 7
   },
   "tiles" : {
     "crossroads" : {
@@ -24,6 +24,10 @@
     },
     "halfcircle-castle" : {
       "amount" : 4
+    },
+    "starttile" : {
+      "amount"   : 1,
+      "priority" : 2
     }
   }
 }
