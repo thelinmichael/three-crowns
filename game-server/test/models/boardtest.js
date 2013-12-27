@@ -6,17 +6,18 @@ var should = require('should');
 var Board = require('../../libs/models/board');
 
 var BaseGame = require("../../libs/gamepacks/basegame/main");
+var Rotations = require("../../libs/schemas/tile").Rotations;
 
 describe("Board", function() {
 
-  it("Can get the number of tiles placed on the board", function() {
+  it("Should get the number of tiles placed on the board", function() {
     var unit = new Board();
     var unplacedTiles = BaseGame.getTiles();
 
-    (unit.getNumberOfTiles()).should.equal(0);
-    unit.placeTile(0, 0, unplacedTiles[0], 0);
+    unit.getNumberOfTiles().should.equal(0);
+    unit.placeTile(0, 0, unplacedTiles[0], Rotations.NONE);
 
-    (unit.getNumberOfTiles()).should.equal(1);
+    unit.getNumberOfTiles().should.equal(1);
   });
 
   it("Can get positions on the board that are free and adjacent to another tiles", function() {
@@ -24,14 +25,14 @@ describe("Board", function() {
     var unplacedTiles = BaseGame.getTiles();
     should.exist(unplacedTiles);
 
-    var canPlaceFirstTileAtOrigo = unit.canPlaceTile(0, 0, unplacedTiles[0], 0);
+    var canPlaceFirstTileAtOrigo = unit.canPlaceTile(0, 0, unplacedTiles[0], Rotations.NONE);
     (canPlaceFirstTileAtOrigo).should.equal(true);
     (unit.hasTile(0, 0)).should.equal(false);
-    unit.placeTile(0, 0, unplacedTiles[0], 0);
+    unit.placeTile(0, 0, unplacedTiles[0], Rotations.NONE);
     (unit.hasTile(0, 0)).should.equal(true);
     (unit.getNumberOfTiles()).should.equal(1);
 
-    canPlaceFirstTileAtOrigo = unit.canPlaceTile(0, 0, unplacedTiles[0], 0);
+    canPlaceFirstTileAtOrigo = unit.canPlaceTile(0, 0, unplacedTiles[0], Rotations.NONE);
     (canPlaceFirstTileAtOrigo).should.equal(false);
 
     var possiblePositions = unit.getPossiblePositions();

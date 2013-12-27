@@ -48,7 +48,7 @@ schema.methods.addPacks = function(gamepacks) {
     self.tiles = self.tiles.concat(tiles);
 
     /* Add meeples (e.g. regular, and big meeple) from the gamepack to the kit that each player gets */
-    var startingMeeples = gamepack.getStartingMeeples();
+    var startingMeeples = gamepack.getMeeples();
     self.startingKit.meeples = self.startingKit.meeples.concat(startingMeeples);
   });
 };

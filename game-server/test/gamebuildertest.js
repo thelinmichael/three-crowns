@@ -5,10 +5,10 @@ var should = require('should');
 
 var GameBuilder = require('../libs/gamebuilder');
 
-describe("GameHandler", function() {
+describe("GameBuilder", function() {
 
-  it("Can create a game with the basepack", function() {
-    var game = GameBuilder.create();
+  it("Can create a game with the components from the basegame", function() {
+    var game = GameBuilder.create({ gamepacks : ['basegame'] });
     should.exist(game);
   });
 

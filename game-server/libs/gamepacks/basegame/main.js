@@ -20,7 +20,7 @@ var BaseGame = {
    * @returns {Array} Returns an array of {Meeple} that each player starts with when playing
    * with the basegame.
    */
-  getStartingMeeples : function() {
+  getMeeples : function() {
     var startingMeeples = [];
     for (var meepleId in config.meeples) {
       if (config.meeples.hasOwnProperty(meepleId)) {
