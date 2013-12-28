@@ -35,7 +35,15 @@ describe("Game", function() {
 
     /* Starting the game */
     unit.isStarted().should.equal(false);
-    unit.start();
+     /* Randomising same priority tiles is turned off so that the tiles are ordered in a deterministic fashion.
+       This helps prevent flaky tests. */
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
     unit.isStarted().should.equal(true);
 
     /* A player should have received meeples */
@@ -72,7 +80,15 @@ describe("Game", function() {
     unit.addPlayer(player1);
     unit.addPlayer(player2);
 
-    unit.start();
+    /* Randomising same priority tiles is turned off so that the tiles are ordered in a deterministic fashion.
+       This helps prevent flaky tests. */
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
 
     /* Place tiles on the first available placement until they run out */
     var previousRoundPlayer;
@@ -85,8 +101,7 @@ describe("Game", function() {
 
     unit.board.getNumberOfTiles().should.equal(unit.tiles.length);
     unit.board.getTile(0,0).tile.name.should.equal("Mountain");
-    unit.board.getTile(-1,0).tile.name.should.equal("WestEast River");
-    unit.board.getTile(-2,0).tile.name.should.equal("Lake");
+    unit.board.getTile(-3,0).tile.name.should.equal("Lake");
 
     unit.isEnded().should.equal(true);
   });

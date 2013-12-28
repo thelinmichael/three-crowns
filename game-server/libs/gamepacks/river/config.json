@@ -3,6 +3,7 @@
   "tiles" : {
     "mountain" : 1,
     "lake" : 1,
-    "westeast-river" : 1
+    "westeast-river" : 1,
+    "westeast-river-with-bridge" : 1
   }
 }

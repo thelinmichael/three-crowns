@@ -82,11 +82,15 @@ schema.methods.placeTile = function(x, y, rotation) {
  * Starts the game
  * @throws Throws an error if the game has already started.
  */
-schema.methods.start = function() {
+schema.methods.start = function(options) {
   if (!this.isStarted()) {
     this.startTime = Date.now();
     this.board = new Board();
-    this.shuffleTiles();
+
+    /* TODO: Refactor this option handling. */
+    var shuffleOptions = options ? options.shuffle : {};
+    this.shuffleTiles(shuffleOptions);
+
     this.distributeStartingKitToPlayers();
   } else {
     throw new Error("Game has already been started");
@@ -96,8 +100,8 @@ schema.methods.start = function() {
 /**
  * Shuffle the tiles in the tile queue.
  */
-schema.methods.shuffleTiles = function() {
-  this.tiles = DrawpileShufflingStrategy.shuffle(this.tiles);
+schema.methods.shuffleTiles = function(options) {
+  this.tiles = DrawpileShufflingStrategy.shuffle(this.tiles, options);
 };
 
 /**

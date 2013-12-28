@@ -3,7 +3,7 @@ var RiverSchema = require("./rivertile").schema;
 var River = require("../tile-components/river");
 var Grass = require("../../basegame/tile-components/grass");
 
-/* This is a starting tile (priority > 2), but has the highest priority in the river expansion,
+/* This is a starting tile (priority >= 2), but has the highest priority in the river expansion,
  * and will thus be shuffled before any other tile. */
 var priority = 4;
 
