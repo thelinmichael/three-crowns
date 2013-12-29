@@ -240,6 +240,95 @@ schema.methods.hasTileInDirection = function(x, y, direction) {
   return (this.getTileInDirection(x, y, direction) !== undefined);
 };
 
+/**
+ * Retrieve which tiles, and positions on those tiles, are involved in a construction.
+ * @returns {Array} holding an object containing {x}, {y}, [{construction}]. */
+schema.methods.getSpanningConstructions = function(x, y, construction) {
+
+  /* No tile, no construction. */
+  if (!this.hasTile(x,y)) {
+    return [];
+  }
+
+  /* Keep track of which tiles that have been checked */
+  var traversedTiles = [];
+
+  /* Start out with this tile as the first */
+  var constructionsToCheck = [{ "x" : x, "y" : y, "construction" : construction }];
+
+  while (constructionsToCheck.length > 0) {
+    /* Use the top tile on the stack */
+    var check = constructionsToCheck.pop();
+
+    /* Check if it is already among the saved constructions */
+    var alreadyTraversed = traversedTiles.some(function(checkedTile) {
+      var tileIsTraversed = (tile.x == checkedTile.x && tile.y == checkedTile.y);
+      var constructionTraversed = tile.constructions.some(function(checkedConstruction) {
+        checkedConstruction.constructionType.getName() == check.constructionType.getName() &&
+        checkedConstruction.positions.compare(check.positions);
+      });
+    });
+    if (alreadyTraversed) {
+      continue;
+    }
+
+    /* Save the tile's position, the positions the construction is made of */
+    traversedTiles.push(check);
+
+    /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
+    var adjacentPositions = Directions.forPositions(check.positions);
+    var rotation = this.getTile(x, y).rotation;
+
+    /* If the adjacent tiles are of the same type, add them to the constructions to check */
+
+  }
+
+    /* Direction that is in the same direction as {position} */
+  forPositions : function(positions) {
+    var directions = [];
+    if (positions.indexOf(0) != -1|| positions.indexOf(1) != -1 || positions.indexOf(2) != -1) {
+      directions.push(0);
+    }
+    if (positions.indexOf(3) != -1|| positions.indexOf(4) != -1 || positions.indexOf(5) != -1) {
+      directions.push(1);
+    }
+    if (positions.indexOf(6) != -1|| positions.indexOf(7) != -1 || positions.indexOf(8) != -1) {
+      directions.push(2);
+    }
+    if (positions.indexOf(9) != -1|| positions.indexOf(10) != -1 || positions.indexOf(11) != -1) {
+      directions.push(3);
+    }
+    return directions;
+  }
+
+  return traversedTiles;
+};
+
+/* Adding comparison function.
+   TODO: Move this out to a module that holds these kinds of additions. */
+Array.prototype.compare = function(array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].compare(array[i]))
+                return false;
+        }
+        else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+        }
+    }
+    return true;
+}
 
 module.exports = mongoose.model('Board', schema);
 module.exports.schema = schema;

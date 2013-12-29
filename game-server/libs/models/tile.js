@@ -143,6 +143,16 @@ schema.methods.getTypeAtPosition = function(position) {
   return componentHoldingPosition[0].constructionType;
 };
 
+schema.methods.getBorderConstruction = function(position) {
+  var componentHoldingPosition = this.constructions.filter(function(construction) {
+    var containedPosition = construction.positions.some(function(pos) {
+      return pos == position;
+    });
+    return containedPosition;
+  });
+  return componentHoldingPosition[0];
+}
+
 /**
  * Helper to make the code more readable.
  */

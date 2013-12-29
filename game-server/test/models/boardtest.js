@@ -110,4 +110,35 @@ describe("Board", function() {
     possiblePositions[2].rotations.indexOf(3).should.not.equal(-1);
   });
 
+  it("Should persist a placed tiles rotation", function() {
+    var unit = new Board();
+
+    var westEastRoad = require("../../libs/gamepacks/basegame/tiles/westeast-road");
+
+    unit.placeTile(0, 0, westEastRoad, Rotations.ONCE);
+    var placedTile = unit.getTile(0, 0);
+
+    placedTile.rotation.should.equal(Rotations.ONCE);
+  });
+
+  it.only("Should keep track of how large a road is", function() {
+    var unit = new Board();
+
+    var crossroads1 = require("../../libs/gamepacks/basegame/tiles/crossroads");
+    var crossroads2 = require("../../libs/gamepacks/basegame/tiles/crossroads");
+
+    unit.placeTile(0, 0, crossroads1, Rotations.NONE);
+    unit.placeTile(1, 0, crossroads2, Rotations.NONE);
+
+    var placedTile = unit.getTile(1, 0).tile;
+    var roadConstruction = placedTile.getBorderConstruction(10);
+
+    should.exist(roadConstruction);
+    roadConstruction.constructionType.getName().should.equal("Road");
+
+    var tilesAndPositionsInvolvedInConstruction = unit.getSpanningConstructions(1, 0, roadConstruction);
+    should.exist(tilesAndPositionsInvolvedInConstruction);
+    tilesAndPositionsInvolvedInConstruction.length.should.equal(2);
+  });
+
 });
