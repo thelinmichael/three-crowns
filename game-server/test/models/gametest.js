@@ -1,11 +1,10 @@
-var mongoose = require("mongoose");
-
 var assert = require('assert');
 var should = require('should');
 
 var GameBuilder = require('../../libs/gamebuilder');
 var Player = require("../../libs/models/player");
 var Tile = require("../../libs/models/tile");
+var Game = require("../../libs/models/game");
 var Rotations = require("../../libs/models/tile").Rotations;
 var BasePack = require("../../libs/gamepacks/basegame/main");
 var River = require("../../libs/gamepacks/river/main")
@@ -58,7 +57,7 @@ describe("Game", function() {
     for (var i = 0; i < unit.tiles.length; i++) {
       var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
       possiblePlacements.length.should.not.equal(0, "No possible placements for tile " + unit.getActiveTile().name + "with board " + unit.board.tiles);
-      unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, Rotations.NONE);
+      unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, possiblePlacements[0].rotations[0]);
 
       unit.isEnded().should.equal(false);
       if (previousRoundPlayer) {
@@ -91,7 +90,6 @@ describe("Game", function() {
     unit.start(options);
 
     /* Place tiles on the first available placement until they run out */
-    var previousRoundPlayer;
     for (var i = 0; i < unit.tiles.length; i++) {
       var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
       possiblePlacements.length.should.not.equal(0, "No possible placements for tile " + unit.getActiveTile().name + "with board " + unit.board.tiles);
@@ -103,6 +101,38 @@ describe("Game", function() {
     unit.board.getTile(0,0).tile.name.should.equal("Mountain");
     unit.board.getTile(-3,0).tile.name.should.equal("Lake");
 
+    unit.isEnded().should.equal(true);
+  });
+
+  it("should rotate tiles in order to be able to place all of them on the board", function() {
+    var unit = new Game();
+
+    var player1 = new Player({ "name" : "Michael" });
+    var player2 = new Player({ "name" : "Jenni" });
+    unit.addPlayer(player1);
+    unit.addPlayer(player2);
+
+    var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/halfcircle-castle-with-road");
+    var westEastRoad = require("../../libs/gamepacks/basegame/tiles/westeast-road");
+
+    unit.tiles = [halfCircleCastleWithRoad, westEastRoad];
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+     unit.start(options);
+
+    /* Place tiles on the first available placement until they run out */
+    for (var i = 0; i < unit.tiles.length; i++) {
+      var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
+      possiblePlacements.length.should.not.equal(0, "No possible placements for tile " + unit.getActiveTile().name + "with board " + unit.board.tiles);
+      unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, possiblePlacements[0].rotations[0]);
+      unit.nextTurn();
+    }
+
+    unit.board.getNumberOfTiles().should.equal(unit.tiles.length);
     unit.isEnded().should.equal(true);
   });
 

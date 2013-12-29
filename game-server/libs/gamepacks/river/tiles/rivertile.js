@@ -3,13 +3,17 @@
 var mongoose = require("mongoose");
 var Schema = require("../../../models/tile").schema;
 var Directions = require("../../../models/tile").Directions;
+var Rotations = require("../../../models/tile").Rotations;
 
-Schema.methods.canBePlacedAt = function(x, y, board) {
-  if (!this.adjacentTilesBordersMatch(x, y, board)) {
+/**
+ * Overriding the default canBePlacedAt method found in the base tile schema
+ */
+Schema.methods.canBePlacedAt = function(x, y, rotation, board) {
+  if (!this.adjacentTilesBordersMatch(x, y, rotation, board)) {
     return false;
   }
 
-  if (!this.isConnectedToOtherRiver(x, y, board)) {
+  if (!this.isConnectedToOtherRiver(x, y, rotation, board)) {
     return false;
   }
 
@@ -17,7 +21,11 @@ Schema.methods.canBePlacedAt = function(x, y, board) {
 };
 
 /* Someone should throw holy water at this function. */
-Schema.methods.isConnectedToOtherRiver = function(x, y, board) {
+Schema.methods.isConnectedToOtherRiver = function(x, y, rotation, board) {
+
+  if (!rotation) {
+    rotation = Rotations.NONE;
+  }
 
   // This tile's river borders are on these positions
   var riverConstructions = this.constructions.filter(function(construction) {

@@ -1,5 +1,7 @@
 var mongoose = require("mongoose");
 var Directions = require("./tile").Directions;
+var Rotations = require("./tile").Rotations;
+
 /**
  * This model describes the board.
  * The board knows about the tiles placed on it, and in which
@@ -56,9 +58,12 @@ schema.methods.getAdjacentTiles = function(x, y) {
  * @params {Tile} tile
  * @params {Tile.Rotations} rotation The number of rotations
  * @throws Will throw if {tile} cannot be placed on {x},{y} with rotation {rotation}
- * TODO: Should be checks if the tile can indeed be placed.
  */
 schema.methods.placeTile = function(x, y, tile, rotation) {
+  if (!this.canPlaceTile(x, y, tile, rotation)) {
+    throw new Error("Tried to place tile at invalid position.");
+  }
+
   var newTileOnBoard = {
     "x" : x,
     "y" : y,
@@ -77,7 +82,6 @@ schema.methods.getNumberOfTiles = function() {
  * @params {Number} y
  * @params {Tile} tile
  * @params {Tile.Rotations} rotation The number of rotations
- * TODO: Needs to pass rotation.
  */
 schema.methods.canPlaceTile = function(x, y, tile, rotation) {
 
@@ -97,7 +101,7 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
   }
 
   /* Checking for tile specific requirements */
-  if (!tile.canBePlacedAt(x, y, this)) {
+  if (!tile.canBePlacedAt(x, y, rotation, this)) {
     return false;
   }
 
@@ -105,8 +109,8 @@ schema.methods.canPlaceTile = function(x, y, tile, rotation) {
 };
 
 /**
- *  @returns {Array} Returns an array containing {Number} x, {Number} y for coordinates
- *  where no tile is placed, but adjacent to some other tile
+ *  @returns {Array} Returns an array containing {Number} x, {Number} y, {Number}
+ *  where no tile is placed, but adjacent to some other tile.
  */
 schema.methods.getPossiblePositions = function() {
   var self = this,
@@ -136,8 +140,7 @@ schema.methods.getPossiblePositions = function() {
 
 /**
  * @params {Tile} tile The tile to be placed on the board
- * @returns {Array} Returns an array of objects that consists of x : {Number}, y : {Number}.
- * TODO: Add rotation parameter, needs to pass it on.
+ * @returns {Array} Returns an array of objects that consists of x : {Number}, y : {Number}, rotations : {Array} of {Number}
  */
 schema.methods.getPossiblePlacementsForTile = function(tile) {
   var self = this,
@@ -145,30 +148,44 @@ schema.methods.getPossiblePlacementsForTile = function(tile) {
 
   /* There are no tiles on the board. The only available place is origo. */
   if (this.getNumberOfTiles() === 0) {
-    possiblePositions.push({ "x" : 0, "y" : 0 });
+    possiblePositions.push({ "x" : 0, "y" : 0, "rotations" : [Rotations.NONE, Rotations.ONCE, Rotations.TWICE, Rotations.TRICE] });
     return possiblePositions;
   }
 
   /* Check all tiles that are placed on the board, and if they match with {tile} */
   this.tiles.forEach(function(tileOnBoard) {
-    var x = tileOnBoard.x;
-    var y = tileOnBoard.y;
+    var rotations = [Rotations.NONE, Rotations.ONCE, Rotations.TWICE, Rotations.THRICE];
+    rotations.forEach(function(rotation) {
+      var x = tileOnBoard.x;
+      var y = tileOnBoard.y;
 
-    if (self.canPlaceTile(x+1, y, tile)) {
-      possiblePositions.push({ "x" : x+1, "y" : y });
-    }
-    if (self.canPlaceTile(x-1, y, tile)) {
-      possiblePositions.push({ "x" : x-1, "y": y });
-    }
-    if (self.canPlaceTile(x, y-1, tile)) {
-      possiblePositions.push({ "x" : x, "y" : (y-1) });
-    }
-    if (self.canPlaceTile(x, y+1, tile)) {
-      possiblePositions.push({ "x" : x, "y" : (y+1) });
-    }
+      if (self.canPlaceTile(x+1, y, tile, rotation)) {
+        _addPosition(possiblePositions, x+1, y, rotation);
+      }
+      if (self.canPlaceTile(x-1, y, tile, rotation)) {
+        _addPosition(possiblePositions, x-1, y, rotation);
+      }
+      if (self.canPlaceTile(x, y-1, tile, rotation)) {
+        _addPosition(possiblePositions, x, y-1, rotation);
+      }
+      if (self.canPlaceTile(x, y+1, tile, rotation)) {
+        _addPosition(possiblePositions, x, y+1, rotation);
+      }
+    });
   });
 
   return possiblePositions;
+};
+
+var _addPosition = function(positions, x, y, rotation) {
+  var existingEntry = positions.filter(function(position) {
+    return position.x === x && position.y === y;
+  });
+  if (existingEntry.length > 0) {
+    existingEntry[0].rotations.push(rotation);
+  } else {
+    positions.push({ "x" : x, "y" : y, "rotations" : [rotation] });
+  }
 };
 
 /**

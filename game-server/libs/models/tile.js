@@ -48,32 +48,35 @@ schema.methods.withRotation = function(rotation) {
  * This function should be overriden by such tiles.
  * @params {Number} x The coordinate where the tile is placed on the board.
  * @params {Number} y The coordinate where the tile is placed on the board.
+ * @params {Number} rotation The tile's rotation
  * @params {Board} board The board onto which the tile is placed.
  * @returns {Boolean} Returns true if the tile can be placed, otherwise false.
  */
-schema.methods.canBePlacedAt = function(x, y, board) {
-  return this.adjacentTilesBordersMatch(x, y, board);
+schema.methods.canBePlacedAt = function(x, y, rotation, board) {
+  return this.adjacentTilesBordersMatch(x, y, rotation, board);
 };
 
-schema.methods.adjacentTilesBordersMatch = function(x, y, board) {
+schema.methods.adjacentTilesBordersMatch = function(x, y, rotation, board) {
   /* Checking with each tile if they allow themselves to be placed there */
-  var eastMatch = this.tilesMatch(board.getTile(x+1,y), Directions.EAST);
-  var westMatch = this.tilesMatch(board.getTile(x-1,y), Directions.WEST);
-  var northMatch = this.tilesMatch(board.getTile(x,y+1), Directions.NORTH);
-  var southMatch = this.tilesMatch(board.getTile(x,y-1), Directions.SOUTH);
+  var eastMatch = this.tilesMatch(rotation, board.getTile(x+1,y), Directions.EAST);
+  var westMatch = this.tilesMatch(rotation, board.getTile(x-1,y), Directions.WEST);
+  var northMatch = this.tilesMatch(rotation, board.getTile(x,y+1), Directions.NORTH);
+  var southMatch = this.tilesMatch(rotation, board.getTile(x,y-1), Directions.SOUTH);
 
   return eastMatch && westMatch && northMatch && southMatch;
 };
 
-schema.methods.tilesMatch = function(otherTile, directionToOtherTile) {
+/* TODO: Refactoring. */
+schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOtherTile) {
   /* Matching is not a problem if there's no tile to be matched against */
   if (!otherTile) {
     return true;
   }
 
-  /* TODO: This is traversing the other tile from the wrong side */
   var otherTilesBorders = otherTile.tile.getBorders(Directions.oppositeOf(directionToOtherTile));
-  var thisTilesBorders = this.getBorders(directionToOtherTile);
+  var thisTilesSidesWithRotation = Directions.rotateDirection(directionToOtherTile, thisTilesRotation);
+  var thisTilesBorders = this.getBorders(thisTilesSidesWithRotation);
+
   var allMatches = true;
   for (var i = 0; i < thisTilesBorders.length; i++) {
     if (!thisTilesBorders[i].matches(otherTilesBorders[i]) ||
@@ -177,6 +180,11 @@ var Directions = {
       directions.push(3);
     }
     return directions;
+  },
+
+  rotateDirection : function(direction, rotation) {
+    rotation = rotation % 4;
+    return ((direction - rotation) + 4) % 4;
   }
 };
 
