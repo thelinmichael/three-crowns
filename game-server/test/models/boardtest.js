@@ -113,22 +113,19 @@ describe("Board", function() {
     placedTile.rotation.should.equal(Rotations.ONCE);
   });
 
-  it("Should keep track of how large a road is", function() {
+  it("should keep track of how long a road is that spans across several tiles", function() {
     var unit = new Board();
 
     var crossroads = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
     var threeWayCrossroad = require("../../libs/gamepacks/basegame/tiles/w-three-way-crossroad");
 
     unit.placeTile(0, 0, crossroads, Rotations.NONE);
-    unit.placeTile(0, 1, threeWayCrossroad, Rotations.NONE);
+    unit.placeTile(1, 0, threeWayCrossroad, Rotations.ONCE);
 
-    var placedTile = unit.getTile(0, 1).tile;
+    var placedTile = unit.getTile(1, 0).tile;
     var roadConstruction = placedTile.getBorderConstruction(7);
 
-    should.exist(roadConstruction);
-    roadConstruction.type.getName().should.equal("Road");
-
-    var tilesAndPositionsInvolvedInConstruction = unit.getSpanningConstructions(0, 1, roadConstruction);
+    var tilesAndPositionsInvolvedInConstruction = unit.getSpanningConstructions(1, 0, roadConstruction);
     should.exist(tilesAndPositionsInvolvedInConstruction);
     tilesAndPositionsInvolvedInConstruction.length.should.equal(2);
   });

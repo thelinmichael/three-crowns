@@ -112,15 +112,10 @@ schema.methods.getBorders = function(direction) {
  *  @returns {BorderType} The border type at position {position}
  */
 schema.methods.getTypeAtPosition = function(position) {
-  var componentHoldingPosition = this.borders.filter(function(border) {
-    var containedPosition = border.positions.some(function(pos) {
-      return pos == position;
-    });
-    return containedPosition;
-  });
-  return componentHoldingPosition[0].type;
+  return this.getBorderConstruction(position).type;
 };
 
+/* Retrieve the border that's on the {position} */
 schema.methods.getBorderConstruction = function(position) {
   var componentHoldingPosition = this.borders.filter(function(border) {
     var containedPosition = border.positions.some(function(pos) {
@@ -129,7 +124,7 @@ schema.methods.getBorderConstruction = function(position) {
     return containedPosition;
   });
   return componentHoldingPosition[0];
-}
+};
 
 /**
  * Helper to make the code more readable.
@@ -156,22 +151,32 @@ var Directions = {
     return (direction + 2) % 4;
   },
 
-  /* Direction that is in the same direction as {position} */
   forPositions : function(positions) {
-    var directions = [];
-    if (positions.indexOf(0) != -1|| positions.indexOf(1) != -1 || positions.indexOf(2) != -1) {
-      directions.push(0);
+    var self = this;
+    var returnedDirections = [];
+    positions.forEach(function(position) {
+      var direction = self.forPosition(position);
+      if (returnedDirections.indexOf(direction) == -1) {
+        returnedDirections.push(direction);
+      }
+    });
+    return returnedDirections;
+  },
+
+  /* Direction that is in the same direction as {position} */
+  forPosition : function(position) {
+    if ([0,1,2].indexOf(position) != -1) {
+      return 0;
     }
-    if (positions.indexOf(3) != -1|| positions.indexOf(4) != -1 || positions.indexOf(5) != -1) {
-      directions.push(1);
+    if ([3,4,5].indexOf(position) != -1) {
+      return 1;
     }
-    if (positions.indexOf(6) != -1|| positions.indexOf(7) != -1 || positions.indexOf(8) != -1) {
-      directions.push(2);
+    if ([6,7,8].indexOf(position) != -1) {
+      return 2;
     }
-    if (positions.indexOf(9) != -1|| positions.indexOf(10) != -1 || positions.indexOf(11) != -1) {
-      directions.push(3);
+    if ([9,10,11].indexOf(position) != -1) {
+      return 3;
     }
-    return directions;
   },
 
   rotateDirection : function(direction, rotation) {
@@ -180,6 +185,53 @@ var Directions = {
   }
 };
 
+var Positions = {
+  rotate : function(positions, rotation) {
+    var rotatedPositions = positions.map(function(position) {
+      rotation = rotation % 4;
+      return (position + rotation*3) % 12;
+    });
+    return rotatedPositions;
+  },
+  filterForDirection : function(positions, direction) {
+    var positionsInDirection = positions.filter(function(position) {
+      return Directions.forPosition(position) === direction;
+    });
+    return positionsInDirection;
+  },
+  inDirection : function(direction) {
+    switch (direction) {
+      case Directions.NORTH:
+        return [0,1,2];
+      case Directions.EAST:
+        return [3,4,5];
+      case Directions.SOUTH:
+        return [6,7,8];
+      case Directions.WEST:
+        return [9,10,11];
+      default:
+        throw new Error("I should never get here");
+    }
+  },
+  oppositeOf : function(position) {
+    var indexOnRow = position % 3;
+    var compensation;
+    switch (indexOnRow) {
+      case 0:
+        compensation = 2;
+        break;
+      case 1:
+        compensation = 0;
+        break;
+      case 2:
+        compensation = -2;
+        break;
+    }
+    return (position + 6 + compensation) % 12;
+  }
+}
+
 module.exports.schema = schema;
 module.exports.Rotations = Rotations;
 module.exports.Directions= Directions;
+module.exports.Positions= Positions;

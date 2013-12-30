@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Directions = require("./tile").Directions;
 var Rotations = require("./tile").Rotations;
+var Positions = require("./tile").Positions;
 
 /**
  * This model describes the board.
@@ -199,6 +200,8 @@ schema.methods.getTile = function(x, y) {
   });
   if (tileWithPosition.length == 1) {
     return {
+      "x" : tileWithPosition[0].x,
+      "y" : tileWithPosition[0].y,
       "tile" : tileWithPosition[0].tile[0],
       "rotation" : tileWithPosition[0].rotation
     };
@@ -242,8 +245,9 @@ schema.methods.hasTileInDirection = function(x, y, direction) {
 
 /**
  * Retrieve which tiles, and positions on those tiles, are involved in a construction.
- * @returns {Array} holding an object containing {x}, {y}, [{construction}]. */
+ * @returns {Array} holding an object containing {x}, {y}, [{borders}]. */
 schema.methods.getSpanningConstructions = function(x, y, construction) {
+  var self = this;
 
   /* No tile, no construction. */
   if (!this.hasTile(x,y)) {
@@ -251,7 +255,7 @@ schema.methods.getSpanningConstructions = function(x, y, construction) {
   }
 
   /* Keep track of which tiles that have been checked */
-  var traversedTiles = [];
+  var traversedConstructions = [];
 
   /* Start out with this tile as the first */
   var constructionsToCheck = [{ "x" : x, "y" : y, "construction" : construction }];
@@ -261,29 +265,68 @@ schema.methods.getSpanningConstructions = function(x, y, construction) {
     var check = constructionsToCheck.pop();
 
     /* Check if it is already among the saved constructions */
-    var alreadyTraversed = traversedTiles.some(function(traversedTile) {
-      var tileIsTraversed = (traversedTile.x == check.tile.x && traversedTile.y == traversedTile.y);
-      var constructionTraversed = traversedTile.constructions.some(function(traversedConstruction) {
-        traversedConstruction.constructionType.getName() == check.construction.constructionType.getName() &&
-        traversedConstruction.positions.compare(check.construction.positions);
-      });
+    var alreadyTraversed = traversedConstructions.some(function(traversedConstruction) {
+      var tileIsTraversed = (traversedConstruction.x == check.x && traversedConstruction.y == check.y);
+      var constructionIsTraversed = (traversedConstruction.construction.type.name == check.construction.type.name &&
+                                     traversedConstruction.construction.positions.compare(check.construction.positions));
+      return tileIsTraversed && constructionIsTraversed;
     });
+    /* Stop traversing if we've already been here */
     if (alreadyTraversed) {
+      console.log("Already checked this one, continuing with the next one..");
       continue;
     }
 
-    /* Save the tile's position, the positions the construction is made of */
-    traversedTiles.push(check);
+    /* Stop traversing if it's not the same type */
+    if (check.construction.type.name != construction.type.name) {
+      console.log("Not the same construction type, continuing with the next one..");
+      continue;
+    }
+
+    /* It's of the same type, so add it to the traversed constructions */
+    traversedConstructions.push(check);
 
     /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
-    var adjacentPositions = Directions.forPositions(check.construction.positions);
-    var rotation = this.getTile(x, y).rotation;
+    var tilesRotation = this.getTile(check.x, check.y).rotation;
+    var rotatedPositions = Positions.rotate(check.construction.positions, tilesRotation);
+    var adjacentDirections = Directions.forPositions(rotatedPositions);
 
-    /* If the adjacent tiles are of the same type, add them to the constructions to check */
+    adjacentDirections.forEach(function(direction) {
+      /* Get adjacent tile */
+      var adjacentTile = self.getTileRelativePosition(check.x, check.y, direction);
+
+      /* Get which of the positions on the adjacent tile that borders to the construction */
+      var positionsInAdjacentTilesDirection = Positions.filterForDirection(rotatedPositions, direction);
+      var adjacentTilesPositions = positionsInAdjacentTilesDirection.map(function(position) {
+        return Positions.oppositeOf(position);
+      });
+
+      /* Get the construction */
+      var adjacentTilePositionsRotated = Positions.rotate(adjacentTilesPositions, adjacentTile.rotation);
+      var adjacentConstruction = adjacentTile.tile.getBorderConstruction(adjacentTilePositionsRotated[0]);
+
+      /* Add to the stack of constructions that will be checked */
+      constructionsToCheck.push({ "x" : adjacentTile.x, "y" : adjacentTile.y, "construction" : adjacentConstruction });
+    });
   }
 
-  return traversedTiles;
+  return traversedConstructions;
 
+};
+
+schema.methods.getTileRelativePosition = function(x, y, direction) {
+  switch(direction) {
+    case (Directions.NORTH):
+      return this.getTile(x, y+1);
+    case (Directions.EAST):
+      return this.getTile(x+1, y);
+    case (Directions.SOUTH):
+      return this.getTile(x, y-1);
+    case (Directions.WEST):
+      return this.getTile(x-1, y);
+    default:
+      throw new Error("I should never get here!");
+  }
 };
 
 /* Adding comparison function.
