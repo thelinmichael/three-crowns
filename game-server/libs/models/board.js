@@ -214,18 +214,12 @@ schema.methods.getTileInDirection = function(x, y, direction) {
   switch (direction) {
     case Directions.NORTH:
       return this.getTile(x, y+1);
-      break;
     case Directions.EAST:
       return this.getTile(x+1, y);
-      break;
     case Directions.SOUTH:
       return this.getTile(x, y-1);
-      break;
     case Directions.WEST:
       return this.getTile(x-1, y);
-      break;
-    default:
-      throw new Error("I should never get here!");
   }
 };
 
@@ -262,71 +256,68 @@ schema.methods.getSpanningConstructions = function(x, y, construction) {
 
   while (constructionsToCheck.length > 0) {
     /* Use the top tile on the stack */
-    var check = constructionsToCheck.pop();
+    var constructionToCheck = constructionsToCheck.pop();
 
     /* Check if it is already among the saved constructions */
-    var alreadyTraversed = traversedConstructions.some(function(traversedConstruction) {
-      var tileIsTraversed = (traversedConstruction.x == check.x && traversedConstruction.y == check.y);
-      var constructionIsTraversed = (traversedConstruction.construction.type.name == check.construction.type.name &&
-                                     traversedConstruction.construction.positions.compare(check.construction.positions));
-      return tileIsTraversed && constructionIsTraversed;
-    });
-    /* Stop traversing if we've already been here */
-    if (alreadyTraversed) {
-      console.log("Already checked this one, continuing with the next one..");
+    if (this.isTraversed(traversedConstructions, constructionToCheck)) {
       continue;
     }
 
     /* Stop traversing if it's not the same type */
-    if (check.construction.type.name != construction.type.name) {
+    if (constructionToCheck.construction.type.name != construction.type.name) {
       console.log("Not the same construction type, continuing with the next one..");
       continue;
     }
 
     /* It's of the same type, so add it to the traversed constructions */
-    traversedConstructions.push(check);
+    traversedConstructions.push(constructionToCheck);
 
     /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
-    var tilesRotation = this.getTile(check.x, check.y).rotation;
-    var rotatedPositions = Positions.rotate(check.construction.positions, tilesRotation);
+    var tilesRotation = this.getTile(constructionToCheck.x, constructionToCheck.y).rotation;
+    var rotatedPositions = Positions.rotate(constructionToCheck.construction.positions, tilesRotation);
     var adjacentDirections = Directions.forPositions(rotatedPositions);
 
-    adjacentDirections.forEach(function(direction) {
-      /* Get adjacent tile */
-      var adjacentTile = self.getTileRelativePosition(check.x, check.y, direction);
+    var adjacentConstructions = this.traverseAdjacentConstructions(constructionToCheck.x, constructionToCheck.y, rotatedPositions, adjacentDirections);
 
-      /* Get which of the positions on the adjacent tile that borders to the construction */
-      var positionsInAdjacentTilesDirection = Positions.filterForDirection(rotatedPositions, direction);
-      var adjacentTilesPositions = positionsInAdjacentTilesDirection.map(function(position) {
-        return Positions.oppositeOf(position);
-      });
-
-      /* Get the construction */
-      var adjacentTilePositionsRotated = Positions.rotate(adjacentTilesPositions, adjacentTile.rotation);
-      var adjacentConstruction = adjacentTile.tile.getBorderConstruction(adjacentTilePositionsRotated[0]);
-
-      /* Add to the stack of constructions that will be checked */
-      constructionsToCheck.push({ "x" : adjacentTile.x, "y" : adjacentTile.y, "construction" : adjacentConstruction });
-    });
+    constructionsToCheck = constructionsToCheck.concat(adjacentConstructions);
   }
 
   return traversedConstructions;
 
 };
 
-schema.methods.getTileRelativePosition = function(x, y, direction) {
-  switch(direction) {
-    case (Directions.NORTH):
-      return this.getTile(x, y+1);
-    case (Directions.EAST):
-      return this.getTile(x+1, y);
-    case (Directions.SOUTH):
-      return this.getTile(x, y-1);
-    case (Directions.WEST):
-      return this.getTile(x-1, y);
-    default:
-      throw new Error("I should never get here!");
-  }
+schema.methods.traverseAdjacentConstructions = function(x, y, positions, directions) {
+  var self = this;
+  var adjacentConstructions = [];
+
+  directions.forEach(function(direction) {
+    /* Get adjacent tile */
+    var tileOnBoard = self.getTileInDirection(x, y, direction);
+
+    /* Get which of the positions on the adjacent tile that borders to the construction */
+    var connectingPositions = Positions.filterForDirection(positions, directions);
+    var adjacentTilesConnectingPositions = connectingPositions.map(function(position) {
+      return Positions.oppositeOf(position);
+    });
+
+    /* Get the construction */
+    var adjacentTilesRotatedPositions = Positions.counterRotate(adjacentTilesConnectingPositions, tileOnBoard.rotation);
+    var adjacentConstruction = tileOnBoard.tile.getBorderConstruction(adjacentTilesRotatedPositions[0]);
+
+    /* Add to the stack of constructions that will be checked */
+    adjacentConstructions.push({ "x" : tileOnBoard.x, "y" : tileOnBoard.y, "construction" : adjacentConstruction });
+  });
+
+  return adjacentConstructions;
+};
+
+schema.methods.isTraversed = function(traversedConstructions, constructionToCheck) {
+  return traversedConstructions.some(function(traversedConstruction) {
+      var tileIsTraversed = (traversedConstruction.x == constructionToCheck.x && traversedConstruction.y == constructionToCheck.y);
+      var constructionIsTraversed = (traversedConstruction.construction.type.name == constructionToCheck.construction.type.name &&
+                                     traversedConstruction.construction.positions.compare(constructionToCheck.construction.positions));
+      return (tileIsTraversed && constructionIsTraversed);
+  });
 };
 
 /* Adding comparison function.

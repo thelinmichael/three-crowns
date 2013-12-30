@@ -74,6 +74,14 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
   return allMatches;
 };
 
+/*
+ *  @params {Number} position The position of the tile's borders
+ *  @returns {BorderType} The border type at position {position}
+ */
+schema.methods.getTypeAtPosition = function(position) {
+  return this.getBorderConstruction(position).type;
+};
+
 /**
  * @params {Direction} direction The direction of the tile of which the borders are to be returned
  * @returns {Array} The three border types that make up the border in the tile's {direction} direction
@@ -107,15 +115,7 @@ schema.methods.getBorders = function(direction) {
   return returnedBorder;
 };
 
-/**
- *  @params {Number} position The position of the tile's borders
- *  @returns {BorderType} The border type at position {position}
- */
-schema.methods.getTypeAtPosition = function(position) {
-  return this.getBorderConstruction(position).type;
-};
-
-/* Retrieve the border that's on the {position} */
+/* Retrieve the border that's on the {position}, taking {rotation} into consideration */
 schema.methods.getBorderConstruction = function(position) {
   var componentHoldingPosition = this.borders.filter(function(border) {
     var containedPosition = border.positions.some(function(pos) {
@@ -193,9 +193,16 @@ var Positions = {
     });
     return rotatedPositions;
   },
+  counterRotate : function(positions, rotation) {
+    var rotatedPositions = positions.map(function(position) {
+      rotation = rotation % 4;
+      return ((position - rotation*3) + 12) % 12;
+    });
+    return rotatedPositions;
+  },
   filterForDirection : function(positions, direction) {
     var positionsInDirection = positions.filter(function(position) {
-      return Directions.forPosition(position) === direction;
+      return Directions.forPosition(position) == direction;
     });
     return positionsInDirection;
   },

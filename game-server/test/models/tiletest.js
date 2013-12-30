@@ -63,4 +63,17 @@ it("should give the opposite to a given position", function() {
   Positions.oppositeOf(9).should.equal(5);
 });
 
+
+it("should rotate positions counter-clockwise", function() {
+  var rotatedPositions1 = Positions.counterRotate([9,10,11], Rotations.THRICE);
+  rotatedPositions1[0].should.equal(0);
+  rotatedPositions1[1].should.equal(1);
+  rotatedPositions1[2].should.equal(2);
+
+  var rotatedPositions2 = Positions.counterRotate([2,3,4], Rotations.TWICE);
+  rotatedPositions2[0].should.equal(8);
+  rotatedPositions2[1].should.equal(9);
+  rotatedPositions2[2].should.equal(10);
+});
+
 });
