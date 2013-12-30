@@ -28,13 +28,13 @@ Schema.methods.isConnectedToOtherRiver = function(x, y, rotation, board) {
   }
 
   // This tile's river borders are on these positions
-  var riverConstructions = this.constructions.filter(function(construction) {
-    return construction.type.name == "River";
+  var riverBorders = this.borders.filter(function(border) {
+    return border.type.name == "River";
   });
 
-  var oneRiverMatched = riverConstructions.some(function(riverConstruction) {
+  var oneRiverMatched = riverBorders.some(function(riverBorder) {
     /* Get the directions (north, east..) where the river positions for this tile are */
-    var directionsWithRiver = Directions.forPositions(riverConstruction.positions);
+    var directionsWithRiver = Directions.forPositions(riverBorder.positions);
 
     /* Go through each of these directions.. */
     var someMatchingDirectionContainedRiver = directionsWithRiver.some(function(directionWithRiver) {

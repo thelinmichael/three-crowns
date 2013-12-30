@@ -97,21 +97,9 @@ describe("Board", function() {
 
     var possiblePositions = unit.getPossiblePlacementsForTile(straightRoad);
     possiblePositions.length.should.equal(3);
-    possiblePositions[0].x.should.equal(1);
-    possiblePositions[0].y.should.equal(0);
     possiblePositions[0].rotations.length.should.equal(2);
-    possiblePositions[0].rotations.indexOf(1).should.not.equal(-1);
-    possiblePositions[0].rotations.indexOf(3).should.not.equal(-1);
-    possiblePositions[1].x.should.equal(0);
-    possiblePositions[1].y.should.equal(-1);
     possiblePositions[1].rotations.length.should.equal(2);
-    possiblePositions[1].rotations.indexOf(1).should.not.equal(-1);
-    possiblePositions[1].rotations.indexOf(3).should.not.equal(-1);
-    possiblePositions[2].x.should.equal(0);
-    possiblePositions[2].y.should.equal(1);
     possiblePositions[2].rotations.length.should.equal(2);
-    possiblePositions[2].rotations.indexOf(1).should.not.equal(-1);
-    possiblePositions[2].rotations.indexOf(3).should.not.equal(-1);
   });
 
   it("Should persist a placed tiles rotation", function() {

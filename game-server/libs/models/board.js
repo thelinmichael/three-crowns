@@ -148,7 +148,7 @@ schema.methods.getPossiblePlacementsForTile = function(tile) {
 
   /* There are no tiles on the board. The only available place is origo. */
   if (this.getNumberOfTiles() === 0) {
-    possiblePositions.push({ "x" : 0, "y" : 0, "rotations" : [Rotations.NONE, Rotations.ONCE, Rotations.TWICE, Rotations.TRICE] });
+    possiblePositions.push({ "x" : 0, "y" : 0, "rotations" : [Rotations.NONE, Rotations.ONCE, Rotations.TWICE, Rotations.THRICE] });
     return possiblePositions;
   }
 

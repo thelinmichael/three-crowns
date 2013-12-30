@@ -6,16 +6,15 @@ var defaultOptions = {
 };
 
 var create = function(options) {
-  this.options = defaultOptions;
 
   /* Any options that are missing are filled in with default options */
   for (var property in defaultOptions) {
     if (options[property] === undefined) {
-      options[property] = _defaultOptions[property];
+      options[property] = defaultOptions[property];
     }
   }
 
-  var gamepacks = GamepackLoader.loadPacks(this.options.gamepacks);
+  var gamepacks = GamepackLoader.loadPacks(options.gamepacks);
 
   var game = new Game();
   game.addPacks(gamepacks);

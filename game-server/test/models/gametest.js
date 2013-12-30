@@ -57,19 +57,19 @@ describe("Game", function() {
     var previousRoundPlayer;
     for (var i = 0; i < unit.tiles.length; i++) {
       var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
-      possiblePlacements.length.should.not.equal(0, "No possible placements for tile " + unit.getActiveTile().name + "with board " + unit.board.tiles);
-      unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, possiblePlacements[0].rotations[0]);
+      if (possiblePlacements.length > 0) {
+       unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, possiblePlacements[0].rotations[0]);
 
-      unit.isEnded().should.equal(false);
-      if (previousRoundPlayer) {
-        unit.currentRound.player.should.equal((previousRoundPlayer+1) % 2);
+        if (previousRoundPlayer) {
+          unit.currentRound.player.should.equal((previousRoundPlayer+1) % 2);
+        }
       }
 
+      unit.isEnded().should.equal(false);
       unit.nextTurn();
       previousRoundPlayer = unit.currentRound.player;
     }
 
-    unit.board.getNumberOfTiles().should.equal(unit.tiles.length);
     unit.isEnded().should.equal(true);
   });
 
