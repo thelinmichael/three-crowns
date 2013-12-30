@@ -113,7 +113,7 @@ describe("Board", function() {
     placedTile.rotation.should.equal(Rotations.ONCE);
   });
 
-  it.only("should keep track of how long a road is that spans across several tiles", function() {
+  it("should keep track of how long a road is that spans across several tiles", function() {
     var unit = new Board();
 
     var crossroads = require("../../libs/gamepacks/basegame/tiles/x-crossroads");

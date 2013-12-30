@@ -5,7 +5,7 @@
 var defaultOptions = {
   "orderByPriority" : true,
   "randomiseSamePriority" : true
-}
+};
 
 var DrawpileShufflingStrategy = {
 
@@ -16,7 +16,7 @@ var DrawpileShufflingStrategy = {
    * and random if priority is equal between several tiles.
    */
   shuffle : function(tiles, options) {
-    var options = _fillInMissingOptions(options, defaultOptions);
+    options = _fillInMissingOptions(options, defaultOptions);
 
     if (options.randomiseSamePriority) {
       tiles = _randomise(tiles);

@@ -236,7 +236,7 @@ var Positions = {
     }
     return (position + 6 + compensation) % 12;
   }
-}
+};
 
 module.exports.schema = schema;
 module.exports.Rotations = Rotations;

@@ -344,7 +344,7 @@ Array.prototype.compare = function(array) {
         }
     }
     return true;
-}
+};
 
 module.exports = mongoose.model('Board', schema);
 module.exports.schema = schema;
