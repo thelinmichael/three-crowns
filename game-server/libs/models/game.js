@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Board = require("./board");
 var Player = require("./player");
-var DrawpileShufflingStrategy = require("./drawpile-shuffling-strategy");
+var DrawpileShufflingStrategy = require("../drawpile-shuffling-strategy");
 
 /**
  * This model describes a Game. A game has general information such as start and end time, as well as

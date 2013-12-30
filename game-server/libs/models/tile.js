@@ -4,16 +4,8 @@ var Tile = require("./tile");
 /**
  * This schema is the base schema describes a tile and overriden by tiles in the gamepacks.
  *
- * Tiles are made of different connectable types, such as Grass, Roads, or Castles. Every tile
- * has 12 pieces which span the borders of the tile. These are connectable, and connected border
- * pieces form constructions. For example, a road that goes from the tile's west side to its north side
- * and has grass on both sides of it, has three different constructions (the road and the grass on each
- * side of it). These constructions may also have special features. For example, constructions that are
- * made of Castles may have a Banner, and a Roads may have an Inn.
- * Tiles are also made of internal pieces, such as Monasteries.
- * @params {Number} priority The priority for this tile. Default is 1, which goes for all regular tiles.
- * Starting tiles (e.g. River) should have a priority of 2 or higher. For example, the River Lake has a priority
- * of 2, the regular rivers have a priority of 3, and the Mountain 4.
+ * @params {Array} internals An array of {Internal} tile components.
+ * @params {Number} priority The priority for this tile.
  */
 var schema = mongoose.Schema({
   name : { type : String },
@@ -22,17 +14,21 @@ var schema = mongoose.Schema({
     "type" : {}
   },
   internals : {},
-  priority : { "type" : Number, "default" : 1 }
+  priority : {
+    "type" : Number,
+    "default" : 1
+  }
 });
 
 /**
  * This function is used to check if this tile can be placed on a specific
- * position. Some tiles, such as the River tile expansions, and the Abbey,
+ * position. Some tiles, such as the River tile expansions,
  * have special requirements. For example, the River tiles needs to have
  * matching borders, but they also have to be connected to another river.
  * This function should be overriden by such tiles.
- * @params {Number} x The coordinate where the tile is placed on the board.
- * @params {Number} y The coordinate where the tile is placed on the board.
+ *
+ * @params {Number} x The x coordinate where the tile is placed on the board.
+ * @params {Number} y The y coordinate where the tile is placed on the board.
  * @params {Number} rotation The tile's rotation
  * @params {Board} board The board onto which the tile is placed.
  * @returns {Boolean} Returns true if the tile can be placed, otherwise false.
@@ -41,8 +37,49 @@ schema.methods.canBePlacedAt = function(x, y, rotation, board) {
   return this.adjacentTilesBordersMatch(x, y, rotation, board);
 };
 
+/**
+ * @params {Direction} direction The direction of the tile of which the borders are to be returned
+ * @returns {Array} The three border types that make up the border in the tile's {direction} direction
+ */
+schema.methods.getBorderTypesInDirection = function(direction) {
+  var returnedBorderTypes = [];
+
+  switch (direction) {
+    case Directions.NORTH :
+      returnedBorderTypes.push(this.getTypeAtPosition(0));
+      returnedBorderTypes.push(this.getTypeAtPosition(1));
+      returnedBorderTypes.push(this.getTypeAtPosition(2));
+      break;
+    case Directions.EAST :
+      returnedBorderTypes.push(this.getTypeAtPosition(3));
+      returnedBorderTypes.push(this.getTypeAtPosition(4));
+      returnedBorderTypes.push(this.getTypeAtPosition(5));
+      break;
+    case Directions.SOUTH :
+      returnedBorderTypes.push(this.getTypeAtPosition(6));
+      returnedBorderTypes.push(this.getTypeAtPosition(7));
+      returnedBorderTypes.push(this.getTypeAtPosition(8));
+      break;
+    case Directions.WEST :
+      returnedBorderTypes.push(this.getTypeAtPosition(9));
+      returnedBorderTypes.push(this.getTypeAtPosition(10));
+      returnedBorderTypes.push(this.getTypeAtPosition(11));
+      break;
+  }
+
+  return returnedBorderTypes;
+};
+
+/**
+ * Used to decide if tiles that are adjacent to the position {x},{y} on the
+ * {board} fit this tile if it's placed on the board with a rotation of {rotation}.
+ *
+ * @params {Number} x The x coordinate on the board
+ * @params {Number} y The y coordinate on the board
+ * @params {Number} rotation The rotation of this tile
+ * @params {Board} board The board where the adjacent tiles are placed
+ */
 schema.methods.adjacentTilesBordersMatch = function(x, y, rotation, board) {
-  /* Checking with each tile if they allow themselves to be placed there */
   var eastMatch = this.tilesMatch(rotation, board.getTile(x+1,y), Directions.EAST);
   var westMatch = this.tilesMatch(rotation, board.getTile(x-1,y), Directions.WEST);
   var northMatch = this.tilesMatch(rotation, board.getTile(x,y+1), Directions.NORTH);
@@ -51,16 +88,16 @@ schema.methods.adjacentTilesBordersMatch = function(x, y, rotation, board) {
   return eastMatch && westMatch && northMatch && southMatch;
 };
 
-/* TODO: Refactoring. */
+
 schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOtherTile) {
   /* Matching is not a problem if there's no tile to be matched against */
   if (!otherTile) {
     return true;
   }
 
-  var otherTilesBorders = otherTile.tile.getBorders(Directions.oppositeOf(directionToOtherTile));
+  var otherTilesBorders = otherTile.tile.getBorderTypesInDirection(Directions.oppositeOf(directionToOtherTile));
   var thisTilesSidesWithRotation = Directions.rotateDirection(directionToOtherTile, thisTilesRotation);
-  var thisTilesBorders = this.getBorders(thisTilesSidesWithRotation);
+  var thisTilesBorders = this.getBorderTypesInDirection(thisTilesSidesWithRotation);
 
   var allMatches = true;
   for (var i = 0; i < thisTilesBorders.length; i++) {
@@ -74,7 +111,7 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
   return allMatches;
 };
 
-/*
+/**
  *  @params {Number} position The position of the tile's borders
  *  @returns {BorderType} The border type at position {position}
  */
@@ -83,39 +120,9 @@ schema.methods.getTypeAtPosition = function(position) {
 };
 
 /**
- * @params {Direction} direction The direction of the tile of which the borders are to be returned
- * @returns {Array} The three border types that make up the border in the tile's {direction} direction
+ * Retrieve the border that's on the {position}, taking {rotation} into consideration
+ * @params {Number} position The position that this construction contains
  */
-schema.methods.getBorders = function(direction) {
-  var returnedBorder = [];
-
-  switch (direction) {
-    case Directions.NORTH :
-      returnedBorder.push(this.getTypeAtPosition(0));
-      returnedBorder.push(this.getTypeAtPosition(1));
-      returnedBorder.push(this.getTypeAtPosition(2));
-      break;
-    case Directions.EAST :
-      returnedBorder.push(this.getTypeAtPosition(3));
-      returnedBorder.push(this.getTypeAtPosition(4));
-      returnedBorder.push(this.getTypeAtPosition(5));
-      break;
-    case Directions.SOUTH :
-      returnedBorder.push(this.getTypeAtPosition(6));
-      returnedBorder.push(this.getTypeAtPosition(7));
-      returnedBorder.push(this.getTypeAtPosition(8));
-      break;
-    case Directions.WEST :
-      returnedBorder.push(this.getTypeAtPosition(9));
-      returnedBorder.push(this.getTypeAtPosition(10));
-      returnedBorder.push(this.getTypeAtPosition(11));
-      break;
-  }
-
-  return returnedBorder;
-};
-
-/* Retrieve the border that's on the {position}, taking {rotation} into consideration */
 schema.methods.getBorderConstruction = function(position) {
   var componentHoldingPosition = this.borders.filter(function(border) {
     var containedPosition = border.positions.some(function(pos) {

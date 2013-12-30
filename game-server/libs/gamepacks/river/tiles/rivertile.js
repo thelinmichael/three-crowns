@@ -48,7 +48,7 @@ Schema.methods.isConnectedToOtherRiver = function(x, y, rotation, board) {
         /* Check if the adjacent tile's border contains a river on the side that it is bordering this tile */
         var direction = Directions.oppositeOf(directionWithRiver);
 
-        var borderContainedRiver = adjacentTile.tile.getBorders(direction).some(function(type) {
+        var borderContainedRiver = adjacentTile.tile.getBorderTypesInDirection(direction).some(function(type) {
           return type.name == "River";
         });
 

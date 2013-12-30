@@ -1,7 +1,7 @@
 var assert = require('assert');
 var should = require('should');
 
-var DrawPileShuffler = require("../../libs/models/drawpile-shuffling-strategy");
+var DrawPileShuffler = require("../../libs/drawpile-shuffling-strategy");
 
 var GamepackLoader =require("../../libs/gamepackloader");
 
