@@ -3,14 +3,16 @@ var should = require('should');
 
 var DrawPileShuffler = require("../../libs/models/drawpile-shuffling-strategy");
 
-var BaseGame = require("../../libs/gamepacks/basegame/main");
-var River = require("../../libs/gamepacks/river/main");
+var GamepackLoader =require("../../libs/gamepackloader");
 
 describe("Draw pile shuffling", function() {
 
   it("should place all tiles in order of priority, and random if the priority is the same", function() {
-    var BaseGameTiles = BaseGame.getTiles();
-    var RiverTiles = River.getTiles();
+    var BaseGame = GamepackLoader.loadPack("basegame");
+    var River = GamepackLoader.loadPack("river");
+
+    var BaseGameTiles = BaseGame.tiles;
+    var RiverTiles = River.tiles;
 
     var unshuffledTiles = BaseGameTiles.concat(RiverTiles);
 

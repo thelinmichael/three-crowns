@@ -1,10 +1,8 @@
 {
+  "gamepackId" : "single-starttile",
   "name" : "Single start tile",
   "description" : "This gamepack is not really a gamepack by itself. It contains the single starting tile that is used as a start tile when playing without the river.",
   "tiles" : {
-    "starttile" : {
-      "amount"   : 1,
-      "priority" : 2
-    }
+    "starttile" : 1
   }
 }

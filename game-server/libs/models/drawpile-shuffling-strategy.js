@@ -1,7 +1,5 @@
 /**
  * This model describes a strategy to shuffle the deck before the game is starting.
- * The purpose of having this as a separate module is to be able to insert a
- * different strategy that makes testing easier (e.g. doesn't shuffle).
  */
 
 var defaultOptions = {

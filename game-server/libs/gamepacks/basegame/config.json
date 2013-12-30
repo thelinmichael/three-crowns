@@ -1,17 +1,18 @@
 {
+  "gamepackId" : "basegame",
   "name" : "Basepack",
   "meeples" : {
     "regular-meeple" : 7
   },
   "tiles" : {
-    "crossroads" : 1,
-    "three-way-crossroad" : 4,
-    "dragon-castle" : 1,
-    "grass-cloister" : 4,
-    "road-to-cloister" : 2,
-    "westnorth-road" : 4,
-    "westeast-road" : 4,
-    "halfcircle-castle" : 4,
-    "halfcircle-castle-with-road" : 2
+    "a-road-to-monastery" : 2,
+    "b-grass-monastery" : 4,
+    "c-city-square" : 1,
+    "d-halfcircle-castle-and-road" : 4,
+    "e-halfcircle-castle" : 4,
+    "w-three-way-crossroad" : 4,
+    "x-crossroads" : 1,
+    "v-curved-road" : 9,
+    "u-straight-road" : 8
   }
 }

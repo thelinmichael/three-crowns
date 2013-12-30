@@ -1,40 +1,26 @@
 var Game = require("./models/game.js");
+var GamepackLoader = require("./gamepackloader");
 
-var _defaultOptions = {
-  gamepacks : ['basegame']
+var defaultOptions = {
+  gamepacks : ['basegame', 'single-starttile']
 };
 
 var create = function(options) {
-  this.options = _defaultOptions;
-  extend(this.options, options);
+  this.options = defaultOptions;
+
+  /* Any options that are missing are filled in with default options */
+  for (var property in defaultOptions) {
+    if (options[property] === undefined) {
+      options[property] = _defaultOptions[property];
+    }
+  }
+
+  var gamepacks = GamepackLoader.loadPacks(this.options.gamepacks);
 
   var game = new Game();
-
-  var gamepacks = _loadPacks(this.options.gamepacks);
   game.addPacks(gamepacks);
 
   return game;
-};
-
-/**
- * @params {Array} gamepacks An Array of gamepack identifiers/folder names.
- * @returns {Array} An array of the gamepacks in {gamepacks}, but the actual modules
- */
-var _loadPacks = function(gamepacks) {
-  var loadedGamePacks = gamepacks.map(function(gamepack) {
-    return require('./gamepacks/' + gamepack + '/main');
-  });
-  return loadedGamePacks;
-};
-
-/**
- * Adds the source's properties to the source properties
- */
-var extend = function(destination, source) {
-  for (var property in source) {
-    destination[property] = source[property];
-  }
-  return destination;
 };
 
 exports = module.exports;

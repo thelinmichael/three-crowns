@@ -29,7 +29,7 @@ Schema.methods.isConnectedToOtherRiver = function(x, y, rotation, board) {
 
   // This tile's river borders are on these positions
   var riverConstructions = this.constructions.filter(function(construction) {
-    return construction.constructionType.name == "River";
+    return construction.type.name == "River";
   });
 
   var oneRiverMatched = riverConstructions.some(function(riverConstruction) {
@@ -48,8 +48,8 @@ Schema.methods.isConnectedToOtherRiver = function(x, y, rotation, board) {
         /* Check if the adjacent tile's border contains a river on the side that it is bordering this tile */
         var direction = Directions.oppositeOf(directionWithRiver);
 
-        var borderContainedRiver = adjacentTile.tile.getBorders(direction).some(function(constructionType) {
-          return constructionType.name == "River";
+        var borderContainedRiver = adjacentTile.tile.getBorders(direction).some(function(type) {
+          return type.name == "River";
         });
 
         return borderContainedRiver;

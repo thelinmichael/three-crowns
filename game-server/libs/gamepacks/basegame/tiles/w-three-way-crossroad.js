@@ -6,33 +6,34 @@ var Road = require("../tile-components/road");
 /**
  *  A three-way crossroads tile.
  *  Roads enter from the west, east and south, but break in the center.
+ *  Rule book letter: W.
  */
-var constructions = [
+var borders = [
   {
     positions : [ 0,1,2,3,11 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 4 ],
-    constructionType      : Road
+    type      : Road
   },
   {
     positions : [ 5,6 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 7 ],
-    constructionType      : Road
+    type      : Road
   },
   {
     positions : [ 8,9 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 10 ],
-    constructionType      : Road
+    type      : Road
   }
 ];
 
 var ThreeWayCrossroadsTile = mongoose.model('ThreeWayCrossroadsTile', BaseSchema);
-module.exports = new ThreeWayCrossroadsTile({ "name" : "Three-way crossroads", "constructions" : constructions });
+module.exports = new ThreeWayCrossroadsTile({ "name" : "Three-way crossroads", "borders" : borders });

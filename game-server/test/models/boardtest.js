@@ -3,14 +3,17 @@ var should = require('should');
 
 var Board = require('../../libs/models/board');
 
-var BaseGame = require("../../libs/gamepacks/basegame/main");
+var GamepackLoader = require("../../libs/gamepackloader");
 var Rotations = require("../../libs/models/tile").Rotations;
 
 describe("Board", function() {
 
   it("Should get the number of tiles placed on the board", function() {
     var unit = new Board();
-    var unplacedTiles = BaseGame.getTiles();
+
+    var BaseGame = GamepackLoader.loadPack("basegame");
+
+    var unplacedTiles = BaseGame.tiles;
 
     unit.getNumberOfTiles().should.equal(0);
     unit.placeTile(0, 0, unplacedTiles[0], Rotations.NONE);
@@ -20,7 +23,8 @@ describe("Board", function() {
 
   it("Can get positions on the board that are free and adjacent to another tiles", function() {
     var unit = new Board();
-    var unplacedTiles = BaseGame.getTiles();
+    var BaseGame = GamepackLoader.loadPack("basegame");
+    var unplacedTiles = BaseGame.tiles;
     should.exist(unplacedTiles);
 
     var canPlaceFirstTileAtOrigo = unit.canPlaceTile(0, 0, unplacedTiles[0], Rotations.NONE);
@@ -60,18 +64,18 @@ describe("Board", function() {
   it("Can get possible positions for specific tile", function() {
     var unit = new Board();
 
-    var westEastRoadTile = require("../../libs/gamepacks/basegame/tiles/westeast-road");
-    var possiblePositions = unit.getPossiblePlacementsForTile(westEastRoadTile);
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
+    var possiblePositions = unit.getPossiblePlacementsForTile(straightRoad);
     (possiblePositions.length).should.equal(1);
     var foundPosition1 = possiblePositions.some(function(position) {
       return (position.x === 0 && position.y === 0);
     });
     (foundPosition1).should.equal(true);
 
-    unit.placeTile(0, 0, westEastRoadTile, 0);
+    unit.placeTile(0, 0, straightRoad, 0);
 
-    var westNorthRoadTile = require("../../libs/gamepacks/basegame/tiles/westnorth-road");
-    possiblePositions = unit.getPossiblePlacementsForTile(westNorthRoadTile);
+    var curvedRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+    possiblePositions = unit.getPossiblePlacementsForTile(curvedRoad);
     (possiblePositions.length).should.equal(4);
     var foundPosition2 = possiblePositions.some(function(position) {
       return (position.x == 1 && position.y === 0);
@@ -86,12 +90,12 @@ describe("Board", function() {
   it("Should consider rotation when giving possible placements", function() {
     var unit = new Board();
 
-    var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/halfcircle-castle-with-road");
-    var westEastRoad = require("../../libs/gamepacks/basegame/tiles/westeast-road");
+    var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/d-halfcircle-castle-and-road");
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
 
     unit.placeTile(0, 0, halfCircleCastleWithRoad, Rotations.NONE);
 
-    var possiblePositions = unit.getPossiblePlacementsForTile(westEastRoad);
+    var possiblePositions = unit.getPossiblePlacementsForTile(straightRoad);
     possiblePositions.length.should.equal(3);
     possiblePositions[0].x.should.equal(1);
     possiblePositions[0].y.should.equal(0);
@@ -113,19 +117,19 @@ describe("Board", function() {
   it("Should persist a placed tiles rotation", function() {
     var unit = new Board();
 
-    var westEastRoad = require("../../libs/gamepacks/basegame/tiles/westeast-road");
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
 
-    unit.placeTile(0, 0, westEastRoad, Rotations.ONCE);
+    unit.placeTile(0, 0, straightRoad, Rotations.ONCE);
     var placedTile = unit.getTile(0, 0);
 
     placedTile.rotation.should.equal(Rotations.ONCE);
   });
 
-  it.only("Should keep track of how large a road is", function() {
+  it("Should keep track of how large a road is", function() {
     var unit = new Board();
 
-    var crossroads = require("../../libs/gamepacks/basegame/tiles/crossroads");
-    var threeWayCrossroad = require("../../libs/gamepacks/basegame/tiles/three-way-crossroad");
+    var crossroads = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var threeWayCrossroad = require("../../libs/gamepacks/basegame/tiles/w-three-way-crossroad");
 
     unit.placeTile(0, 0, crossroads, Rotations.NONE);
     unit.placeTile(0, 1, threeWayCrossroad, Rotations.NONE);
@@ -134,7 +138,7 @@ describe("Board", function() {
     var roadConstruction = placedTile.getBorderConstruction(7);
 
     should.exist(roadConstruction);
-    roadConstruction.constructionType.getName().should.equal("Road");
+    roadConstruction.type.getName().should.equal("Road");
 
     var tilesAndPositionsInvolvedInConstruction = unit.getSpanningConstructions(0, 1, roadConstruction);
     should.exist(tilesAndPositionsInvolvedInConstruction);

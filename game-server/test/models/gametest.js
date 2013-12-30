@@ -2,12 +2,11 @@ var assert = require('assert');
 var should = require('should');
 
 var GameBuilder = require('../../libs/gamebuilder');
+var GamepackLoader = require("../../libs/gamepackloader");
 var Player = require("../../libs/models/player");
 var Tile = require("../../libs/models/tile");
 var Game = require("../../libs/models/game");
 var Rotations = require("../../libs/models/tile").Rotations;
-var BasePack = require("../../libs/gamepacks/basegame/main");
-var River = require("../../libs/gamepacks/river/main")
 
 describe("Game", function() {
 
@@ -17,6 +16,8 @@ describe("Game", function() {
    */
   it("Should be played the game from end to end", function() {
     var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+
+    var BaseGame = GamepackLoader.loadPack("basegame");
 
     var players = unit.getPlayers();
     players.length.should.equal(0);
@@ -48,7 +49,7 @@ describe("Game", function() {
     /* A player should have received meeples */
     firstPlayersMeeples = players[0].meeples;
     should.exist(firstPlayersMeeples);
-    firstPlayersMeeples.length.should.equal(BasePack.getMeeples().length);
+    firstPlayersMeeples.length.should.equal(BaseGame.meeples.length);
 
     unit.getActivePlayer().getName().should.equal(player1.getName());
 
@@ -112,8 +113,8 @@ describe("Game", function() {
     unit.addPlayer(player1);
     unit.addPlayer(player2);
 
-    var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/halfcircle-castle-with-road");
-    var westEastRoad = require("../../libs/gamepacks/basegame/tiles/westeast-road");
+    var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/d-halfcircle-castle-and-road");
+    var westEastRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
 
     unit.tiles = [halfCircleCastleWithRoad, westEastRoad];
     var options = {

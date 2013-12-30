@@ -10,16 +10,16 @@ var priority = 4;
 /**
  *  The Mountain tile, where the River expansion river starts.
  */
-var constructions = [
+var borders = [
   {
     positions : [ 0,1,2,3,4,5,6,7,8,9,11 ],
-    constructionType : Grass
+    type : Grass
   },
   {
     positions : [ 10 ],
-    constructionType : River
+    type : River
   }
 ];
 
 var MountainTile = mongoose.model('MountainTile', RiverSchema);
-module.exports = new MountainTile({ "priority" : priority, "name" : "Mountain", "constructions" : constructions });
+module.exports = new MountainTile({ "priority" : priority, "name" : "Mountain", "borders" : borders });

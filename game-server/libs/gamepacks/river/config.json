@@ -1,4 +1,5 @@
 {
+  "gamepackId" : "river",
   "name" : "River",
   "tiles" : {
     "mountain" : 1,

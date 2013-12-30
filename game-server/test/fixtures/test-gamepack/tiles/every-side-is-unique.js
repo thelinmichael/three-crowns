@@ -8,32 +8,32 @@ var River = require("../../../../libs/gamepacks/river/tile-components/river");
 /**
  * Tile where all sides are different from the others.
  */
-var constructions = [
+var borders = [
   {
     positions : [ 0 ],
-    constructionType : Grass
+    type : Grass
   },
   {
     positions : [ 1 ],
-    constructionType : Road
+    type : Road
   },
   {
     positions : [ 2,3,4,5,6 ],
-    constructionType : Grass
+    type : Grass
   },
   {
     positions : [ 7  ],
-    constructionType : River
+    type : River
   },
   {
     positions : [ 8 ],
-    constructionType : Grass
+    type : Grass
   },
   {
     positions : [ 9,10,11 ],
-    constructionType : Castle
+    type : Castle
   }
 ];
 
 var UniqueSidesTile = mongoose.model('UniqueSidesTile', BaseSchema);
-module.exports = new UniqueSidesTile({ "name" : "Unique Sides tile", "constructions" : constructions });
+module.exports = new UniqueSidesTile({ "name" : "Unique Sides tile", "borders" : borders });

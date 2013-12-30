@@ -280,8 +280,6 @@ schema.methods.getSpanningConstructions = function(x, y, construction) {
     var rotation = this.getTile(x, y).rotation;
 
     /* If the adjacent tiles are of the same type, add them to the constructions to check */
-    console.log(check.construction.positions);
-    console.log(adjacentPositions);
   }
 
   return traversedTiles;

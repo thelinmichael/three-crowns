@@ -1,5 +1,5 @@
-var BaseSchema = require("../../../models/tile-border-construction-extra.js").schema;
 var mongoose = require("mongoose");
+var BaseSchema = require("../../../models/tile-border-extra.js").schema;
 
 /**
  * Return one point when castle has finished and there's a penant.
@@ -28,4 +28,4 @@ BaseSchema.methods.isBuildingCompleted = function(position, board) {
   throw new Error("Not implemented!");
 };
 
-module.exports = mongoose.model('Penant', BaseSchema);
+module.exports = mongoose.model('Banner', BaseSchema);

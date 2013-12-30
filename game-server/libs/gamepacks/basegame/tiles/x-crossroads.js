@@ -7,40 +7,40 @@ var Road = require("../tile-components/road");
  *  A crossroads tile.
  *  Roads enter from all directions, but break in the center.
  */
-var constructions = [
+var borders = [
   {
     positions : [ 0,11 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 1 ],
-    constructionType      : Road
+    type      : Road
   },
   {
     positions : [ 2,3 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 4 ],
-    constructionType      : Road
+    type      : Road
   },
   {
     positions : [ 5,6 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 7 ],
-    constructionType      : Road
+    type      : Road
   },
   {
     positions : [ 8,9 ],
-    constructionType      : Grass
+    type      : Grass
   },
   {
     positions : [ 10 ],
-    constructionType      : Road
+    type      : Road
   }
 ];
 
 var CrossroadsTile = mongoose.model('CrossroadsTile', BaseSchema);
-module.exports = new CrossroadsTile({ "name" : "Crossroads", "constructions" : constructions });
+module.exports = new CrossroadsTile({ "name" : "Crossroads", "borders" : borders });

@@ -1,31 +1,37 @@
-var Tile = require("../../../models/tile");
-var Grass = require("../tile-components/grass");
-var Castle = require("../tile-components/castle");
-var Road = require("../tile-components/road");
+var mongoose = require("mongoose");
+
+var BaseSchema = require("../../../models/tile").schema;
+var Grass = require("../../basegame/tile-components/grass");
+var Castle = require("../../basegame/tile-components/castle");
+var Road = require("../../basegame/tile-components/road");
 
 /**
  * The basepacks starting tile. A half circle castle, with a road
- * spanning from west to east.
+ * spanning from north to south.
+ * Rule book letter: D.
  */
-var constructions = [
+
+var priority = 2;
+
+var borders = [
   {
     positions : [ 0,1,2,3,4,11 ],
-    constructionType : Grass
+    type : Grass
   },
   {
     positions : [ 4,10 ],
-    constructionType : Road
+    type : Road
   },
   {
     positions : [ 5,9 ],
-    constructionType : Grass
+    type : Grass
   },
   {
     positions : [ 6,7,8 ],
-    constructionType : Castle
+    type : Castle
   }
 ];
 
-var tile = new Tile();
-tile.constructions = constructions;
-module.exports = tile;
+
+var StartTile = mongoose.model('StartTile', BaseSchema);
+module.exports = new StartTile({ "name" : "Single start tile", "borders" : borders, "priority" : priority });

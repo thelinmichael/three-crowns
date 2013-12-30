@@ -3,7 +3,6 @@ var should = require('should');
 
 var Tile = require("../../libs/models/tile");
 var Directions = require("../../libs/models/tile").Directions;
-var BasePack = require("../../libs/gamepacks/basegame/main");
 
 describe("Tile", function() {
 

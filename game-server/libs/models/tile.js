@@ -2,43 +2,28 @@ var mongoose = require("mongoose");
 var Tile = require("./tile");
 
 /**
- * This schema describes a tile.
+ * This schema is the base schema describes a tile and overriden by tiles in the gamepacks.
+ *
  * Tiles are made of different connectable types, such as Grass, Roads, or Castles. Every tile
  * has 12 pieces which span the borders of the tile. These are connectable, and connected border
  * pieces form constructions. For example, a road that goes from the tile's west side to its north side
  * and has grass on both sides of it, has three different constructions (the road and the grass on each
  * side of it). These constructions may also have special features. For example, constructions that are
- * made of Castles may have a Penant, and a Roads may have an Inn.
- * Tiles are also made of internal pieces, such as Cloisters.
+ * made of Castles may have a Banner, and a Roads may have an Inn.
+ * Tiles are also made of internal pieces, such as Monasteries.
  * @params {Number} priority The priority for this tile. Default is 1, which goes for all regular tiles.
- * Staring tiles (e.g. River) should have a priority of 2 or higher. For example, the River Lake has a priority
+ * Starting tiles (e.g. River) should have a priority of 2 or higher. For example, the River Lake has a priority
  * of 2, the regular rivers have a priority of 3, and the Mountain 4.
  */
 var schema = mongoose.Schema({
   name : { type : String },
-  constructions : [{
+  borders : {
     "positions" : [Number],
-    "constructionType" : {}
-  }],
+    "type" : {}
+  },
   internals : {},
   priority : { "type" : Number, "default" : 1 }
 });
-
-/**
- * @params {Tile} otherTile The tile to compare this tile with
- * @returns {Boolean} True if the tile is the same as the tile compared with it, otherwise false
- */
-schema.methods.sameAs = function(otherTile) {
-  throw new Error("Not implemented!");
-};
-
-/**
- * @params {Tile.Rotations} rotation The rotation of this tile
- * @returns {Tile} This tile rotated like {Tile.Rotations}
- */
-schema.methods.withRotation = function(rotation) {
-  throw new Error("Not implemented!");
-};
 
 /**
  * This function is used to check if this tile can be placed on a specific
@@ -123,29 +108,22 @@ schema.methods.getBorders = function(direction) {
 };
 
 /**
- *  @returns {Number} Returns the internal component's type, e.g. a Cathedral
- */
-schema.methods.getInternal = function() {
-  return this.internals;
-};
-
-/**
  *  @params {Number} position The position of the tile's borders
- *  @returns {ConstructionType} The construction type of the border at position {position}
+ *  @returns {BorderType} The border type at position {position}
  */
 schema.methods.getTypeAtPosition = function(position) {
-  var componentHoldingPosition = this.constructions.filter(function(construction) {
-    var containedPosition = construction.positions.some(function(pos) {
+  var componentHoldingPosition = this.borders.filter(function(border) {
+    var containedPosition = border.positions.some(function(pos) {
       return pos == position;
     });
     return containedPosition;
   });
-  return componentHoldingPosition[0].constructionType;
+  return componentHoldingPosition[0].type;
 };
 
 schema.methods.getBorderConstruction = function(position) {
-  var componentHoldingPosition = this.constructions.filter(function(construction) {
-    var containedPosition = construction.positions.some(function(pos) {
+  var componentHoldingPosition = this.borders.filter(function(border) {
+    var containedPosition = border.positions.some(function(pos) {
       return pos == position;
     });
     return containedPosition;
@@ -163,6 +141,10 @@ var Rotations = {
   THRICE : 3
 };
 
+/**
+ * This class describes directions, and helps make the code more readable, and keeps track of which
+ * positions transalte to which direction.
+ */
 var Directions = {
   NORTH : 0,
   EAST  : 1,
@@ -200,4 +182,4 @@ var Directions = {
 
 module.exports.schema = schema;
 module.exports.Rotations = Rotations;
-module.exports.Directions = Directions;
+module.exports.Directions= Directions;
