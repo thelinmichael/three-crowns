@@ -4,7 +4,8 @@
     "regular-meeple" : 7
   },
   "tiles" : {
-    "crossroads" : 2,
+    "crossroads" : 1,
+    "three-way-crossroad" : 4,
     "dragon-castle" : 1,
     "grass-cloister" : 4,
     "road-to-cloister" : 2,

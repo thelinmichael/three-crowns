@@ -261,11 +261,11 @@ schema.methods.getSpanningConstructions = function(x, y, construction) {
     var check = constructionsToCheck.pop();
 
     /* Check if it is already among the saved constructions */
-    var alreadyTraversed = traversedTiles.some(function(checkedTile) {
-      var tileIsTraversed = (tile.x == checkedTile.x && tile.y == checkedTile.y);
-      var constructionTraversed = tile.constructions.some(function(checkedConstruction) {
-        checkedConstruction.constructionType.getName() == check.constructionType.getName() &&
-        checkedConstruction.positions.compare(check.positions);
+    var alreadyTraversed = traversedTiles.some(function(traversedTile) {
+      var tileIsTraversed = (traversedTile.x == check.tile.x && traversedTile.y == traversedTile.y);
+      var constructionTraversed = traversedTile.constructions.some(function(traversedConstruction) {
+        traversedConstruction.constructionType.getName() == check.construction.constructionType.getName() &&
+        traversedConstruction.positions.compare(check.construction.positions);
       });
     });
     if (alreadyTraversed) {
@@ -276,32 +276,16 @@ schema.methods.getSpanningConstructions = function(x, y, construction) {
     traversedTiles.push(check);
 
     /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
-    var adjacentPositions = Directions.forPositions(check.positions);
+    var adjacentPositions = Directions.forPositions(check.construction.positions);
     var rotation = this.getTile(x, y).rotation;
 
     /* If the adjacent tiles are of the same type, add them to the constructions to check */
-
-  }
-
-    /* Direction that is in the same direction as {position} */
-  forPositions : function(positions) {
-    var directions = [];
-    if (positions.indexOf(0) != -1|| positions.indexOf(1) != -1 || positions.indexOf(2) != -1) {
-      directions.push(0);
-    }
-    if (positions.indexOf(3) != -1|| positions.indexOf(4) != -1 || positions.indexOf(5) != -1) {
-      directions.push(1);
-    }
-    if (positions.indexOf(6) != -1|| positions.indexOf(7) != -1 || positions.indexOf(8) != -1) {
-      directions.push(2);
-    }
-    if (positions.indexOf(9) != -1|| positions.indexOf(10) != -1 || positions.indexOf(11) != -1) {
-      directions.push(3);
-    }
-    return directions;
+    console.log(check.construction.positions);
+    console.log(adjacentPositions);
   }
 
   return traversedTiles;
+
 };
 
 /* Adding comparison function.
