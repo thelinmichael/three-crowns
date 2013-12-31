@@ -14,10 +14,13 @@ var Gamepack = function(config) {
  */
 Gamepack.prototype.getTiles = function() {
   var self = this;
-  var loadedTiles = this.config.tiles.map(function(tileEntry) {
-    var tile =  require("./gamepacks/" + self.config.gamepackId + "/tiles/" + tileEntry.name);
-    tile.shufflePriority = tileEntry.shufflePriority;
-    return tile;
+  var loadedTiles = [];
+  this.config.tiles.forEach(function(tileEntry) {
+    for (var i = 0; i < tileEntry.amount; i++) {
+      var tile =  require("./gamepacks/" + self.config.gamepackId + "/tiles/" + tileEntry.name);
+      tile.shufflePriority = tileEntry.shufflePriority;
+      loadedTiles.push(tile);
+    }
   });
   return loadedTiles;
 };

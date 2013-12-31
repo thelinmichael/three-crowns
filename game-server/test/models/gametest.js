@@ -40,7 +40,7 @@ describe("Game", function() {
     var options = {
       shuffle : {
         "orderByPriority" : true,
-        "randomiseSamePriority" : false
+        "randomiseSamePriority" : true
       }
     };
     unit.start(options);
