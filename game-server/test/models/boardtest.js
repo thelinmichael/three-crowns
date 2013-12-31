@@ -136,11 +136,30 @@ describe("Board", function() {
     unit.placeTile(1, 0, threeWayCrossroad, Rotations.ONCE);
 
     var placedTile = unit.getTile(1, 0).tile;
-    var roadConstruction = placedTile.getConnectableAreaAtPosition(7);
+    var roadArea = placedTile.getConnectableAreaAtPosition(7);
 
-    var tilesAndPositionsInvolvedInConstruction = unit.getTileAreasCoveredByConnectableArea(1, 0, roadConstruction);
-    should.exist(tilesAndPositionsInvolvedInConstruction);
-    tilesAndPositionsInvolvedInConstruction.length.should.equal(2);
+    var tilesAndPositionsInvolvedInArea = unit.getTileAreasCoveredByConnectableArea(1, 0, roadArea);
+    should.exist(tilesAndPositionsInvolvedInArea);
+    tilesAndPositionsInvolvedInArea.length.should.equal(2);
+  });
+
+  it("should know which areas is part of a field that spans several tiles", function() {
+    var unit = new Board();
+
+    var roadToMonastery = require("../../libs/gamepacks/basegame/tiles/a-road-to-monastery");
+    var grassMonastery = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
+
+    unit.placeTile(0, 0, roadToMonastery, Rotations.NONE);
+    unit.placeTile(0, 1, grassMonastery, Rotations.NONE);
+    unit.placeTile(0, -1, straightRoad, Rotations.ONCE);
+
+    var placedTile = unit.getTile(0, -1).tile;
+    var grassArea = placedTile.getConnectableAreaAtPosition(7);
+
+    var tilesAndPositionsInvolvedInArea = unit.getTileAreasCoveredByConnectableArea(0, -1, grassArea);
+    should.exist(tilesAndPositionsInvolvedInArea);
+    tilesAndPositionsInvolvedInArea.length.should.equal(4);
   });
 
 });

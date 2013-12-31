@@ -19,4 +19,8 @@ schema.methods.meeplesCanBePlaced = function() {
   return this.meeplePlaceable;
 };
 
+schema.methods.sameAs = function(otherAreaType) {
+  return this.name == otherAreaType.name;
+};
+
 module.exports.schema = schema;

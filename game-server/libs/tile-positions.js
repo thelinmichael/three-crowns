@@ -63,14 +63,9 @@ var Positions = {
         self = this;
 
     positions.forEach(function(position) {
-      if ([0,1,2].indexOf(position) > -1) { directions.push(Directions.NORTH); }
-      if ([3,4,5].indexOf(position) > -1) { directions.push(Directions.EAST); }
-      if ([6,7,8].indexOf(position) > -1) { directions.push(Directions.SOUTH); }
-      if ([9,10,11].indexOf(position) > -1) { directions.push(Directions.WEST); }
-    });
-
-    directions = directions.filter(function(direction) {
-      return directions[directions.indexOf(direction)];
+      if (directions.indexOf(self.toDirection(position)) == -1) {
+        directions.push(self.toDirection(position));
+      }
     });
 
     return directions;

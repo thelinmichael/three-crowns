@@ -11,4 +11,9 @@ ConnectableSchema.methods.getType = function() {
   return this.areaType;
 };
 
+
+ConnectableSchema.methods.connectsWith = function(area) {
+  return this.areaType.sameAs(area.areaType);
+}
+
 module.exports = mongoose.model('Connectable', ConnectableSchema);

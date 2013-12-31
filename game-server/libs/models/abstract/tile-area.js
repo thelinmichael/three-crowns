@@ -4,8 +4,7 @@ var mongoose = require("mongoose");
  *  Describes a tile area.
  */
 var TileAreaSchema = mongoose.Schema({
-  name : { type : String },
-  connectable : { type : Boolean }
+  name : { type : String }
 });
 
 module.exports.schema = TileAreaSchema;

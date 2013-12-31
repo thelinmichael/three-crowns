@@ -24,16 +24,16 @@ var BoardTraverser = {
       }
 
       /* Stop traversing if it's not the same type */
-      if (areaBeingChecked.area.areaType.name != area.areaType.name) {
+      if (!areaBeingChecked.area.connectsWith(area)) {
         continue;
       }
 
-      /* It's of the same type, so add it to the traversed areas */
+      /* Not traversed before, and it's of the same type, so it's part of the larger area */
       traversedAreas.push(areaBeingChecked);
 
       /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
-      var tilesRotation = board.getTile(areaBeingChecked.x, areaBeingChecked.y).rotation;
-      var rotatedPositions = Positions.rotate(areaBeingChecked.area.positions, tilesRotation);
+      var tileBeingCheckedsRotation = board.getTile(areaBeingChecked.x, areaBeingChecked.y).rotation;
+      var rotatedPositions = Positions.rotate(areaBeingChecked.area.positions, tileBeingCheckedsRotation);
       var adjacentDirections = Positions.toDirections(rotatedPositions);
 
       var adjacentAreas = this.traverseAdjacentAreas(areaBeingChecked.x, areaBeingChecked.y, rotatedPositions, adjacentDirections, board);
@@ -48,11 +48,16 @@ var BoardTraverser = {
     var adjacentAreas = [];
 
     directions.forEach(function(direction) {
+
       /* Get adjacent tile */
+      if (!board.hasTileInDirection(x, y, direction)) {
+        return;
+      }
+
       var tileOnBoard = board.getTileInDirection(x, y, direction);
 
       /* Get which of the positions on the adjacent tile that borders to the construction */
-      var connectingPositions = Positions.filterForDirection(positions, directions);
+      var connectingPositions = Positions.filterForDirection(positions, direction);
       var adjacentTilesConnectingPositions = connectingPositions.map(function(position) {
         return Positions.oppositeOf(position);
       });

@@ -58,6 +58,9 @@ schema.methods.getAreaTypesAdjacentToDirection = function(direction) {
  *  @returns {AreaType} The border type at position {position}
  */
 schema.methods.getAreaTypeAtPosition = function(position) {
+  if (position === undefined) {
+    throw new Error("Missing required parameter position", position);
+  }
   return this.getConnectableAreaAtPosition(position).areaType;
 };
 
