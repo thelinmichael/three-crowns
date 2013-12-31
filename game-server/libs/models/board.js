@@ -1,7 +1,8 @@
 var mongoose = require("mongoose");
-var Directions = require("./tile").Directions;
-var Rotations = require("./tile").Rotations;
-var Positions = require("./tile").Positions;
+var Directions = require("../directions");
+var Rotations = require("../tile-rotations");
+var Positions = require("../tile-positions");
+var BoardTraverser = require("../board-traverser");
 
 /**
  * This model describes the board.
@@ -14,7 +15,7 @@ var schema = mongoose.Schema({
   tiles : [{
     "x" : { "type" : Number },
     "y" : { "type" : Number },
-    "tile" : ['Tile'], // This is bogus. There must surely be an easy way to define another Schema without creating an array.
+    "tile" : ['Tile'],
     "rotation" : { "type": Number }
   }]
 });
@@ -34,21 +35,21 @@ schema.methods.hasAdjacentTile = function(x, y) {
 /**
  * @params {Number} x The coordinate on the x axis
  * @params {Number} y The coordinate on the y axis
- * @returns {Object} Returns an object containing the tiles adjacent to {x},{y}.
+ * @returns {Array} Returns an object containing the tiles adjacent to {x},{y}.
  */
 schema.methods.getAdjacentTiles = function(x, y) {
-  var adjacentTiles = {};
+  var adjacentTiles = [];
   if (this.hasTile(x-1, y)) {
-    adjacentTiles.west = this.getTile(x-1, y);
+    adjacentTiles.push(this.getTile(x-1, y));
   }
   if (this.hasTile(x+1, y)) {
-    adjacentTiles.east = this.getTile(x+1, y);
+    adjacentTiles.push(this.getTile(x+1, y));
   }
   if (this.hasTile(x, y+1)) {
-    adjacentTiles.north = this.getTile(x, y+1);
+    adjacentTiles.push(this.getTile(x, y+1));
   }
   if (this.hasTile(x, y-1)) {
-    adjacentTiles.south = this.getTile(x, y-1);
+    adjacentTiles.push(this.getTile(x, y-1));
   }
   return adjacentTiles;
 };
@@ -159,7 +160,6 @@ schema.methods.getPossiblePlacementsForTile = function(tile) {
     rotations.forEach(function(rotation) {
       var x = tileOnBoard.x;
       var y = tileOnBoard.y;
-
       if (self.canPlaceTile(x+1, y, tile, rotation)) {
         _addPosition(possiblePositions, x+1, y, rotation);
       }
@@ -240,111 +240,10 @@ schema.methods.hasTileInDirection = function(x, y, direction) {
 /**
  * Retrieve which tiles, and positions on those tiles, are involved in a construction.
  * @returns {Array} holding an object containing {x}, {y}, [{borders}]. */
-schema.methods.getSpanningConstructions = function(x, y, construction) {
-  var self = this;
-
-  /* No tile, no construction. */
-  if (!this.hasTile(x,y)) {
-    return [];
-  }
-
-  /* Keep track of which tiles that have been checked */
-  var traversedConstructions = [];
-
-  /* Start out with this tile as the first */
-  var constructionsToCheck = [{ "x" : x, "y" : y, "construction" : construction }];
-
-  while (constructionsToCheck.length > 0) {
-    /* Use the top tile on the stack */
-    var constructionToCheck = constructionsToCheck.pop();
-
-    /* Check if it is already among the saved constructions */
-    if (this.isTraversed(traversedConstructions, constructionToCheck)) {
-      continue;
-    }
-
-    /* Stop traversing if it's not the same type */
-    if (constructionToCheck.construction.type.name != construction.type.name) {
-      console.log("Not the same construction type, continuing with the next one..");
-      continue;
-    }
-
-    /* It's of the same type, so add it to the traversed constructions */
-    traversedConstructions.push(constructionToCheck);
-
-    /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
-    var tilesRotation = this.getTile(constructionToCheck.x, constructionToCheck.y).rotation;
-    var rotatedPositions = Positions.rotate(constructionToCheck.construction.positions, tilesRotation);
-    var adjacentDirections = Directions.forPositions(rotatedPositions);
-
-    var adjacentConstructions = this.traverseAdjacentConstructions(constructionToCheck.x, constructionToCheck.y, rotatedPositions, adjacentDirections);
-
-    constructionsToCheck = constructionsToCheck.concat(adjacentConstructions);
-  }
-
-  return traversedConstructions;
-
+schema.methods.getTileAreasCoveredByConnectableArea = function(x, y, area) {
+  return BoardTraverser.getTileAreasCoveredByConnectableArea(x, y, area, this);
 };
 
-schema.methods.traverseAdjacentConstructions = function(x, y, positions, directions) {
-  var self = this;
-  var adjacentConstructions = [];
-
-  directions.forEach(function(direction) {
-    /* Get adjacent tile */
-    var tileOnBoard = self.getTileInDirection(x, y, direction);
-
-    /* Get which of the positions on the adjacent tile that borders to the construction */
-    var connectingPositions = Positions.filterForDirection(positions, directions);
-    var adjacentTilesConnectingPositions = connectingPositions.map(function(position) {
-      return Positions.oppositeOf(position);
-    });
-
-    /* Get the construction */
-    var adjacentTilesRotatedPositions = Positions.counterRotate(adjacentTilesConnectingPositions, tileOnBoard.rotation);
-    var adjacentConstruction = tileOnBoard.tile.getBorderConstruction(adjacentTilesRotatedPositions[0]);
-
-    /* Add to the stack of constructions that will be checked */
-    adjacentConstructions.push({ "x" : tileOnBoard.x, "y" : tileOnBoard.y, "construction" : adjacentConstruction });
-  });
-
-  return adjacentConstructions;
-};
-
-schema.methods.isTraversed = function(traversedConstructions, constructionToCheck) {
-  return traversedConstructions.some(function(traversedConstruction) {
-      var tileIsTraversed = (traversedConstruction.x == constructionToCheck.x && traversedConstruction.y == constructionToCheck.y);
-      var constructionIsTraversed = (traversedConstruction.construction.type.name == constructionToCheck.construction.type.name &&
-                                     traversedConstruction.construction.positions.compare(constructionToCheck.construction.positions));
-      return (tileIsTraversed && constructionIsTraversed);
-  });
-};
-
-/* Adding comparison function.
-   TODO: Move this out to a module that holds these kinds of additions. */
-Array.prototype.compare = function(array) {
-    // if the other array is a falsy value, return
-    if (!array)
-        return false;
-
-    // compare lengths - can save a lot of time
-    if (this.length != array.length)
-        return false;
-
-    for (var i = 0, l=this.length; i < l; i++) {
-        // Check if we have nested arrays
-        if (this[i] instanceof Array && array[i] instanceof Array) {
-            // recurse into the nested arrays
-            if (!this[i].compare(array[i]))
-                return false;
-        }
-        else if (this[i] != array[i]) {
-            // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;
-        }
-    }
-    return true;
-};
 
 module.exports = mongoose.model('Board', schema);
 module.exports.schema = schema;

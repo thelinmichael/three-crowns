@@ -2,7 +2,6 @@ var assert = require('assert');
 var should = require('should');
 
 var DrawPileShuffler = require("../../libs/drawpile-shuffling-strategy");
-
 var GamepackLoader =require("../../libs/gamepackloader");
 
 describe("Draw pile shuffling", function() {
@@ -22,8 +21,8 @@ describe("Draw pile shuffling", function() {
     var previousTilesPriority;
     var inPriorityOrder = shuffledTiles.every(function(tile, index) {
       if (index > 0) {
-        previousTilesPriority = shuffledTiles[index-1].priority;
-        return previousTilesPriority >= tile.priority;
+        previousTilesPriority = shuffledTiles[index-1].shufflePriority;
+        return previousTilesPriority >= tile.shufflePriority;
       } else {
         return true;
       }

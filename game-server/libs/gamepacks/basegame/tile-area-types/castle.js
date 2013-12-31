@@ -1,4 +1,4 @@
-var BaseSchema = require("../../../models/tile-border.js").schema;
+var BaseSchema = require("../../../models/abstract/tile-area.js").schema;
 var mongoose = require("mongoose");
 
 /**
@@ -10,8 +10,10 @@ BaseSchema.methods.onBuildingComplete = function(tilesInvolved) {
 };
 
 /**
- *
- */
+* Get the number of tiles adjacent to this one
+* from the board and return a number of points
+* equalling that.
+*/
 BaseSchema.methods.onGameFinish = function(position, board) {
   throw new Error("Not implemented!");
 };
@@ -24,13 +26,14 @@ BaseSchema.methods.isBuildingCompleted = function(position, board) {
 };
 
 BaseSchema.methods.matches = function(constructionType) {
-  return (constructionType.getName() === "Grass");
+  return (constructionType.getName() === "Castle");
 };
 
 BaseSchema.methods.getName = function() {
   return this.name;
 };
 
-var Grass = mongoose.model('Grass', BaseSchema);
 
-module.exports = new Grass({ "name" : "Grass" });
+var Castle = mongoose.model('Castle', BaseSchema);
+
+module.exports = new Castle({ "name" : "Castle" });

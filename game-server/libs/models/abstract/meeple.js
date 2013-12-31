@@ -8,5 +8,4 @@ var MeepleSchema = mongoose.Schema({
   strength :  Number
 });
 
-module.exports = mongoose.model('Meeple', MeepleSchema);
 module.exports.schema = MeepleSchema;

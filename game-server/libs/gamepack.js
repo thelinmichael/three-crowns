@@ -13,28 +13,24 @@ var Gamepack = function(config) {
  * @returns {Array} Returns an array of {Tile} that are included in this gamepack.
  */
 Gamepack.prototype.getTiles = function() {
-  var tiles = [];
-  for (var tileId in this.config.tiles) {
-    if (this.config.tiles.hasOwnProperty(tileId)) {
-      var tile = require("./gamepacks/" + this.config.gamepackId + "/tiles/" + tileId);
-      tiles.push(tile);
-    }
-  }
-  return tiles;
+  var self = this;
+  var loadedTiles = this.config.tiles.map(function(tileEntry) {
+    var tile =  require("./gamepacks/" + self.config.gamepackId + "/tiles/" + tileEntry.name);
+    tile.shufflePriority = tileEntry.shufflePriority;
+    return tile;
+  });
+  return loadedTiles;
 };
 
 /**
  * @returns {Array} Returns an array of {Meeple} that are included in this gamepack.
  */
 Gamepack.prototype.getMeeples = function() {
-  var meeples = [];
-  for (var meepleId in this.config.meeples) {
-    if (this.config.meeples.hasOwnProperty(meepleId)) {
-      var meeple = require("./gamepacks/" + this.config.gamepackId + "/meeples/" + meepleId);
-      meeples.push(meeple);
-    }
-  }
-  return meeples;
+  var self = this;
+  var loadedMeeples = this.config.meeples.map(function(meepleEntry) {
+    return require("./gamepacks/" + self.config.gamepackId + "/meeples/" + meepleEntry.name);
+  });
+  return loadedMeeples;
 };
 
 module.exports = Gamepack;

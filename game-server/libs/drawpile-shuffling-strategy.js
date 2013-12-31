@@ -24,9 +24,9 @@ var DrawpileShufflingStrategy = {
 
     if (options.orderByPriority) {
       tiles.sort(function(tile1, tile2) {
-        if (tile1.priority > tile2.priority) {
+        if (tile1.shufflePriority > tile2.shufflePriority) {
           return -1;
-        } else if (tile1.priority < tile2.priority) {
+        } else if (tile1.shufflePriority < tile2.shufflePriority) {
           return 1;
         } else {
           return 0;

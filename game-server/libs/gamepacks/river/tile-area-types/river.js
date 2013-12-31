@@ -1,4 +1,4 @@
-var BaseSchema = require("../../../models/tile-border.js").schema;
+var BaseSchema = require("../../../models/abstract/tile-area.js").schema;
 var mongoose = require("mongoose");
 
 /**

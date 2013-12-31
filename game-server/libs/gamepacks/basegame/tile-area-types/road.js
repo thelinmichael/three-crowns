@@ -1,4 +1,4 @@
-var BaseSchema = require("../../../models/tile-border.js").schema;
+var BaseSchema = require("../../../models/abstract/tile-area.js").schema;
 var mongoose = require("mongoose");
 
 /**
@@ -26,14 +26,13 @@ BaseSchema.methods.isBuildingCompleted = function(position, board) {
 };
 
 BaseSchema.methods.matches = function(constructionType) {
-  return (constructionType.getName() === "Castle");
+  return (constructionType.getName() === "Road");
 };
 
 BaseSchema.methods.getName = function() {
   return this.name;
 };
 
+var Road = mongoose.model('Road', BaseSchema);
 
-var Castle = mongoose.model('Castle', BaseSchema);
-
-module.exports = new Castle({ "name" : "Castle" });
+module.exports = new Road({ "name" : "Road" });

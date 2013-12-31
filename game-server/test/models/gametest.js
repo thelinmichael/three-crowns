@@ -4,9 +4,9 @@ var should = require('should');
 var GameBuilder = require('../../libs/gamebuilder');
 var GamepackLoader = require("../../libs/gamepackloader");
 var Player = require("../../libs/models/player");
-var Tile = require("../../libs/models/tile");
+var Tile = require("../../libs/models/abstract/tile");
 var Game = require("../../libs/models/game");
-var Rotations = require("../../libs/models/tile").Rotations;
+var Rotations = require("../../libs/tile-rotations");
 
 describe("Game", function() {
 

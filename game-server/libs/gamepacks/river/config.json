@@ -1,10 +1,27 @@
 {
   "gamepackId" : "river",
   "name" : "River",
-  "tiles" : {
-    "mountain" : 1,
-    "lake" : 1,
-    "westeast-river" : 1,
-    "westeast-river-with-bridge" : 1
+  "meeples" : [],
+  "tiles" : [
+  {
+    "name" : "mountain",
+    "amount" : 1,
+    "shufflePriority" : 4
+  },
+  {
+    "name" : "westeast-river",
+    "amount" : 1,
+    "shufflePriority" : 3
+  },
+  {
+    "name" : "westeast-river-with-bridge",
+    "amount" : 1,
+    "shufflePriority" : 3
+  },
+  {
+    "name" : "lake",
+    "amount" : 1,
+    "shufflePriority" : 2
   }
+  ]
 }

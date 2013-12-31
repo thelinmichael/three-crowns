@@ -1,18 +1,62 @@
 {
   "gamepackId" : "basegame",
   "name" : "Basepack",
-  "meeples" : {
-    "regular-meeple" : 7
-  },
-  "tiles" : {
-    "a-road-to-monastery" : 2,
-    "b-grass-monastery" : 4,
-    "c-city-square" : 1,
-    "d-halfcircle-castle-and-road" : 4,
-    "e-halfcircle-castle" : 4,
-    "w-three-way-crossroad" : 4,
-    "x-crossroads" : 1,
-    "v-curved-road" : 9,
-    "u-straight-road" : 8
+  "meeples" : [
+  {
+    "name" : "regular-meeple",
+    "amount" : 7
   }
+  ],
+  "tiles" : [
+  {
+    "name" : "a-road-to-monastery",
+    "amount" : 2,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "b-grass-monastery",
+    "amount" : 4,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "b-grass-monastery",
+    "amount" : 4,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "c-city-square",
+    "amount" : 1,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "d-halfcircle-castle-and-road",
+    "amount" : 4,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "e-halfcircle-castle",
+    "amount" : 4,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "w-three-way-crossroad",
+    "amount" : 4,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "x-crossroads",
+    "amount" : 1,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "v-curved-road",
+    "amount" : 9,
+    "shufflePriority" : 1
+  },
+  {
+    "name" : "u-straight-road",
+    "amount" : 8,
+    "shufflePriority" : 1
+  }
+  ]
 }

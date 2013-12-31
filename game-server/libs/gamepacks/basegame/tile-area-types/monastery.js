@@ -1,12 +1,13 @@
+var BaseSchema = require("../../../models/abstract/tile-area.js").schema;
 var mongoose = require("mongoose");
-var BaseSchema = require("../../../models/tile-border-extra.js").schema;
 
 /**
- * Return one point when castle has finished and there's a penant.
- */
+* The tiles involved is irrelevant, simply return
+* nine points.
+*/
 BaseSchema.methods.onBuildingComplete = function(tilesInvolved) {
   return {
-    points : 1
+    points : 9
   };
 };
 
@@ -17,15 +18,17 @@ BaseSchema.methods.onBuildingComplete = function(tilesInvolved) {
 */
 BaseSchema.methods.onGameFinish = function(position, board) {
   return {
-    points : 1
+    points : 1 + board.getAdjacentTiles(position).length
   };
 };
 
 /**
-* @returns {Boolean} True if building is completed, otherwise false
+* Building is completed when all adjacent tiles
+* have been placed.
 */
 BaseSchema.methods.isBuildingCompleted = function(position, board) {
-  throw new Error("Not implemented!");
+  return (board.getAdjacentTiles(position).length === 8);
 };
 
-module.exports = mongoose.model('Banner', BaseSchema);
+
+module.exports = mongoose.model('Cloister', BaseSchema);

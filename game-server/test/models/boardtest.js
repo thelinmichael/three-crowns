@@ -4,7 +4,8 @@ var should = require('should');
 var Board = require('../../libs/models/board');
 
 var GamepackLoader = require("../../libs/gamepackloader");
-var Rotations = require("../../libs/models/tile").Rotations;
+var Rotations = require("../../libs/tile-rotations");
+var Directions = require("../../libs/directions");
 
 describe("Board", function() {
 
@@ -61,6 +62,15 @@ describe("Board", function() {
     (foundPosition5).should.equal(false);
   });
 
+  it("Uses rotation to get a valid position for a tile", function() {
+    var unit = new Board();
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
+    unit.placeTile(0, 0, straightRoad, Rotations.NONE);
+
+    var curvedRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+    curvedRoad.tilesMatch(Rotations.NONE, unit.getTile(0, 0), Directions.WEST);
+  });
+
   it("Can get possible positions for specific tile", function() {
     var unit = new Board();
 
@@ -72,11 +82,11 @@ describe("Board", function() {
     });
     (foundPosition1).should.equal(true);
 
-    unit.placeTile(0, 0, straightRoad, 0);
+    unit.placeTile(0, 0, straightRoad, Rotations.NONE);
 
     var curvedRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
     possiblePositions = unit.getPossiblePlacementsForTile(curvedRoad);
-    (possiblePositions.length).should.equal(4);
+    possiblePositions.length.should.equal(4);
     var foundPosition2 = possiblePositions.some(function(position) {
       return (position.x == 1 && position.y === 0);
     });
@@ -91,9 +101,12 @@ describe("Board", function() {
     var unit = new Board();
 
     var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/d-halfcircle-castle-and-road");
-    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
 
     unit.placeTile(0, 0, halfCircleCastleWithRoad, Rotations.NONE);
+
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
+
+    straightRoad.tilesMatch(Rotations.ONCE, unit.getTile(0, 0), Directions.NORTH).should.equal(true);
 
     var possiblePositions = unit.getPossiblePlacementsForTile(straightRoad);
     possiblePositions.length.should.equal(3);
@@ -123,9 +136,9 @@ describe("Board", function() {
     unit.placeTile(1, 0, threeWayCrossroad, Rotations.ONCE);
 
     var placedTile = unit.getTile(1, 0).tile;
-    var roadConstruction = placedTile.getBorderConstruction(7);
+    var roadConstruction = placedTile.getConnectableAreaAtPosition(7);
 
-    var tilesAndPositionsInvolvedInConstruction = unit.getSpanningConstructions(1, 0, roadConstruction);
+    var tilesAndPositionsInvolvedInConstruction = unit.getTileAreasCoveredByConnectableArea(1, 0, roadConstruction);
     should.exist(tilesAndPositionsInvolvedInConstruction);
     tilesAndPositionsInvolvedInConstruction.length.should.equal(2);
   });
