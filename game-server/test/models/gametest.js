@@ -69,7 +69,6 @@ describe("Game", function() {
       unit.nextTurn();
       previousRoundPlayer = unit.currentRound.player;
     }
-
     unit.isEnded().should.equal(true);
   });
 

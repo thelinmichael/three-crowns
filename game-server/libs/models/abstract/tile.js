@@ -111,10 +111,10 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
     return true;
   }
 
-  /* TODO: Take other tiles rotation into consideration */
   var thisTilesSidesWithRotation = Directions.rotateClockwise(directionToOtherTile, thisTilesRotation);
+  var otherTilesSidesWithRotation = Directions.rotateClockwise(Directions.oppositeOf(directionToOtherTile), otherTile.rotation);
 
-  var otherTilesSide = otherTile.tile.getAreaTypesAdjacentToDirection(directionToOtherTile);
+  var otherTilesSide = otherTile.tile.getAreaTypesInDirection(otherTilesSidesWithRotation);
   var thisTilesSide = this.getAreaTypesInDirection(thisTilesSidesWithRotation);
 
   return thisTilesSide.every(function(areaType, index) {
