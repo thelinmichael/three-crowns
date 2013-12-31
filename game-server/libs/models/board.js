@@ -13,10 +13,14 @@ var BoardTraverser = require("../board-traverser");
  */
 var schema = mongoose.Schema({
   tiles : [{
-    "x" : { "type" : Number },
-    "y" : { "type" : Number },
-    "tile" : ['Tile'],
-    "rotation" : { "type": Number }
+    x   : { "type" : Number },
+    y   : { "type" : Number },
+    tile : ['Tile'],
+    rotation : { "type": Number },
+    meeplePlacements : [{
+      "position" : { type : Number },
+      "meeple" : {}
+    }]
   }]
 });
 
@@ -70,7 +74,8 @@ schema.methods.placeTile = function(x, y, tile, rotation) {
     "x" : x,
     "y" : y,
     "tile" : tile,
-    "rotation" : rotation
+    "rotation" : rotation,
+    "meeplePlacements" : []
   };
   this.tiles.push(newTileOnBoard);
 };
@@ -203,7 +208,8 @@ schema.methods.getTile = function(x, y) {
       "x" : tileWithPosition[0].x,
       "y" : tileWithPosition[0].y,
       "tile" : tileWithPosition[0].tile[0],
-      "rotation" : tileWithPosition[0].rotation
+      "rotation" : tileWithPosition[0].rotation,
+      "meeplePlacements" : tileWithPosition[0].meeplePlacements
     };
   } else if (tileWithPosition.length > 1) {
     throw new Error("Should never get here!");
@@ -237,13 +243,53 @@ schema.methods.hasTileInDirection = function(x, y, direction) {
   return (this.getTileInDirection(x, y, direction) !== undefined);
 };
 
+schema.methods.getLastPlayedTile = function() {
+  return this.tiles[this.tiles.length - 1];
+};
+
+schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
+  if (!this.hasTile(x,y)) {
+    throw new Error("No tile on position.");
+  }
+
+  /* Check if there's already a meeple on the connectable area that is on the position */
+
+  /* Place meeple on position */
+  var tileOnBoard = this.getTile(x, y);
+
+  /* TODO: If internal, place it on the internal instead */
+  tileOnBoard.meeplePlacements.push({ "position" : tilearea.positions[0], "meeple" : meeple })
+}
+
+schema.methods.getAreasFreeFromMeeplesOnTile = function(tileOnBoard) {
+  var self = this;
+  var connectableAreasOnTile = tileOnBoard.tile[0].getConnectableAreas();
+
+  var meepleFreeConnectableAreas = connectableAreasOnTile.filter(function(area) {
+    var connectedAreas = self.getTileAreasCoveredByConnectableArea(tileOnBoard.x, tileOnBoard.y, area);
+    var hasMeepleAlready = self.connectedAreasHasMeeple(connectedAreas);
+    return !hasMeepleAlready;
+  });
+  return meepleFreeConnectableAreas;
+};
+
+schema.methods.connectedAreasHasMeeple = function(connectedAreas) {
+  var self = this;
+  return connectedAreas.some(function(connectedArea) {
+    var tileOnBoard = self.getTile(connectedArea.x, connectedArea.y);
+    var somePositionHasMeeple = tileOnBoard.meeplePlacements.some(function(meeplePlacement) {
+      return (connectedArea.area.positions.indexOf(meeplePlacement.position) != -1);
+    });
+    return somePositionHasMeeple;
+  });
+};
+
 /**
  * Retrieve which tiles, and positions on those tiles, are involved in a construction.
  * @returns {Array} holding an object containing {x}, {y}, [{borders}]. */
 schema.methods.getTileAreasCoveredByConnectableArea = function(x, y, area) {
   return BoardTraverser.getTileAreasCoveredByConnectableArea(x, y, area, this);
 };
-
 
 module.exports = mongoose.model('Board', schema);
 module.exports.schema = schema;

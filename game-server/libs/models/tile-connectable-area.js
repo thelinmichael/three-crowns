@@ -3,8 +3,7 @@ var mongoose = require("mongoose");
 var ConnectableSchema = mongoose.Schema({
   positions : [Number],
   areaType : {},
-  extras : [],
-  meeplePlaceable : { "type" : Boolean, "default" : true },
+  extras : []
 });
 
 ConnectableSchema.methods.getType = function() {
@@ -16,4 +15,4 @@ ConnectableSchema.methods.connectsWith = function(area) {
   return this.areaType.sameAs(area.areaType);
 }
 
-module.exports = mongoose.model('Connectable', ConnectableSchema);
+module.exports = mongoose.model('ConnectableArea', ConnectableSchema);

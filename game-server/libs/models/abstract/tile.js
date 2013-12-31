@@ -125,4 +125,8 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
   });
 };
 
+schema.methods.getConnectableAreas = function() {
+  return this.areas.connectables;
+}
+
 module.exports.schema = schema;

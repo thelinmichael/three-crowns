@@ -25,14 +25,18 @@ var DrawpileShufflingStrategy = require("../drawpile-shuffling-strategy");
 var schema = mongoose.Schema({
   startTime: Date,
   endTime : Date,
-  players : [],
+  players : [{
+    player : {},
+    meeples : []
+  }],
   tiles : ['Tile'],
   startingKit : {
     meeples : []
   },
   currentRound : {
     player : { type: Number, default: 0 },
-    tile : { type: Number, default : 0 }
+    tile : { type: Number, default : 0 },
+    tileHasBeenPlaced : { type: Boolean, default : false }
   },
   board : {}
 });
@@ -67,6 +71,8 @@ schema.methods.nextTurn = function() {
     this.currentRound.player = this.currentRound.player++ % (this.players.length);
     /* Change active tile to the next tile */
     this.currentRound.tile++;
+
+    this.currentRound.tileHasBeenPlaced = false;
   }
 };
 
@@ -76,6 +82,11 @@ schema.methods.nextTurn = function() {
  */
 schema.methods.placeTile = function(x, y, rotation) {
   this.board.placeTile(x, y, this.tiles[this.currentRound.tile], rotation);
+  this.currentRound.tileHasBeenPlaced = true;
+};
+
+schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
+  this.board.placeMeeple(x, y, tilearea, meeple);
 };
 
 /**
@@ -95,6 +106,25 @@ schema.methods.start = function(options) {
   } else {
     throw new Error("Game has already been started");
   }
+};
+
+/**
+ *  @returns {Array} of objects containing {x}, {y} and {ConnectableArea}.
+ */
+schema.methods.getPossibleMeeplePlacements = function() {
+  var self = this;
+
+  if (!this.tileHasBeenPlacedThisRound()) {
+    return [];
+  }
+
+  var tilePlacedThisRound = this.board.getLastPlayedTile();
+  var meepleFreeAreas = this.board.getAreasFreeFromMeeplesOnTile(tilePlacedThisRound);
+  return meepleFreeAreas;
+};
+
+schema.methods.tileHasBeenPlacedThisRound = function() {
+  return this.currentRound.tileHasBeenPlaced;
 };
 
 /**
@@ -175,6 +205,14 @@ schema.methods.getActivePlayer = function() {
     return this.players[this.currentRound.player].player;
   }
 };
+
+schema.methods.getActivePlayersMeeples = function() {
+  if (!this.inProgress()) {
+    throw new Error("No active player as game isn't in progress");
+  } else {
+    return this.players[this.currentRound.player].meeples;
+  }
+}
 
 schema.methods.getActiveTile = function() {
   return this.tiles[this.currentRound.tile];

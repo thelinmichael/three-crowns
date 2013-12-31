@@ -136,4 +136,42 @@ describe("Game", function() {
     unit.isEnded().should.equal(true);
   });
 
+  it("should place a meeple on an area that is not already occupied", function() {
+     var unit = new Game();
+
+    var player1 = new Player({ "name" : "Michael" });
+    var player2 = new Player({ "name" : "Jenni" });
+    unit.addPlayer(player1);
+    unit.addPlayer(player2);
+
+    var halfCircleCastleWithRoad = require("../../libs/gamepacks/basegame/tiles/d-halfcircle-castle-and-road");
+    var curvedRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+
+    unit.tiles = [halfCircleCastleWithRoad, curvedRoad];
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
+
+    unit.placeTile(0, 0, Rotations.NONE);
+
+    var possibleMeeplePlacements1 = unit.getPossibleMeeplePlacements();
+    should.exist(possibleMeeplePlacements1);
+    possibleMeeplePlacements1.length.should.equal(4);
+
+    var meeples = unit.getActivePlayersMeeples();
+    unit.placeMeeple(0, 0, possibleMeeplePlacements1[1], meeples[0]); // The road
+
+    unit.nextTurn();
+
+    unit.placeTile(0, 1, Rotations.NONE);
+
+    var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
+    should.exist(possibleMeeplePlacements2);
+    possibleMeeplePlacements2.length.should.equal(2);
+  });
+
 });
