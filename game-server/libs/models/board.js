@@ -18,8 +18,8 @@ var schema = mongoose.Schema({
     tile : ['Tile'],
     rotation : { "type": Number },
     meeplePlacements : [{
-      "position" : { type : Number },
-      "meeple" : {}
+      tileArea : {},
+      meeple   : {}
     }]
   }]
 });
@@ -258,7 +258,7 @@ schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
   var tileOnBoard = this.getTile(x, y);
 
   /* TODO: If internal, place it on the internal instead */
-  tileOnBoard.meeplePlacements.push({ "position" : tilearea.positions[0], "meeple" : meeple })
+  tileOnBoard.meeplePlacements.push({ "tileArea" : tilearea, "meeple" : meeple });
 }
 
 schema.methods.getAreasFreeFromMeeplesOnTile = function(tileOnBoard) {
@@ -270,7 +270,13 @@ schema.methods.getAreasFreeFromMeeplesOnTile = function(tileOnBoard) {
     var hasMeepleAlready = self.connectedAreasHasMeeple(connectedAreas);
     return !hasMeepleAlready;
   });
-  return meepleFreeConnectableAreas;
+
+  var internalAreas = tileOnBoard.tile[0].getInternalAreas();
+  var meepleFreeInternalAreas = internalAreas.filter(function(internalArea) {
+    return !self.internalAreaHasMeeple(tileOnBoard.x, tileOnBoard.y, internalArea);
+  });
+
+  return meepleFreeConnectableAreas.concat(meepleFreeInternalAreas);
 };
 
 schema.methods.connectedAreasHasMeeple = function(connectedAreas) {
@@ -278,9 +284,16 @@ schema.methods.connectedAreasHasMeeple = function(connectedAreas) {
   return connectedAreas.some(function(connectedArea) {
     var tileOnBoard = self.getTile(connectedArea.x, connectedArea.y);
     var somePositionHasMeeple = tileOnBoard.meeplePlacements.some(function(meeplePlacement) {
-      return (connectedArea.area.positions.indexOf(meeplePlacement.position) != -1);
+      return connectedArea.area.matchingProperties(meeplePlacement.tileArea);
     });
     return somePositionHasMeeple;
+  });
+};
+
+schema.methods.internalAreaHasMeeple = function(x, y, internalArea) {
+  var tileOnBoard = this.getTile(x, y);
+  tileOnBoard.meeplePlacements.some(function(meeplePlacement) {
+    return meeplePlacement.area.matchingProperties(internalArea);
   });
 };
 

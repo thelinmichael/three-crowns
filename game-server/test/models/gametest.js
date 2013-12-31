@@ -136,7 +136,7 @@ describe("Game", function() {
     unit.isEnded().should.equal(true);
   });
 
-  it("should place a meeple on an area that is not already occupied", function() {
+  it("should place a meeple on a connectable area that is not already occupied", function() {
      var unit = new Game();
 
     var player1 = new Player({ "name" : "Michael" });
@@ -172,6 +172,26 @@ describe("Game", function() {
     var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
     should.exist(possibleMeeplePlacements2);
     possibleMeeplePlacements2.length.should.equal(2);
+  });
+
+  it("can place meeples on internals areas such as monsteries", function() {
+    var unit = new Game();
+
+    var player1 = new Player({ "name" : "Michael" });
+    var player2 = new Player({ "name" : "Jenni" });
+    unit.addPlayer(player1);
+    unit.addPlayer(player2);
+
+    var roadToMonastery = require("../../libs/gamepacks/basegame/tiles/a-road-to-monastery");
+
+    unit.tiles = [roadToMonastery];
+    unit.start();
+
+    unit.placeTile(0, 0, Rotations.NONE);
+
+    var possibleMeeplePlacements1 = unit.getPossibleMeeplePlacements();
+    should.exist(possibleMeeplePlacements1);
+    possibleMeeplePlacements1.length.should.equal(3);
   });
 
 });

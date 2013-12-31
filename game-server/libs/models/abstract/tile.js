@@ -127,6 +127,10 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
 
 schema.methods.getConnectableAreas = function() {
   return this.areas.connectables;
-}
+};
+
+schema.methods.getInternalAreas = function() {
+  return this.areas.internals;
+};
 
 module.exports.schema = schema;
