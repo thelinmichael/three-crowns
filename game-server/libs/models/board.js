@@ -271,12 +271,26 @@ schema.methods.getAreasFreeFromMeeplesOnTile = function(tileOnBoard) {
     return !hasMeepleAlready;
   });
 
+  var meeplePlaceableConnectableAreas = meepleFreeConnectableAreas.filter(function(area) {
+    return area.areaType.meeplePlaceable;
+  });
+
   var internalAreas = tileOnBoard.tile[0].getInternalAreas();
   var meepleFreeInternalAreas = internalAreas.filter(function(internalArea) {
     return !self.internalAreaHasMeeple(tileOnBoard.x, tileOnBoard.y, internalArea);
   });
 
-  return meepleFreeConnectableAreas.concat(meepleFreeInternalAreas);
+  var allMeepleFreeAreas = meeplePlaceableConnectableAreas.concat(meepleFreeInternalAreas);
+
+  if (allMeepleFreeAreas.length > 0) {
+    return {
+      "x" : tileOnBoard.x,
+      "y" : tileOnBoard.y,
+      "areas" : allMeepleFreeAreas
+    };
+  } else {
+    return;
+  }
 };
 
 schema.methods.connectedAreasHasMeeple = function(connectedAreas) {
@@ -292,8 +306,8 @@ schema.methods.connectedAreasHasMeeple = function(connectedAreas) {
 
 schema.methods.internalAreaHasMeeple = function(x, y, internalArea) {
   var tileOnBoard = this.getTile(x, y);
-  tileOnBoard.meeplePlacements.some(function(meeplePlacement) {
-    return meeplePlacement.area.matchingProperties(internalArea);
+  return tileOnBoard.meeplePlacements.some(function(meeplePlacement) {
+    return meeplePlacement.tileArea.matchingProperties(internalArea);
   });
 };
 

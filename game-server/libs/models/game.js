@@ -109,7 +109,7 @@ schema.methods.start = function(options) {
 };
 
 /**
- *  @returns {Array} of objects containing {x}, {y} and {ConnectableArea}.
+ *  @returns {Array} of objects containing {Number} x, {Number} y and {Array} areas of {TileArea}.
  */
 schema.methods.getPossibleMeeplePlacements = function() {
   var self = this;
@@ -120,7 +120,11 @@ schema.methods.getPossibleMeeplePlacements = function() {
 
   var tilePlacedThisRound = this.board.getLastPlayedTile();
   var meepleFreeAreas = this.board.getAreasFreeFromMeeplesOnTile(tilePlacedThisRound);
-  return meepleFreeAreas;
+  if (meepleFreeAreas) {
+    return [meepleFreeAreas];
+  } else {
+    return [];
+  }
 };
 
 schema.methods.tileHasBeenPlacedThisRound = function() {

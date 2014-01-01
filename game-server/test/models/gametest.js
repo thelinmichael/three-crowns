@@ -56,12 +56,18 @@ describe("Game", function() {
     /* Place tiles on the first available placement until they run out */
     var previousRoundPlayer;
     for (var i = 0; i < unit.tiles.length; i++) {
-      var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
-      if (possiblePlacements.length > 0) {
-       unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, possiblePlacements[0].rotations[0]);
-
+      var possibleTilePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
+      if (possibleTilePlacements.length > 0) {
+        unit.placeTile(possibleTilePlacements[0].x, possibleTilePlacements[0].y, possibleTilePlacements[0].rotations[0]);
         if (previousRoundPlayer) {
           unit.currentRound.player.should.equal((previousRoundPlayer+1) % 2);
+        }
+      }
+      var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+      if (possibleMeeplePlacements.length > 0) {
+        var meeples = unit.getActivePlayersMeeples();
+        if (meeples.length > 0) {
+          unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
         }
       }
 
@@ -91,9 +97,9 @@ describe("Game", function() {
 
     /* Place tiles on the first available placement until they run out */
     for (var i = 0; i < unit.tiles.length; i++) {
-      var possiblePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
-      possiblePlacements.length.should.not.equal(0, "No possible placements for tile " + unit.getActiveTile().name + "with board " + unit.board.tiles);
-      unit.placeTile(possiblePlacements[0].x, possiblePlacements[0].y, Rotations.NONE);
+      var possibleTilePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
+      possibleTilePlacements.length.should.not.equal(0, "No possible placements for tile " + unit.getActiveTile().name + "with board " + unit.board.tiles);
+      unit.placeTile(possibleTilePlacements[0].x, possibleTilePlacements[0].y, Rotations.NONE);
       unit.nextTurn();
     }
 
@@ -160,10 +166,10 @@ describe("Game", function() {
 
     var possibleMeeplePlacements1 = unit.getPossibleMeeplePlacements();
     should.exist(possibleMeeplePlacements1);
-    possibleMeeplePlacements1.length.should.equal(4);
+    possibleMeeplePlacements1[0].areas.length.should.equal(4);
 
     var meeples = unit.getActivePlayersMeeples();
-    unit.placeMeeple(0, 0, possibleMeeplePlacements1[1], meeples[0]); // The road
+    unit.placeMeeple(possibleMeeplePlacements1[0].x, possibleMeeplePlacements1[0].y, possibleMeeplePlacements1[0].areas[1], meeples[0]);
 
     unit.nextTurn();
 
@@ -171,7 +177,7 @@ describe("Game", function() {
 
     var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
     should.exist(possibleMeeplePlacements2);
-    possibleMeeplePlacements2.length.should.equal(2);
+    possibleMeeplePlacements2[0].areas.length.should.equal(2);
   });
 
   it("can place meeples on internals areas such as monsteries", function() {
@@ -191,7 +197,13 @@ describe("Game", function() {
 
     var possibleMeeplePlacements1 = unit.getPossibleMeeplePlacements();
     should.exist(possibleMeeplePlacements1);
-    possibleMeeplePlacements1.length.should.equal(3);
+    possibleMeeplePlacements1[0].areas.length.should.equal(3);
+
+    var meeples = unit.getActivePlayersMeeples();
+    unit.placeMeeple(possibleMeeplePlacements1[0].x, possibleMeeplePlacements1[0].y, possibleMeeplePlacements1[0].areas[2], meeples[0]);
+
+    var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
+    possibleMeeplePlacements2[0].areas.length.should.equal(2);
   });
 
 });

@@ -1,8 +1,7 @@
 var mongoose = require("mongoose");
 
 var InternalSchema = mongoose.Schema({
-  areaType : {},
-  meeplePlaceable : { "type" : Boolean, "default" : true }
+  areaType : {}
 });
 
 InternalSchema.methods.getType = function() {
@@ -13,4 +12,4 @@ InternalSchema.methods.matchingProperties = function(otherTileArea) {
   return this.areaType.sameAs(otherTileArea.areaType);
 }
 
-module.exports = mongoose.model('Internal', InternalSchema);
+module.exports = mongoose.model('InternalArea', InternalSchema);
