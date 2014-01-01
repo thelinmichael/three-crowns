@@ -241,51 +241,92 @@ describe("Game", function() {
   describe("Actions", function() {
 
     it("can get actions both with or without name", function() {
-       var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+      var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
 
-        var player1 = new Player({ "name" : "Michael" });
-        var player2 = new Player({ "name" : "Jenni" });
-        unit.addPlayer(player1);
-        unit.addPlayer(player2);
+      var player1 = new Player({ "name" : "Michael" });
+      var player2 = new Player({ "name" : "Jenni" });
+      unit.addPlayer(player1);
+      unit.addPlayer(player2);
 
-        unit.start();
+      unit.start();
 
-        var actions = unit.getActionsByName("PlaceTile");
-        actions.length.should.equal(1);
-        actions[0].name.should.equal("PlaceTile");
+      var actions = unit.getActionsByName("PlaceTile");
+      actions.length.should.equal(1);
+      actions[0].name.should.equal("PlaceTile");
 
-        var mandatoryActions = unit.getMandatoryActions();
-        mandatoryActions.length.should.equal(1);
-        mandatoryActions[0].name.should.equal("PlaceTile");
+      var mandatoryActions = unit.getMandatoryActions();
+      mandatoryActions.length.should.equal(1);
+      mandatoryActions[0].name.should.equal("PlaceTile");
 
-        var optionalActions = unit.getOptionalActions();
-        optionalActions.length.should.equal(0);
+      var optionalActions = unit.getOptionalActions();
+      optionalActions.length.should.equal(0);
     });
 
     it("should automatically end round when no more actions are left", function() {
-       var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+      var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
 
-        var player1 = new Player({ "name" : "Michael" });
-        var player2 = new Player({ "name" : "Jenni" });
-        unit.addPlayer(player1);
-        unit.addPlayer(player2);
+      var player1 = new Player({ "name" : "Michael" });
+      var player2 = new Player({ "name" : "Jenni" });
+      unit.addPlayer(player1);
+      unit.addPlayer(player2);
 
-        var currentRoundNumber0 = unit.getCurrentRoundNumber();
-        currentRoundNumber0.should.equal(0);
+      var currentRoundNumber0 = unit.getCurrentRoundNumber();
+      currentRoundNumber0.should.equal(0);
 
-        unit.start();
+      unit.start();
 
-        var currentRoundNumber1 = unit.getCurrentRoundNumber();
-        currentRoundNumber1.should.equal(1);
+      var currentRoundNumber1 = unit.getCurrentRoundNumber();
+      currentRoundNumber1.should.equal(1);
 
-        unit.placeTile(0, 0, Rotations.NONE);
+      var actionsLeft1 = unit.getActions();
+      actionsLeft1.length.should.equal(1);
 
-        var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
-        var meeples = unit.getActivePlayersMeeples();
-        unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
+      unit.placeTile(0, 0, Rotations.NONE);
 
-        var currentRoundNumber2 = unit.getCurrentRoundNumber();
-        currentRoundNumber2.should.equal(2);
+      /* Has one meeple laying action left */
+      var actionsLeft2 = unit.getActions();
+      actionsLeft2.length.should.equal(1);
+
+      var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+      var meeples = unit.getActivePlayersMeeples();
+      unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
+
+      /* No actions are left, and should be the second round */
+      var currentRoundNumber2 = unit.getCurrentRoundNumber();
+      currentRoundNumber2.should.equal(2);
+    });
+
+    it("should not be able to force a new turn when mandatory actions are left, even if there are optional actions", function() {
+      var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+
+      var player1 = new Player({ "name" : "Michael" });
+      var player2 = new Player({ "name" : "Jenni" });
+      unit.addPlayer(player1);
+      unit.addPlayer(player2);
+
+      var currentRoundNumber0 = unit.getCurrentRoundNumber();
+      currentRoundNumber0.should.equal(0);
+
+      unit.start();
+
+      var mandatoryActionsLeft = unit.getMandatoryActions();
+      mandatoryActionsLeft.length.should.equal(1);
+
+      (function() {
+        unit.nextTurn();
+      }).should.throw();
+
+      unit.placeTile(0, 0, Rotations.NONE);
+
+      var mandatoryActionsLeft2 = unit.getMandatoryActions();
+      mandatoryActionsLeft2.length.should.equal(0);
+
+      var optionalActionsLeft = unit.getOptionalActions();
+      optionalActionsLeft.length.should.equal(1);
+
+      (function() {
+        unit.nextTurn();
+        }).should.not.throw();
     });
 
   });
