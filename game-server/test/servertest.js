@@ -85,4 +85,15 @@ describe("Websocket API", function() {
     });
   });
 
+  it("should be able to play end to end", function(done) {
+    socket.emit('create', { gamepacks : ['river', 'basegame' ]});
+    socket.once('create', function(response) {
+      response.status.should.equal("success");
+      Game.find({}).exec(function(err, games) {
+        games.length.should.not.equal(0);
+        done();
+      });
+    });
+  });
+
 });

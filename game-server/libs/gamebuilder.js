@@ -18,6 +18,7 @@ var create = function(options) {
 
   var game = new Game();
   game.addPacks(gamepacks);
+  game.save();
 
   return game;
 };

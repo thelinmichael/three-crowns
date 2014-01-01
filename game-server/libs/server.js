@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
-var Game = require("./models/game.js");
+var Game = require("./models/game");
+var GameBuilder = require("./gamebuilder");
 var io;
 
 function GameServer(options) {
@@ -19,20 +20,9 @@ GameServer.prototype.start = function(stopCallback, port, options) {
 
     socket.emit('connection', { status: 'success' });
 
-    socket.on('create', function() {
-      Game.create({}, function(err) {
-        var params;
-        if (err) {
-          params = {
-            error : true
-          };
-        } else {
-          params = {
-            success : true
-          };
-        }
-        socket.emit('create', params);
-      });
+    socket.on('create', function(options) {
+      GameBuilder.create(options);
+      socket.emit('create', { status : 'success' });
     });
 
     socket.on('server-status', function() {

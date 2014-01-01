@@ -1,9 +1,11 @@
 var mongoose = require("mongoose");
 
-var BaseSchema = require("../../../models/tile").schema;
-var Grass = require("../../basegame/tile-area-type/grass");
-var Castle = require("../../basegame/tile-area-type/castle");
-var Road = require("../../basegame/tile-area-type/road");
+var Connectable = require("../../../models/tile-connectable-area");
+var BaseSchema = require("../../../models/abstract/tile").schema;
+var Grass = require("../../basegame/tile-area-types/grass");
+var Castle = require("../../basegame/tile-area-types/castle");
+var Road = require("../../basegame/tile-area-types/road");
+
 
 /**
  * The basepacks starting tile. A half circle castle, with a road
