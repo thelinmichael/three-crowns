@@ -35,15 +35,7 @@ describe("Game", function() {
 
     /* Starting the game */
     unit.isStarted().should.equal(false);
-     /* Randomising same priority tiles is turned off so that the tiles are ordered in a deterministic fashion.
-       This helps prevent flaky tests. */
-    var options = {
-      shuffle : {
-        "orderByPriority" : true,
-        "randomiseSamePriority" : true
-      }
-    };
-    unit.start(options);
+    unit.start();
     unit.isStarted().should.equal(true);
 
     /* A player should have received meeples */
@@ -55,26 +47,27 @@ describe("Game", function() {
 
     /* Place tiles on the first available placement until they run out */
     var previousRoundPlayer;
-    for (var i = 0; i < unit.tiles.length; i++) {
+    while (unit.inProgress()) {
       var possibleTilePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
-      if (possibleTilePlacements.length > 0) {
+      if (unit.inProgress()) {
         unit.placeTile(possibleTilePlacements[0].x, possibleTilePlacements[0].y, possibleTilePlacements[0].rotations[0]);
         if (previousRoundPlayer) {
           unit.currentRound.player.should.equal((previousRoundPlayer+1) % 2);
         }
-      }
-      var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
-      if (possibleMeeplePlacements.length > 0) {
-        var meeples = unit.getActivePlayersMeeples();
-        if (meeples.length > 0) {
-          unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
+
+        var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+        if (possibleMeeplePlacements.length > 0) {
+          var meeples = unit.getActivePlayersMeeples();
+          if (meeples.length > 0) {
+            unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
+          }
+        } else {
+          unit.nextTurn();
         }
       }
-
-      unit.isEnded().should.equal(false);
-      unit.nextTurn();
       previousRoundPlayer = unit.currentRound.player;
     }
+
     unit.isEnded().should.equal(true);
   });
 
@@ -143,7 +136,9 @@ describe("Game", function() {
   });
 
   it("should place a meeple on a connectable area that is not already occupied", function() {
-     var unit = new Game();
+    var unit = new Game();
+    var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
+    unit.startingKit.meeples = [regularMeeple];
 
     var player1 = new Player({ "name" : "Michael" });
     var player2 = new Player({ "name" : "Jenni" });
@@ -171,8 +166,6 @@ describe("Game", function() {
     var meeples = unit.getActivePlayersMeeples();
     unit.placeMeeple(possibleMeeplePlacements1[0].x, possibleMeeplePlacements1[0].y, possibleMeeplePlacements1[0].areas[1], meeples[0]);
 
-    unit.nextTurn();
-
     unit.placeTile(0, 1, Rotations.NONE);
 
     var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
@@ -182,6 +175,8 @@ describe("Game", function() {
 
   it("can place meeples on internals areas such as monsteries", function() {
     var unit = new Game();
+    var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
+    unit.startingKit.meeples = [regularMeeple];
 
     var player1 = new Player({ "name" : "Michael" });
     var player2 = new Player({ "name" : "Jenni" });
@@ -189,9 +184,17 @@ describe("Game", function() {
     unit.addPlayer(player2);
 
     var roadToMonastery = require("../../libs/gamepacks/basegame/tiles/a-road-to-monastery");
+    var grassMonastery = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
 
-    unit.tiles = [roadToMonastery];
-    unit.start();
+    unit.tiles = [roadToMonastery, grassMonastery];
+
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
 
     unit.placeTile(0, 0, Rotations.NONE);
 
@@ -202,8 +205,88 @@ describe("Game", function() {
     var meeples = unit.getActivePlayersMeeples();
     unit.placeMeeple(possibleMeeplePlacements1[0].x, possibleMeeplePlacements1[0].y, possibleMeeplePlacements1[0].areas[2], meeples[0]);
 
+    unit.placeTile(-1, 0, Rotations.NONE);
+
     var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
     possibleMeeplePlacements2[0].areas.length.should.equal(2);
   });
 
+  it("should keep track of which round it is", function() {
+      var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+
+      var player1 = new Player({ "name" : "Michael" });
+      var player2 = new Player({ "name" : "Jenni" });
+      unit.addPlayer(player1);
+      unit.addPlayer(player2);
+
+      var currentRoundNumber0 = unit.getCurrentRoundNumber();
+      should.exist(currentRoundNumber0);
+      currentRoundNumber0.should.equal(0);
+
+      unit.start();
+
+      var currentRoundNumber1 = unit.getCurrentRoundNumber();
+      should.exist(currentRoundNumber1);
+      currentRoundNumber1.should.equal(1);
+
+      unit.placeTile(0, 0, Rotations.NONE);
+
+      unit.nextTurn();
+
+      var currentRoundNumber2 = unit.getCurrentRoundNumber();
+      should.exist(currentRoundNumber2);
+      currentRoundNumber2.should.equal(2);
+  });
+
+  describe("Actions", function() {
+
+    it("can get actions both with or without name", function() {
+       var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+
+        var player1 = new Player({ "name" : "Michael" });
+        var player2 = new Player({ "name" : "Jenni" });
+        unit.addPlayer(player1);
+        unit.addPlayer(player2);
+
+        unit.start();
+
+        var actions = unit.getActionsByName("PlaceTile");
+        actions.length.should.equal(1);
+        actions[0].name.should.equal("PlaceTile");
+
+        var mandatoryActions = unit.getMandatoryActions();
+        mandatoryActions.length.should.equal(1);
+        mandatoryActions[0].name.should.equal("PlaceTile");
+
+        var optionalActions = unit.getOptionalActions();
+        optionalActions.length.should.equal(0);
+    });
+
+    it("should automatically end round when no more actions are left", function() {
+       var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
+
+        var player1 = new Player({ "name" : "Michael" });
+        var player2 = new Player({ "name" : "Jenni" });
+        unit.addPlayer(player1);
+        unit.addPlayer(player2);
+
+        var currentRoundNumber0 = unit.getCurrentRoundNumber();
+        currentRoundNumber0.should.equal(0);
+
+        unit.start();
+
+        var currentRoundNumber1 = unit.getCurrentRoundNumber();
+        currentRoundNumber1.should.equal(1);
+
+        unit.placeTile(0, 0, Rotations.NONE);
+
+        var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+        var meeples = unit.getActivePlayersMeeples();
+        unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
+
+        var currentRoundNumber2 = unit.getCurrentRoundNumber();
+        currentRoundNumber2.should.equal(2);
+    });
+
+  });
 });

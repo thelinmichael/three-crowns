@@ -2,6 +2,8 @@ var mongoose = require("mongoose");
 var Board = require("./board");
 var Player = require("./player");
 var DrawpileShufflingStrategy = require("../drawpile-shuffling-strategy");
+var PlaceTile = require("./placetile-action");
+var PlaceMeeple = require("./placemeeple-action");
 
 /**
  * This model describes a Game. A game has general information such as start and end time, as well as
@@ -36,7 +38,11 @@ var schema = mongoose.Schema({
   currentRound : {
     player : { type: Number, default: 0 },
     tile : { type: Number, default : 0 },
-    tileHasBeenPlaced : { type: Boolean, default : false }
+    tileHasBeenPlaced : { type: Boolean, default : false },
+    actions : {
+      mandatory : { type: Array, default: [] },
+      optional : { type: Array, default: [] }
+    }
   },
   board : {}
 });
@@ -59,21 +65,79 @@ schema.methods.addPacks = function(gamepacks) {
 };
 
 /**
- * Go to next turn.
+ * Go to next turn or end the game if it was the last turn.
+ * @returns {Boolean} Returns true if successfully changed to the next turn or ended the game, false otherwise.
  */
 schema.methods.nextTurn = function() {
+  /* If the user still has mandatory actions left, refuse to change turn */
+  if (this.hasRemainingMandatoryActions()) {
+    throw new Error("Tried to go to next turn, but still has mandatory actions");
+  }
+
   /* If there are no more tiles at the end of the turn,
      the game ends. */
-  if (this.currentRound.tile == (this.tiles.length - 1)) {
+  if (this.isLastTile()) {
     this.end();
   } else {
     /* Change active player to the next player */
     this.currentRound.player = this.currentRound.player++ % (this.players.length);
     /* Change active tile to the next tile */
-    this.currentRound.tile++;
+    this.removeAllActions();
+    this.distributeActions();
+    this.skipToNextTile();
 
     this.currentRound.tileHasBeenPlaced = false;
   }
+  return true;
+};
+
+schema.methods.skipToNextTile = function() {
+  this.currentRound.tile++;
+  var possiblePlacementsForTile = this.board.getPossiblePlacementsForTile(this.getActiveTile());
+  while (possiblePlacementsForTile.length === 0) {
+    if (this.isLastTile()) {
+      this.end();
+    } else {
+      this.currentRound.tile++;
+      possiblePlacementsForTile = this.board.getPossiblePlacementsForTile(this.getActiveTile());
+    }
+  }
+};
+
+schema.methods.isLastTile = function() {
+  return (this.currentRound.tile == this.tiles.length - 1);
+};
+
+schema.methods.getActions = function() {
+  return this.currentRound.actions.mandatory.concat(this.currentRound.actions.optional);
+};
+
+schema.methods.getMandatoryActions = function() {
+  return this.currentRound.actions.mandatory;
+};
+
+schema.methods.getOptionalActions = function() {
+  return this.currentRound.actions.optional;
+};
+
+schema.methods.performAction = function(action, options, callback) {
+  action.perform(this.board, options);
+  if (callback) {
+    callback();
+  }
+
+  this.removeAction(action);
+  if (this.getActions().length === 0) {
+    this.nextTurn();
+  }
+};
+
+schema.methods.getActionsByName = function(name) {
+  var actions = this.currentRound.actions.mandatory.concat(this.currentRound.actions.optional);
+  var filteredActions = actions.filter(function(action) {
+    return action.name == name;
+  });
+  return filteredActions;
 };
 
 /**
@@ -81,12 +145,38 @@ schema.methods.nextTurn = function() {
  *  Side effect: Removes the first tile from the tile queue.
  */
 schema.methods.placeTile = function(x, y, rotation) {
-  this.board.placeTile(x, y, this.tiles[this.currentRound.tile], rotation);
-  this.currentRound.tileHasBeenPlaced = true;
+  var self = this;
+
+  var placeTileAction = this.getActionsByName("PlaceTile");
+  if (placeTileAction.length === 0) {
+    throw new Error("Attempted to place a tile, but the current player doesn't have any place tile actions");
+  }
+  var options = {
+    "x" : x,
+    "y" : y,
+    "tile" : this.tiles[this.currentRound.tile],
+    "rotation" : rotation
+  };
+  this.performAction(placeTileAction[0], options, function() {
+    self.currentRound.tileHasBeenPlaced = true;
+    self.giveOptionalAction(new PlaceMeeple());
+  });
 };
 
 schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
-  this.board.placeMeeple(x, y, tilearea, meeple);
+  var placeMeepleAction = this.getActionsByName("PlaceMeeple");
+  if (placeMeepleAction.length === 0) {
+    throw new Error("Attempted to place a meeple, but the current player doesn't have any place meeple actions!");
+  }
+
+  var options = {
+    "x" : x,
+    "y" : y,
+    "tilearea" : tilearea,
+    "meeple" : meeple
+  };
+  this.performAction(placeMeepleAction[0], options);
+  /* TODO: Remove a meeple from the player. */
 };
 
 /**
@@ -103,9 +193,43 @@ schema.methods.start = function(options) {
     this.shuffleTiles(shuffleOptions);
 
     this.distributeStartingKitToPlayers();
+    this.distributeActions();
   } else {
     throw new Error("Game has already been started");
   }
+};
+
+schema.methods.distributeActions = function() {
+  this.giveMandatoryAction(new PlaceTile());
+};
+
+schema.methods.giveMandatoryAction = function(action) {
+  this.currentRound.actions.mandatory.push(action);
+};
+
+schema.methods.giveOptionalAction = function(action) {
+  this.currentRound.actions.optional.push(action);
+};
+
+schema.methods.removeAction = function(actionToRemove) {
+  var successFullyRemoved = false,
+      self = this;
+
+  this.currentRound.actions.mandatory.forEach(function(action, index) {
+    if (action == actionToRemove) {
+      self.currentRound.actions.mandatory.splice(index, 1);
+    }
+  });
+  this.currentRound.actions.optional.forEach(function(action, index) {
+    if (action == actionToRemove) {
+      self.currentRound.actions.optional.splice(index, 1);
+    }
+  });
+};
+
+schema.methods.removeAllActions = function() {
+  this.currentRound.actions.optional = [];
+  this.currentRound.actions.mandatory = [];
 };
 
 /**
@@ -220,6 +344,18 @@ schema.methods.getActivePlayersMeeples = function() {
 
 schema.methods.getActiveTile = function() {
   return this.tiles[this.currentRound.tile];
+};
+
+schema.methods.getCurrentRoundNumber = function() {
+  if (this.isStarted()) {
+    return this.currentRound.tile + 1;
+  } else {
+    return 0;
+  }
+};
+
+schema.methods.hasRemainingMandatoryActions = function() {
+  return (this.currentRound.actions.mandatory.length > 0);
 };
 
 schema.methods.getPlayers = function() {
