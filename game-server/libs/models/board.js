@@ -259,7 +259,7 @@ schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
 
   /* TODO: If internal, place it on the internal instead */
   tileOnBoard.meeplePlacements.push({ "tileArea" : tilearea, "meeple" : meeple });
-}
+};
 
 schema.methods.getAreasFreeFromMeeplesOnTile = function(tileOnBoard) {
   var self = this;

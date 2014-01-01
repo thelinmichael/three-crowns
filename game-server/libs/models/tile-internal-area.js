@@ -10,6 +10,6 @@ InternalSchema.methods.getType = function() {
 
 InternalSchema.methods.matchingProperties = function(otherTileArea) {
   return this.areaType.sameAs(otherTileArea.areaType);
-}
+};
 
 module.exports = mongoose.model('InternalArea', InternalSchema);

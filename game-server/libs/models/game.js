@@ -216,7 +216,7 @@ schema.methods.getActivePlayersMeeples = function() {
   } else {
     return this.players[this.currentRound.player].meeples;
   }
-}
+};
 
 schema.methods.getActiveTile = function() {
   return this.tiles[this.currentRound.tile];
