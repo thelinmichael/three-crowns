@@ -162,4 +162,25 @@ describe("Board", function() {
     tilesAndPositionsInvolvedInArea.length.should.equal(4);
   });
 
+  it.skip("should know when a connectable area is finished", function() {
+    var unit = new Board();
+
+    var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var curvedRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+    var crossroads2 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+
+    unit.placeTile(0, 0, crossroads1, Rotations.NONE);
+
+    var northernRoad = crossroads1.getConnectableAreaAtPosition(1);
+    should.exist(northernRoad);
+
+    (function() {
+      unit.isConnectableAreaFinished(0, -1, nothernRoad);
+    }).should.throw();
+
+    //unit.placeTile(0, 1, curvedRoad, Rotations.NONE);
+
+    //unit.placeTile(-1, -1, crossroads2, Rotations.NONE);
+  });
+
 });

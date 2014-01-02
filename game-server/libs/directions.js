@@ -13,12 +13,38 @@ var Directions = {
     return (direction + 2) % 4;
   },
 
+  rotateCounterClockwise : function(direction, rotation) {
+    if (direction instanceof Array) {
+      var rotated = direction.map(function(dir) {
+        return _rotateCounterClockwise(dir, rotation);
+      });
+      return rotated;
+    } else {
+      return _rotateCounterClockwise(direction, rotation);
+    }
+  },
+
   rotateClockwise : function(direction, rotation) {
-    rotation = rotation % 4;
-    return ((direction - rotation) + 4) % 4;
+    if (direction instanceof Array) {
+      var rotated = direction.map(function(dir) {
+        return _rotateClockwise(dir, rotation);
+      });
+      return rotated;
+    } else {
+      return _rotateClockwise(direction, rotation);
+    }
   }
 
 };
 
+var _rotateClockwise = function(direction, rotation) {
+  rotation = rotation % 4;
+  return (direction + rotation) % 4;
+};
+
+var _rotateCounterClockwise = function(direction, rotation) {
+  rotation = rotation % 4;
+  return ((direction - rotation) + 4) % 4;
+};
 
 module.exports = Directions;

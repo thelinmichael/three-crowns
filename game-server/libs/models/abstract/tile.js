@@ -114,8 +114,8 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
     return true;
   }
 
-  var thisTilesSidesWithRotation = Directions.rotateClockwise(directionToOtherTile, thisTilesRotation);
-  var otherTilesSidesWithRotation = Directions.rotateClockwise(Directions.oppositeOf(directionToOtherTile), otherTile.rotation);
+  var thisTilesSidesWithRotation = Directions.rotateCounterClockwise(directionToOtherTile, thisTilesRotation);
+  var otherTilesSidesWithRotation = Directions.rotateCounterClockwise(Directions.oppositeOf(directionToOtherTile), otherTile.rotation);
 
   var otherTilesSide = otherTile.tile.getAreaTypesInDirection(otherTilesSidesWithRotation);
   var thisTilesSide = this.getAreaTypesInDirection(thisTilesSidesWithRotation);

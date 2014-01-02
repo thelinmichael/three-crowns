@@ -318,5 +318,22 @@ schema.methods.getTileAreasCoveredByConnectableArea = function(x, y, area) {
   return BoardTraverser.getTileAreasCoveredByConnectableArea(x, y, area, this);
 };
 
+schema.methods.isConnectableAreaFinished = function(x, y, area) {
+  if (!hasTile(x,y)) {
+    throw new Error("No tile at position " + x + "," + y);
+  }
+
+  var tileOnBoard = this.getTile(x,y);
+  var areaExistsOnTile = tileOnBoard.tile.areas.connectables.some(function(connectableArea) {
+    return connectableArea.equals(area);
+  });
+  if (!areaExistsOnTile) {
+    throw new Error("The given area wasn't found on the tile at the given position");
+  }
+
+  var finished = BoardTraverser.connectableAreaHasNoForMoreConnections();
+  return finished;
+};
+
 module.exports = mongoose.model('Board', schema);
 module.exports.schema = schema;

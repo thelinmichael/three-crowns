@@ -7,13 +7,6 @@ var Positions = require("../../libs/tile-positions");
 
 describe("Tile", function() {
 
-  it("Should rotate clock-wise", function() {
-    Directions.rotateClockwise(Directions.NORTH, 0).should.equal(Directions.NORTH);
-    Directions.rotateClockwise(Directions.NORTH, 1).should.equal(Directions.WEST);
-    Directions.rotateClockwise(Directions.NORTH, 2).should.equal(Directions.SOUTH);
-    Directions.rotateClockwise(Directions.NORTH, 3).should.equal(Directions.EAST);
-  });
-
   it("should be able to rotate specific positions", function() {
     var rotatedPositions1 = Positions.rotate([0,1,2], Rotations.THRICE);
     rotatedPositions1[0].should.equal(9);

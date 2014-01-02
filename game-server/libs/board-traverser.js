@@ -79,7 +79,29 @@ var BoardTraverser = {
         var areaIsTraversed = traversedArea.area.positions.compare(aboutToTraverseArea.area.positions);
         return (tileIsTraversed && areaIsTraversed);
     });
+  },
+
+  getOpenConnections : function(x, y, area, board) {
+    var areasInvolved = this.getTileAreasCoveredByConnectableArea(x, y, area, board);
+
+    var areasWithPositionsFacingEmptySpotsOnTheBoard = areasInvolved.filter(function(areaInvolved) {
+      var areaFacingDirections = areaInvolved.area.getFacingDirections();
+      var tilesRotation = board.getTile(areaInvolved.x, areaInvolved.y).rotation;
+      var areaFacingDirectionsAdjustedForRotation = Directions.rotateClockwise(areaFacingDirections, tilesRotation);
+
+      return areaFacingDirectionsAdjustedForRotation.some(function(direction) {
+        var hasTileInDirection = board.hasTileInDirection(areaInvolved.x, areaInvolved.y, direction);
+        return !hasTileInDirection;
+      });
+    });
+
+    return areasWithPositionsFacingEmptySpotsOnTheBoard;
+  },
+
+  getNumberOfOpenConnections : function(x, y, area, board) {
+    return this.getOpenConnections(x, y, area, board).length;
   }
+
 };
 
 /* Adding comparison function.
