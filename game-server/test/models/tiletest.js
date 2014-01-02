@@ -26,7 +26,6 @@ describe("Tile", function() {
     Positions.oppositeOf(9).should.equal(5);
   });
 
-
   it("should rotate positions counter-clockwise", function() {
     var rotatedPositions1 = Positions.counterRotate([9,10,11], Rotations.THRICE);
     rotatedPositions1[0].should.equal(0);

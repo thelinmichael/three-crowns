@@ -162,7 +162,7 @@ describe("Board", function() {
     tilesAndPositionsInvolvedInArea.length.should.equal(4);
   });
 
-  it.skip("should know when a connectable area is finished", function() {
+  it("should know when a connectable area is finished", function() {
     var unit = new Board();
 
     var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
@@ -171,16 +171,22 @@ describe("Board", function() {
 
     unit.placeTile(0, 0, crossroads1, Rotations.NONE);
 
-    var northernRoad = crossroads1.getConnectableAreaAtPosition(1);
-    should.exist(northernRoad);
+    var southernRoad = crossroads1.getConnectableAreaAtPosition(7);
+    should.exist(southernRoad);
 
     (function() {
-      unit.isConnectableAreaFinished(0, -1, nothernRoad);
+      unit.isConnectableAreaFinished(0, -1, southernRoad);
     }).should.throw();
 
-    //unit.placeTile(0, 1, curvedRoad, Rotations.NONE);
+    unit.isConnectableAreaFinished(0, 0, southernRoad).should.equal(false);
 
-    //unit.placeTile(-1, -1, crossroads2, Rotations.NONE);
+    unit.placeTile(0, -1, curvedRoad, Rotations.ONCE);
+
+    unit.isConnectableAreaFinished(0, 0, southernRoad).should.equal(false);
+
+    unit.placeTile(-1, -1, crossroads2, Rotations.NONE);
+
+    unit.isConnectableAreaFinished(0, 0, southernRoad).should.equal(true);
   });
 
 });
