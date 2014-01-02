@@ -164,6 +164,8 @@ schema.methods.placeTile = function(x, y, rotation) {
 };
 
 schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
+  var self = this;
+
   var placeMeepleAction = this.getActionsByName("PlaceMeeple");
   if (placeMeepleAction.length === 0) {
     throw new Error("Attempted to place a meeple, but the current player doesn't have any place meeple actions!");
@@ -175,8 +177,22 @@ schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
     "tilearea" : tilearea,
     "meeple" : meeple
   };
-  this.performAction(placeMeepleAction[0], options);
-  /* TODO: Remove a meeple from the player. */
+  this.performAction(placeMeepleAction[0], options, function() {
+    self.removeMeepleFromActivePlayer(meeple);
+  });
+};
+
+schema.methods.removeMeepleFromActivePlayer = function(meepleToRemove) {
+  var activePlayer = this.getActivePlayer();
+  this.players.forEach(function(player) {
+    if (activePlayer.equals(player.player)) {
+      player.meeples.forEach(function(meeple, index) {
+        if (meepleToRemove.equals(meeple)) {
+          player.meeples.splice(index, 1);
+        }
+      });
+    }
+  });
 };
 
 /**

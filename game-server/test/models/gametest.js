@@ -60,6 +60,8 @@ describe("Game", function() {
           var meeples = unit.getActivePlayersMeeples();
           if (meeples.length > 0) {
             unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
+          } else {
+            unit.nextTurn();
           }
         } else {
           unit.nextTurn();
@@ -238,6 +240,71 @@ describe("Game", function() {
       currentRoundNumber2.should.equal(2);
   });
 
+  it.skip("should know when a connectable area is finished", function() {
+    var unit = new Game();
+
+    unit.addPlayer(new Player({ "name" : "Michael" }));
+    unit.addPlayer(new Player({ "name" : "Jenni" }));
+
+    var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var crossroads2 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var curvedRoad = require("../../libs/gamepacks/basegame/tiles/u-curved-road");
+
+    unit.tiles = [crossroads1, curvedRoad, crossroads2];
+
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
+
+    unit.placeTile(0, 0, Rotation.NONE);
+
+    var meeples = unit.getActivePlayersMeeples();
+    var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+
+    unit.placeMeeple(0, 0, possibleMeeplePlacements[0].areas[2], meeples[0]);
+  });
+
+  it("should know when an internal area is finished");
+
+  it("should remove meeples from a player when a meeple is placed", function() {
+    var unit = new Game();
+
+    unit.addPlayer(new Player({ "name" : "Michael" }));
+    unit.addPlayer(new Player({ "name" : "Jenni" }));
+
+    var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var crossroads2 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var curvedRoad = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+
+    unit.tiles = [crossroads1, curvedRoad, crossroads2];
+
+    var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
+    unit.startingKit.meeples = [regularMeeple];
+
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
+
+    unit.placeTile(0, 0, Rotations.NONE);
+
+    var meeples = unit.getActivePlayersMeeples();
+    meeples.length.should.equal(1);
+
+    var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+    unit.placeMeeple(0, 0, possibleMeeplePlacements[0].areas[2], meeples[0]);
+
+    var meeplesAfterPlacement = unit.getActivePlayersMeeples();
+    meeplesAfterPlacement.length.should.equal(0);
+  });
+
   describe("Actions", function() {
 
     it("can get actions both with or without name", function() {
@@ -330,4 +397,5 @@ describe("Game", function() {
     });
 
   });
+
 });
