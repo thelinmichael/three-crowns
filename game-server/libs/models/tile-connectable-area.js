@@ -1,11 +1,16 @@
 var mongoose = require("mongoose");
 var Positions = require("../tile-positions");
+var BoardTraverser = require("../board-traverser");
 
 var ConnectableSchema = mongoose.Schema({
   positions : [Number],
   areaType : {},
   extras : []
 });
+
+ConnectableSchema.methods.isFinished = function(x, y, board) {
+    return (BoardTraverser.getNumberOfOpenConnections(x, y, this, board) == 0);
+};
 
 ConnectableSchema.methods.getType = function() {
   return this.areaType;

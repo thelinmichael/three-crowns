@@ -318,7 +318,7 @@ schema.methods.getTileAreasCoveredByConnectableArea = function(x, y, area) {
   return BoardTraverser.getTileAreasCoveredByConnectableArea(x, y, area, this);
 };
 
-schema.methods.isConnectableAreaFinished = function(x, y, area) {
+schema.methods.isAreaFinished = function(x, y, area) {
   if (!this.hasTile(x,y)) {
     throw new Error("No tile at position " + x + "," + y);
   }
@@ -331,7 +331,8 @@ schema.methods.isConnectableAreaFinished = function(x, y, area) {
     throw new Error("The given area wasn't found on the tile at the given position");
   }
 
-  var finished = (BoardTraverser.getNumberOfOpenConnections(x, y, area, this) == 0);
+  var finished = area.isFinished(x, y, this);
+
   return finished;
 };
 

@@ -175,18 +175,18 @@ describe("Board", function() {
     should.exist(southernRoad);
 
     (function() {
-      unit.isConnectableAreaFinished(0, -1, southernRoad);
+      unit.isAreaFinished(0, -1, southernRoad);
     }).should.throw();
 
-    unit.isConnectableAreaFinished(0, 0, southernRoad).should.equal(false);
+    unit.isAreaFinished(0, 0, southernRoad).should.equal(false);
 
     unit.placeTile(0, -1, curvedRoad, Rotations.ONCE);
 
-    unit.isConnectableAreaFinished(0, 0, southernRoad).should.equal(false);
+    unit.isAreaFinished(0, 0, southernRoad).should.equal(false);
 
     unit.placeTile(-1, -1, crossroads2, Rotations.NONE);
 
-    unit.isConnectableAreaFinished(0, 0, southernRoad).should.equal(true);
+    unit.isAreaFinished(0, 0, southernRoad).should.equal(true);
   });
 
 });
