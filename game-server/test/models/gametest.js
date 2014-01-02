@@ -240,8 +240,6 @@ describe("Game", function() {
       currentRoundNumber2.should.equal(2);
   });
 
-  it("should know when an internal area is finished");
-
   it("should remove meeples from a player when a meeple is placed", function() {
     var unit = new Game();
 
@@ -267,15 +265,54 @@ describe("Game", function() {
 
     unit.placeTile(0, 0, Rotations.NONE);
 
-    var meeples = unit.getActivePlayersMeeples();
-    meeples.length.should.equal(1);
+    unit.players[0].meeples.length.should.equal(1);
+    unit.players[1].meeples.length.should.equal(1);
 
+    var meeples = unit.getActivePlayersMeeples();
     var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
     unit.placeMeeple(0, 0, possibleMeeplePlacements[0].areas[2], meeples[0]);
 
-    var meeplesAfterPlacement = unit.getActivePlayersMeeples();
-    meeplesAfterPlacement.length.should.equal(0);
+    unit.players[0].meeples.length.should.equal(0);
+    unit.players[1].meeples.length.should.equal(1);
   });
+
+  it.skip("if players have meeples on a road or castle and the area is finished, they should get them back", function() {
+    var unit = new Game();
+
+    unit.addPlayer(new Player({ "name" : "Michael" }));
+    unit.addPlayer(new Player({ "name" : "Jenni" }));
+
+    var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+    var curvedRoad1 = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+    var curvedRoad2 = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+    var curvedRoad3 = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
+
+    unit.tiles = [crossroads1, curvedRoad1, curvedRoad2, curvedRoad3];
+
+    var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
+    unit.startingKit.meeples = [regularMeeple];
+
+    var options = {
+      shuffle : {
+        "orderByPriority" : true,
+        "randomiseSamePriority" : false
+      }
+    };
+    unit.start(options);
+
+    /* First player places a crossroads and places a meeple on the southern road */
+    unit.placeTile(0, 0, Rotations.NONE);
+    var meeples = unit.getActivePlayersMeeples();
+    meeples.length.should.equal(1);
+    var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+    unit.placeMeeple(0, 0, possibleMeeplePlacements[0].areas[2], meeples[0]);
+
+    unit.players[0].meeples.length.should.equal(0);
+    unit.players[1].meeples.length.should.equal(1);
+
+  });
+
+  it("if players have meeples on a road or castle and the area is finished, they should not get them back");
 
   describe("Actions", function() {
 

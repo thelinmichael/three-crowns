@@ -9,7 +9,7 @@ var ConnectableSchema = mongoose.Schema({
 });
 
 ConnectableSchema.methods.isFinished = function(x, y, board) {
-    return (BoardTraverser.getNumberOfOpenConnections(x, y, this, board) == 0);
+    return (BoardTraverser.getNumberOfOpenConnections(x, y, this, board) === 0);
 };
 
 ConnectableSchema.methods.getType = function() {

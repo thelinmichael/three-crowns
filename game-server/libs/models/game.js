@@ -186,11 +186,7 @@ schema.methods.removeMeepleFromActivePlayer = function(meepleToRemove) {
   var activePlayer = this.getActivePlayer();
   this.players.forEach(function(player) {
     if (activePlayer.equals(player.player)) {
-      player.meeples.forEach(function(meeple, index) {
-        if (meepleToRemove.equals(meeple)) {
-          player.meeples.splice(index, 1);
-        }
-      });
+      player.meeples.pull(meepleToRemove);
     }
   });
 };
@@ -280,12 +276,11 @@ schema.methods.shuffleTiles = function(options) {
 
 /**
  * Distribute meeples to the players.
- * RISK: This may copy the reference to the starting kit instead of cloning it.
  */
 schema.methods.distributeStartingKitToPlayers = function() {
   var self = this;
   this.players.forEach(function(player) {
-    player.meeples = self.startingKit.meeples;
+    player.meeples = [].concat(self.startingKit.meeples);
   });
 };
 
