@@ -189,4 +189,25 @@ describe("Board", function() {
     unit.isAreaFinished(0, 0, southernRoad).should.equal(true);
   });
 
+  it("should know when a monastery is finished", function() {
+    var unit = new Board();
+
+    var roadToMonastery = require("../../libs/gamepacks/basegame/tiles/a-road-to-monastery");
+    var straightRoad = require("../../libs/gamepacks/basegame/tiles/u-straight-road");
+    var grassMonastery1 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var grassMonastery2 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var grassMonastery3 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var grassMonastery4 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var grassMonastery5 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var grassMonastery6 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+    var grassMonastery7 = require("../../libs/gamepacks/basegame/tiles/b-grass-monastery");
+
+    unit.placeTile(0, 0, roadToMonastery, Rotations.NONE);
+
+    var monastery = roadToMonastery.getInternalAreas()[0];
+    should.exist(monastery);
+
+    unit.isAreaFinished(0, 0, monastery).should.equal(false);
+  });
+
 });

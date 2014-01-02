@@ -58,6 +58,23 @@ schema.methods.getAdjacentTiles = function(x, y) {
   return adjacentTiles;
 };
 
+schema.methods.getDiagonalTiles = function(x, y) {
+  var diagonalTiles = [];
+  if (this.hasTile(x-1, y-1)) {
+    diagonalTiles.push(this.getTile(x-1,y-1));
+  }
+  if (this.hasTile(x+1, y+1)) {
+    diagonalTiles.push(this.getTile(x+1, y+1));
+  }
+  if (this.hasTile(x-1, y+1)) {
+    diagonalTiles.push(this.getTile(x-1, y+1));
+  }
+  if (this.hasTile(x+1, y-1)) {
+    diagonalTiles.push(this.getTile(x-1, y+1));
+  }
+  return diagonalTiles;
+};
+
 /**
  * @params {Number} x
  * @params {Number} y
@@ -194,6 +211,11 @@ var _addPosition = function(positions, x, y, rotation) {
   }
 };
 
+schema.methods.coordinateIsSurrounded = function(x, y) {
+  return (this.getAdjacentTiles(x, y).length == 4 &&
+          this.getDiagonalTiles(x, y).length == 4);
+};
+
 /**
  * @params {Number} x
  * @params {Number} y
@@ -324,9 +346,7 @@ schema.methods.isAreaFinished = function(x, y, area) {
   }
 
   var tileOnBoard = this.getTile(x,y);
-  var areaExistsOnTile = tileOnBoard.tile.areas.connectables.some(function(connectableArea) {
-    return connectableArea.equals(area);
-  });
+  var areaExistsOnTile = tileOnBoard.tile.hasArea(area);
   if (!areaExistsOnTile) {
     throw new Error("The given area wasn't found on the tile at the given position");
   }

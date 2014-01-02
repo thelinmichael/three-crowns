@@ -125,6 +125,16 @@ schema.methods.tilesMatch = function(thisTilesRotation, otherTile, directionToOt
   });
 };
 
+schema.methods.hasArea = function(areaToLookFor) {
+  var allAreas = this.areas.connectables.concat(this.areas.internals);
+
+  var areaFound = allAreas.some(function(area) {
+    return areaToLookFor.equals(area);
+  });
+
+  return areaFound;
+};
+
 schema.methods.getConnectableAreas = function() {
   return this.areas.connectables;
 };
