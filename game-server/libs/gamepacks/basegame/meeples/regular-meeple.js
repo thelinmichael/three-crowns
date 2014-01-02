@@ -6,5 +6,4 @@ var BaseSchema = require("../../../models/abstract/meeple.js").schema;
  };
 
 var RegularMeeple = mongoose.model('RegularMeeple', BaseSchema);
-
-module.exports = new RegularMeeple();
+module.exports = RegularMeeple;

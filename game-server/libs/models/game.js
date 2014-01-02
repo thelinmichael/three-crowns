@@ -33,7 +33,10 @@ var schema = mongoose.Schema({
   }],
   tiles : ['Tile'],
   startingKit : {
-    meeples : []
+    meeples : [{
+      model : {},
+      amount : { type : Number }
+    }]
   },
   currentRound : {
     player : { type: Number, default: 0 },
@@ -59,8 +62,7 @@ schema.methods.addPacks = function(gamepacks) {
     self.tiles = self.tiles.concat(tiles);
 
     /* Add meeples (e.g. regular, and big meeple) from the gamepack to the kit that each player gets */
-    var startingMeeples = gamepack.getMeeples();
-    self.startingKit.meeples = self.startingKit.meeples.concat(startingMeeples);
+    self.startingKit.meeples = self.startingKit.meeples.concat(gamepack.getMeeples());
   });
 };
 
@@ -79,9 +81,7 @@ schema.methods.nextTurn = function() {
   if (this.isLastTile()) {
     this.end();
   } else {
-    /* Change active player to the next player */
-    this.currentRound.player = this.currentRound.player++ % (this.players.length);
-    /* Change active tile to the next tile */
+    this.shiftActivePlayer();
     this.removeAllActions();
     this.distributeActions();
     this.skipToNextTile();
@@ -89,6 +89,10 @@ schema.methods.nextTurn = function() {
     this.currentRound.tileHasBeenPlaced = false;
   }
   return true;
+};
+
+schema.methods.shiftActivePlayer = function() {
+  this.currentRound.player = (this.currentRound.player + 1) % (this.players.length);
 };
 
 schema.methods.skipToNextTile = function() {
@@ -280,7 +284,12 @@ schema.methods.shuffleTiles = function(options) {
 schema.methods.distributeStartingKitToPlayers = function() {
   var self = this;
   this.players.forEach(function(player) {
-    player.meeples = [].concat(self.startingKit.meeples);
+    self.startingKit.meeples.forEach(function(meeple) {
+      for (var i = 0; i < meeple.amount; i++) {
+        var newMeeple = new meeple.model({ "owner" : player });
+        player.meeples.push(newMeeple);
+      }
+    });
   });
 };
 

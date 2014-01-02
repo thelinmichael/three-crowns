@@ -26,12 +26,15 @@ Gamepack.prototype.getTiles = function() {
 };
 
 /**
- * @returns {Array} Returns an array of {Meeple} that are included in this gamepack.
+ * @returns {Array} Returns an array of {Object}, consisting of a {MeepleModel} and {Number} amount.
  */
 Gamepack.prototype.getMeeples = function() {
   var self = this;
   var loadedMeeples = this.config.meeples.map(function(meepleEntry) {
-    return require("./gamepacks/" + self.config.gamepackId + "/meeples/" + meepleEntry.name);
+    return {
+      "model" : require("./gamepacks/" + self.config.gamepackId + "/meeples/" + meepleEntry.name),
+      "amount" : meepleEntry.amount
+    }
   });
   return loadedMeeples;
 };

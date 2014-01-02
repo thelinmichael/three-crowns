@@ -41,19 +41,20 @@ describe("Game", function() {
     /* A player should have received meeples */
     firstPlayersMeeples = players[0].meeples;
     should.exist(firstPlayersMeeples);
-    firstPlayersMeeples.length.should.equal(BaseGame.meeples.length);
 
     unit.getActivePlayer().getName().should.equal(player1.getName());
 
     /* Place tiles on the first available placement until they run out */
     var previousRoundPlayer;
     while (unit.inProgress()) {
+      if (previousRoundPlayer) {
+        unit.getActivePlayer().name.should.not.equal(previousRoundPlayer.name);
+      }
+
       var possibleTilePlacements = unit.board.getPossiblePlacementsForTile(unit.getActiveTile());
       if (unit.inProgress()) {
+        previousRoundPlayer = unit.getActivePlayer();
         unit.placeTile(possibleTilePlacements[0].x, possibleTilePlacements[0].y, possibleTilePlacements[0].rotations[0]);
-        if (previousRoundPlayer) {
-          unit.currentRound.player.should.equal((previousRoundPlayer+1) % 2);
-        }
 
         var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
         if (possibleMeeplePlacements.length > 0) {
@@ -61,13 +62,14 @@ describe("Game", function() {
           if (meeples.length > 0) {
             unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
           } else {
+            previousRoundPlayer = unit.getActivePlayer();
             unit.nextTurn();
           }
         } else {
+          previousRoundPlayer = unit.getActivePlayer();
           unit.nextTurn();
         }
       }
-      previousRoundPlayer = unit.currentRound.player;
     }
 
     unit.isEnded().should.equal(true);
@@ -140,7 +142,10 @@ describe("Game", function() {
   it("should place a meeple on a connectable area that is not already occupied", function() {
     var unit = new Game();
     var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
-    unit.startingKit.meeples = [regularMeeple];
+    unit.startingKit.meeples = {
+      "model" : regularMeeple,
+      "amount" : 1
+    };
 
     var player1 = new Player({ "name" : "Michael" });
     var player2 = new Player({ "name" : "Jenni" });
@@ -178,7 +183,10 @@ describe("Game", function() {
   it("can place meeples on internals areas such as monsteries", function() {
     var unit = new Game();
     var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
-    unit.startingKit.meeples = [regularMeeple];
+    unit.startingKit.meeples = {
+      "model" : regularMeeple,
+      "amount" : 1
+    };
 
     var player1 = new Player({ "name" : "Michael" });
     var player2 = new Player({ "name" : "Jenni" });
@@ -253,7 +261,7 @@ describe("Game", function() {
     unit.tiles = [crossroads1, curvedRoad, crossroads2];
 
     var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
-    unit.startingKit.meeples = [regularMeeple];
+    unit.startingKit.meeples = [{ "model" : regularMeeple, "amount" : 1 }];
 
     var options = {
       shuffle : {
@@ -310,6 +318,26 @@ describe("Game", function() {
     unit.players[0].meeples.length.should.equal(0);
     unit.players[1].meeples.length.should.equal(1);
 
+    /* Second player places a curved road west of the crossroads and places a meeple on the road. */
+    unit.placeTile(-1, 0, Rotations.TWICE);
+    var meeples = unit.getActivePlayersMeeples();
+    meeples.length.should.equal(1);
+    var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+    unit.placeMeeple(-1, 0, possibleMeeplePlacements[0].areas[1], meeples[0]);
+
+    unit.players[0].meeples.length.should.equal(0);
+    unit.players[1].meeples.length.should.equal(0);
+
+    /* First player places a curve below the original crossroads, and turning it so that it continues west */
+    unit.placeTile(0,-1, Rotations.ONCE);
+    unit.nextTurn();
+
+    /* Second player finishes the road by placing a curve */
+    unit.placeTile(-1,-1, Rotations.THRICE);
+
+    /* Both places should now have their meeple back */
+    unit.players[0].meeples.length.should.equal(1);
+    unit.players[1].meeples.length.should.equal(1);
   });
 
   it("if players have meeples on a road or castle and the area is finished, they should not get them back");
@@ -357,17 +385,25 @@ describe("Game", function() {
       var actionsLeft1 = unit.getActions();
       actionsLeft1.length.should.equal(1);
 
+      /* Player has a mandatory action, but will receive an optional action after placing a tile */
       unit.placeTile(0, 0, Rotations.NONE);
 
       /* Has one meeple laying action left */
       var actionsLeft2 = unit.getActions();
       actionsLeft2.length.should.equal(1);
+      var currentRoundNumberStill1 = unit.getCurrentRoundNumber();
+      currentRoundNumberStill1.should.equal(1);
+      var activePlayer = unit.getActivePlayer();
+      activePlayer.name.should.equal("Michael");
 
       var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
       var meeples = unit.getActivePlayersMeeples();
       unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
 
       /* No actions are left, and should be the second round */
+      var activePlayer = unit.getActivePlayer();
+      activePlayer.name.should.equal("Jenni");
+
       var currentRoundNumber2 = unit.getCurrentRoundNumber();
       currentRoundNumber2.should.equal(2);
     });

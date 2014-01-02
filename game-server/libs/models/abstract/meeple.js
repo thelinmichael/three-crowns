@@ -5,7 +5,8 @@ var mongoose = require("mongoose");
  * the mayor, etc.
  */
 var MeepleSchema = mongoose.Schema({
-  strength :  Number
+  strength :  Number,
+  owner : String
 });
 
 module.exports.schema = MeepleSchema;
