@@ -33,7 +33,7 @@ var BoardTraverser = {
 
       /* Get tiles adjacent to the positions that the latest construction is connected to (regard rotation) */
       var tileBeingCheckedsRotation = board.getTile(areaBeingChecked.x, areaBeingChecked.y).rotation;
-      var rotatedPositions = Positions.rotate(areaBeingChecked.area.positions, tileBeingCheckedsRotation);
+      var rotatedPositions = Positions.rotateClockwise(areaBeingChecked.area.positions, tileBeingCheckedsRotation);
       var adjacentDirections = Positions.toDirections(rotatedPositions);
 
       var adjacentAreas = this.traverseAdjacentAreas(areaBeingChecked.x, areaBeingChecked.y, rotatedPositions, adjacentDirections, board);
@@ -63,7 +63,7 @@ var BoardTraverser = {
       });
 
       /* Get the construction */
-      var adjacentTilesRotatedPositions = Positions.counterRotate(adjacentTilesConnectingPositions, tileOnBoard.rotation);
+      var adjacentTilesRotatedPositions = Positions.rotateCounterClockwise(adjacentTilesConnectingPositions, tileOnBoard.rotation);
       var adjacentArea = tileOnBoard.tile.getConnectableAreaAtPosition(adjacentTilesRotatedPositions[0]);
 
       /* Add to the stack of constructions that will be checked */

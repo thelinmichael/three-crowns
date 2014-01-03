@@ -2,18 +2,37 @@ var Directions = require("./directions");
 
 var Positions = {
 
-  rotate : function(positions, rotation) {
+  oppositeOf : function(position) {
+    var indexOnRow = position % 3;
+    var compensation;
+    switch (indexOnRow) {
+      case 0:
+        compensation = 2;
+        break;
+      case 1:
+        compensation = 0;
+        break;
+      case 2:
+        compensation = -2;
+        break;
+      default:
+        throw new Error("Required parameter not given");
+    }
+    return (position + 6 + compensation) % 12;
+  },
+
+  rotateCounterClockwise : function(positions, rotation) {
     var rotatedPositions = positions.map(function(position) {
       rotation = rotation % 4;
-      return (position + rotation*3) % 12;
+      return ((position - rotation*3) + 12) % 12;
     });
     return rotatedPositions;
   },
 
-  counterRotate : function(positions, rotation) {
+  rotateClockwise : function(positions, rotation) {
     var rotatedPositions = positions.map(function(position) {
       rotation = rotation % 4;
-      return ((position - rotation*3) + 12) % 12;
+      return (position + rotation*3) % 12;
     });
     return rotatedPositions;
   },
@@ -39,23 +58,6 @@ var Positions = {
       default:
         throw new Error("I should never get here");
     }
-  },
-
-  oppositeOf : function(position) {
-    var indexOnRow = position % 3;
-    var compensation;
-    switch (indexOnRow) {
-      case 0:
-        compensation = 2;
-        break;
-      case 1:
-        compensation = 0;
-        break;
-      case 2:
-        compensation = -2;
-        break;
-    }
-    return (position + 6 + compensation) % 12;
   },
 
   toDirections : function(positions) {

@@ -23,7 +23,7 @@ var Directions = {
    * Example: rotateCounterClockwise(Directions.NORTH, Rotations.ONCE) -> Directions.WEST
    */
   rotateCounterClockwise : function(directions, rotation) {
-    return _rotate(direction, rotation, _rotateCounterClockwise);
+    return _rotate(directions, rotation, _rotateCounterClockwise);
   },
 
   /**
@@ -32,7 +32,7 @@ var Directions = {
    * Example: rotateClockwise(Directions.NORTH, Rotations.ONCE) -> Directions.EAST
    */
   rotateClockwise : function(directions, rotation) {
-    return _rotate(direction, rotation, _rotateClockwise);
+    return _rotate(directions, rotation, _rotateClockwise);
   }
 
 };
