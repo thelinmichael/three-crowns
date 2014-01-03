@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         reporter: 'spec'
       },
       all: {
-        src: ['test/models/*.js', 'test/*.js']
+        src: ['test/**/*.js', 'test/*.js']
       }
     },
     /* Javascript linting */
