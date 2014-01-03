@@ -284,11 +284,12 @@ describe("Game", function() {
     unit.players[1].meeples.length.should.equal(1);
   });
 
-  it.skip("if players have meeples on a road or castle and the area is finished, they should get them back", function() {
+  it("if players have meeples on a road and the area is finished, they should get them back. Not on grass though.", function() {
     var unit = new Game();
 
     unit.addPlayer(new Player({ "name" : "Michael" }));
     unit.addPlayer(new Player({ "name" : "Jenni" }));
+    unit.addPlayer(new Player({ "name" : "The GrassQueen" }));
 
     var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
     var curvedRoad1 = require("../../libs/gamepacks/basegame/tiles/v-curved-road");
@@ -298,7 +299,7 @@ describe("Game", function() {
     unit.tiles = [crossroads1, curvedRoad1, curvedRoad2, curvedRoad3];
 
     var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
-    unit.startingKit.meeples = [regularMeeple];
+    unit.startingKit.meeples = [{ "model" : regularMeeple, "amount" : 1 }];
 
     var options = {
       shuffle : {
@@ -312,32 +313,43 @@ describe("Game", function() {
     unit.placeTile(0, 0, Rotations.NONE);
     var meeples = unit.getActivePlayersMeeples();
     meeples.length.should.equal(1);
-    var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
-    unit.placeMeeple(0, 0, possibleMeeplePlacements[0].areas[2], meeples[0]);
+    var possibleMeeplePlacementsForPlayer1 = unit.getPossibleMeeplePlacements();
+    unit.placeMeeple(0, 0, possibleMeeplePlacementsForPlayer1[0].areas[5], meeples[0]);
 
     unit.players[0].meeples.length.should.equal(0);
     unit.players[1].meeples.length.should.equal(1);
+    unit.players[2].meeples.length.should.equal(1);
 
     /* Second player places a curved road west of the crossroads and places a meeple on the road. */
-    unit.placeTile(-1, 0, Rotations.TWICE);
-    var meeples = unit.getActivePlayersMeeples();
-    meeples.length.should.equal(1);
-    var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
-    unit.placeMeeple(-1, 0, possibleMeeplePlacements[0].areas[1], meeples[0]);
+    unit.placeTile(-1, 0, Rotations.THRICE);
+    var player2meeples = unit.getActivePlayersMeeples();
+    player2meeples.length.should.equal(1);
+    var possibleMeeplePlacementsForPlayer2 = unit.getPossibleMeeplePlacements();
+    unit.placeMeeple(-1, 0, possibleMeeplePlacementsForPlayer2[0].areas[1], player2meeples[0]);
 
     unit.players[0].meeples.length.should.equal(0);
     unit.players[1].meeples.length.should.equal(0);
+    unit.players[2].meeples.length.should.equal(1);
 
-    /* First player places a curve below the original crossroads, and turning it so that it continues west */
+    /* Third player places a curve below the original crossroads, and turning it so that it continues west.
+       Places a meeple on the grass on the inside of the curve. */
     unit.placeTile(0,-1, Rotations.ONCE);
-    unit.nextTurn();
+    var player3meeples = unit.getActivePlayersMeeples();
+    player3meeples.length.should.equal(1);
+    var possibleMeeplePlacementsForPlayer3 = unit.getPossibleMeeplePlacements();
+    unit.placeMeeple(-1, 0, possibleMeeplePlacementsForPlayer3[0].areas[1], player3meeples[0]);
 
-    /* Second player finishes the road by placing a curve */
-    unit.placeTile(-1,-1, Rotations.THRICE);
+    unit.players[0].meeples.length.should.equal(0);
+    unit.players[1].meeples.length.should.equal(0);
+    unit.players[2].meeples.length.should.equal(0);
 
-    /* Both places should now have their meeple back */
+    /* First player finishes the road by placing a curve */
+    unit.placeTile(-1,-1, Rotations.TWICE);
+
+    /* The first two players should now have their meeple back. Not the third one though, who had a meeple in the grass. */
     unit.players[0].meeples.length.should.equal(1);
     unit.players[1].meeples.length.should.equal(1);
+    unit.players[2].meeples.length.should.equal(0);
   });
 
   it("if players have meeples on a road or castle and the area is finished, they should not get them back");
@@ -393,16 +405,14 @@ describe("Game", function() {
       actionsLeft2.length.should.equal(1);
       var currentRoundNumberStill1 = unit.getCurrentRoundNumber();
       currentRoundNumberStill1.should.equal(1);
-      var activePlayer = unit.getActivePlayer();
-      activePlayer.name.should.equal("Michael");
+      unit.getActivePlayer().name.should.equal("Michael");
 
       var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
       var meeples = unit.getActivePlayersMeeples();
       unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[0], meeples[0]);
 
       /* No actions are left, and should be the second round */
-      var activePlayer = unit.getActivePlayer();
-      activePlayer.name.should.equal("Jenni");
+      unit.getActivePlayer().name.should.equal("Jenni");
 
       var currentRoundNumber2 = unit.getCurrentRoundNumber();
       currentRoundNumber2.should.equal(2);

@@ -11,7 +11,7 @@ var Road = require("../tile-area-types/road");
  var areas = {
   "connectables" : [
     new Connectable({
-      "positions" : [ 8,9 ],
+      "positions" : [ 11,0,1,2,3,4,5,6 ],
       "areaType" : Grass
     }),
     new Connectable({
@@ -19,7 +19,7 @@ var Road = require("../tile-area-types/road");
       "areaType" : Road
     }),
     new Connectable({
-      "positions" : [ 11,0,1,2,3,4,5,6 ],
+      "positions" : [ 8,9 ],
       "areaType" : Grass
     })
   ]

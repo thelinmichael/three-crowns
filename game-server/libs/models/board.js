@@ -97,6 +97,20 @@ schema.methods.placeTile = function(x, y, tile, rotation) {
   this.tiles.push(newTileOnBoard);
 };
 
+schema.methods.getFinishedMeeplePlacements = function() {
+  var self = this;
+  var returnedAreaContainers = [];
+  this.tiles.forEach(function(tileOnBoard) {
+    tileOnBoard.meeplePlacements.forEach(function(placement) {
+      var finishedArea = placement.tileArea.isFinished(tileOnBoard.x, tileOnBoard.y, self);
+      if (finishedArea) {
+        returnedAreaContainers.push({ "tileArea" : placement.tileArea, "meeple" : placement.meeple, "x" : tileOnBoard.x, "y" : tileOnBoard.y });
+      }
+    });
+  });
+  return returnedAreaContainers;
+};
+
 schema.methods.getNumberOfTiles = function() {
   return this.tiles.length;
 };
@@ -260,7 +274,6 @@ schema.methods.hasTile = function(x, y) {
   return (this.getTile(x,y) !== undefined);
 };
 
-
 schema.methods.hasTileInDirection = function(x, y, direction) {
   return (this.getTileInDirection(x, y, direction) !== undefined);
 };
@@ -280,7 +293,27 @@ schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
   var tileOnBoard = this.getTile(x, y);
 
   /* TODO: If internal, place it on the internal instead */
-  tileOnBoard.meeplePlacements.push({ "tileArea" : tilearea, "meeple" : meeple });
+  tileOnBoard.meeplePlacements.push({ "x" : tileOnBoard.x, "y" : tileOnBoard.y, "tileArea" : tilearea, "meeple" : meeple });
+};
+
+schema.methods.removeMeeple = function(x, y, tilearea, meeple) {
+  var tileOnBoardWithMeeple = this.tiles.filter(function(tileOnBoard) {
+    return tileOnBoard.meeplePlacements.some(function(placement) {
+      return placement.meeple.equals(meeple);
+    });
+  });
+  if (tileOnBoardWithMeeple.length === 0) {
+    throw new Error("Didn't find meeple!");
+  }
+  if (tileOnBoardWithMeeple.length > 1) {
+    throw new Error("Found more than one occurence of meeple.");
+  }
+
+  tileOnBoardWithMeeple[0].meeplePlacements.forEach(function(placement, index) {
+    if (placement.meeple.equals(meeple)) {
+      tileOnBoardWithMeeple[0].meeplePlacements.splice(index, 1);
+    }
+  });
 };
 
 schema.methods.getAreasFreeFromMeeplesOnTile = function(tileOnBoard) {

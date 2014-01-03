@@ -28,6 +28,7 @@ ConnectableSchema.methods.connectsWith = function(area) {
  * @returns {Boolean} Returns true if this connectable is restricted to one side of the
  * tile. This may need to be changed in case there are tiles that can connect to a tile adjacent to it
  * in two different paths, e.g. a tile that has a u turn road going back to the same side that it came from.
+ * TODO: Remove.
  */
 ConnectableSchema.methods.isCulDeSac = function() {
   return (Positions.toDirections(this.positions).length == 1);

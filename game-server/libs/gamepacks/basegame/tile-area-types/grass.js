@@ -30,4 +30,4 @@ BaseSchema.methods.getName = function() {
 
 var Grass = mongoose.model('Grass', BaseSchema);
 
-module.exports = new Grass({ "name" : "Grass" });
+module.exports = new Grass({ "name" : "Grass", "returnMeepleOnFinish" : false });

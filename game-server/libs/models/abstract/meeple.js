@@ -6,7 +6,7 @@ var mongoose = require("mongoose");
  */
 var MeepleSchema = mongoose.Schema({
   strength :  Number,
-  owner : String
+  owner : {}
 });
 
 module.exports.schema = MeepleSchema;

@@ -8,7 +8,8 @@ var mongoose = require("mongoose");
  */
 var schema = mongoose.Schema({
   name : { "type" : String },
-  meeplePlaceable : { "type" : Boolean, "default" : true }
+  meeplePlaceable : { "type" : Boolean, "default" : true },
+  returnMeepleOnFinish : { "type" : Boolean, "default" : true }
 });
 
 /*

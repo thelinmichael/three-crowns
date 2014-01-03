@@ -163,6 +163,7 @@ schema.methods.placeTile = function(x, y, rotation) {
   };
   this.performAction(placeTileAction[0], options, function() {
     self.currentRound.tileHasBeenPlaced = true;
+    self.returnMeeplesFromFinishedAreas();
     self.giveOptionalAction(new PlaceMeeple());
   });
 };
@@ -186,11 +187,35 @@ schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
   });
 };
 
+schema.methods.returnMeeplesFromFinishedAreas = function() {
+  var self = this;
+  var finishedPlacements = this.board.getFinishedMeeplePlacements();
+
+  finishedPlacements.forEach(function(finishedPlacement) {
+    if (finishedPlacement.tileArea.areaType.returnMeepleOnFinish) {
+
+      /* Remove it from the board */
+      self.board.removeMeeple(finishedPlacement.x, finishedPlacement.y, finishedPlacement.tileArea, finishedPlacement.meeple);
+
+      /* Return it to the player */
+      self.returnMeeple(finishedPlacement.meeple);
+    }
+  });
+};
+
 schema.methods.removeMeepleFromActivePlayer = function(meepleToRemove) {
   var activePlayer = this.getActivePlayer();
   this.players.forEach(function(player) {
     if (activePlayer.equals(player.player)) {
       player.meeples.pull(meepleToRemove);
+    }
+  });
+};
+
+schema.methods.returnMeeple = function(meeple) {
+  this.players.forEach(function(player) {
+    if (meeple.owner.equals(player.player)) {
+      player.meeples.push(meeple);
     }
   });
 };
@@ -286,7 +311,7 @@ schema.methods.distributeStartingKitToPlayers = function() {
   this.players.forEach(function(player) {
     self.startingKit.meeples.forEach(function(meeple) {
       for (var i = 0; i < meeple.amount; i++) {
-        var newMeeple = new meeple.model({ "owner" : player });
+        var newMeeple = new meeple.model({ "owner" : player.player });
         player.meeples.push(newMeeple);
       }
     });

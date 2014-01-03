@@ -34,7 +34,7 @@ Gamepack.prototype.getMeeples = function() {
     return {
       "model" : require("./gamepacks/" + self.config.gamepackId + "/meeples/" + meepleEntry.name),
       "amount" : meepleEntry.amount
-    }
+    };
   });
   return loadedMeeples;
 };
