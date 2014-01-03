@@ -5,7 +5,7 @@ var PlaceMeepleSchema = mongoose.Schema({
   performed : { type : Boolean, default: false }
 });
 
-PlaceMeepleSchema.methods.perform = function(board, options) {
+PlaceMeepleSchema.methods.perform = function(game, options) {
   if (options.x === undefined ||
       options.y === undefined ||
       options.tilearea === undefined ||
@@ -13,7 +13,8 @@ PlaceMeepleSchema.methods.perform = function(board, options) {
     throw new Error("Required options not given", options);
   }
 
-  board.placeMeeple(options.x, options.y, options.tilearea, options.meeple);
+  game.board.placeMeeple(options.x, options.y, options.tilearea, options.meeple);
+  game.removeMeepleFromActivePlayer(options.meeple);
 
   this.performed = true;
 };

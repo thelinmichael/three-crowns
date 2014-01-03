@@ -3,7 +3,6 @@ var Board = require("./board");
 var Player = require("./player");
 var DrawpileShufflingStrategy = require("../drawpile-shuffling-strategy");
 var PlaceTile = require("./placetile-action");
-var PlaceMeeple = require("./placemeeple-action");
 
 /**
  * This model describes a Game. A game has general information such as start and end time, as well as
@@ -71,27 +70,29 @@ schema.methods.addPacks = function(gamepacks) {
 /**
  * Go to next turn or end the game if it was the last turn.
  * @returns {Boolean} Returns true if successfully changed to the next turn or ended the game, false otherwise.
+ * @throws If there are still unperformed mandatory actions left.
  */
 schema.methods.nextTurn = function() {
-  /* If the user still has mandatory actions left, refuse to change turn */
   if (this.hasUnperformedMandatoryActions()) {
     throw new Error("Tried to go to next turn, but still has mandatory actions");
   }
 
-  /* If there are no more tiles at the end of the turn,
-     the game ends. */
   if (this.isLastTile()) {
     this.end();
   } else {
-    this.shiftActivePlayer();
-    this.removeAllActions();
-    this.distributeActions();
+    this.resetActions();
+    this.skipToNextPlayer();
     this.skipToNextTile();
   }
   return true;
 };
 
-schema.methods.shiftActivePlayer = function() {
+schema.methods.resetActions = function() {
+  this.removeAllActions();
+  this.distributeActions();
+};
+
+schema.methods.skipToNextPlayer = function() {
   this.currentRound.player = (this.currentRound.player + 1) % (this.players.length);
 };
 
@@ -124,11 +125,8 @@ schema.methods.getOptionalActions = function() {
   return this.currentRound.actions.optional;
 };
 
-schema.methods.performAction = function(action, options, callback) {
-  action.perform(this.board, options);
-  if (callback) {
-    callback();
-  }
+schema.methods.performAction = function(action, options) {
+  action.perform(this, options);
 
   if (this.getUnperformedActions().length === 0) {
     this.nextTurn();
@@ -160,11 +158,7 @@ schema.methods.placeTile = function(x, y, rotation) {
     "tile" : this.tiles[this.currentRound.tile],
     "rotation" : rotation
   };
-  this.performAction(placeTileAction[0], options, function() {
-    self.currentRound.tileHasBeenPlaced = true;
-    self.returnMeeplesFromFinishedAreas();
-    self.giveOptionalAction(new PlaceMeeple());
-  });
+  this.performAction(placeTileAction[0], options);
 };
 
 schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
@@ -181,9 +175,7 @@ schema.methods.placeMeeple = function(x, y, tilearea, meeple) {
     "tilearea" : tilearea,
     "meeple" : meeple
   };
-  this.performAction(placeMeepleAction[0], options, function() {
-    self.removeMeepleFromActivePlayer(meeple);
-  });
+  this.performAction(placeMeepleAction[0], options);
 };
 
 schema.methods.returnMeeplesFromFinishedAreas = function() {
@@ -321,13 +313,13 @@ schema.methods.getUnperformedMandatoryActions = function() {
   return this.getMandatoryActions().filter(function(action) {
     return !action.isPerformed();
   });
-}
+};
 
 schema.methods.getUnperformedOptionalActions = function() {
   return this.getOptionalActions().filter(function(action) {
     return !action.isPerformed();
   });
-}
+};
 
 /**
  * Shuffle the tiles in the tile queue.

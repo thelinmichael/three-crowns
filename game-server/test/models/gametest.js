@@ -354,8 +354,6 @@ describe("Game", function() {
     unit.players[2].meeples.length.should.equal(0);
   });
 
-  it("if players have meeples on a road or castle and the area is finished, they should not get them back");
-
   describe("Actions", function() {
 
     it("can get actions both with or without name", function() {
