@@ -168,6 +168,7 @@ describe("Game", function() {
 
     var possibleMeeplePlacements1 = unit.getPossibleMeeplePlacements();
     should.exist(possibleMeeplePlacements1);
+    possibleMeeplePlacements1.length.should.equal(1);
     possibleMeeplePlacements1[0].areas.length.should.equal(4);
 
     var meeples = unit.getActivePlayersMeeples();
@@ -177,6 +178,7 @@ describe("Game", function() {
 
     var possibleMeeplePlacements2 = unit.getPossibleMeeplePlacements();
     should.exist(possibleMeeplePlacements2);
+    possibleMeeplePlacements2.length.should.equal(1);
     possibleMeeplePlacements2[0].areas.length.should.equal(2);
   });
 
@@ -394,14 +396,14 @@ describe("Game", function() {
       var currentRoundNumber1 = unit.getCurrentRoundNumber();
       currentRoundNumber1.should.equal(1);
 
-      var actionsLeft1 = unit.getActions();
+      var actionsLeft1 = unit.getUnperformedActions();
       actionsLeft1.length.should.equal(1);
 
       /* Player has a mandatory action, but will receive an optional action after placing a tile */
       unit.placeTile(0, 0, Rotations.NONE);
 
       /* Has one meeple laying action left */
-      var actionsLeft2 = unit.getActions();
+      var actionsLeft2 = unit.getUnperformedActions();
       actionsLeft2.length.should.equal(1);
       var currentRoundNumberStill1 = unit.getCurrentRoundNumber();
       currentRoundNumberStill1.should.equal(1);
@@ -440,10 +442,10 @@ describe("Game", function() {
 
       unit.placeTile(0, 0, Rotations.NONE);
 
-      var mandatoryActionsLeft2 = unit.getMandatoryActions();
+      var mandatoryActionsLeft2 = unit.getUnperformedMandatoryActions();
       mandatoryActionsLeft2.length.should.equal(0);
 
-      var optionalActionsLeft = unit.getOptionalActions();
+      var optionalActionsLeft = unit.getUnperformedOptionalActions();
       optionalActionsLeft.length.should.equal(1);
 
       (function() {

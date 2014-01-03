@@ -18,4 +18,8 @@ PlaceTileSchema.methods.perform = function(board, options) {
   this.performed = true;
 };
 
+PlaceTileSchema.methods.isPerformed = function() {
+  return this.performed;
+};
+
 module.exports = mongoose.model('PlaceTileAction', PlaceTileSchema);

@@ -18,4 +18,8 @@ PlaceMeepleSchema.methods.perform = function(board, options) {
   this.performed = true;
 };
 
+PlaceMeepleSchema.methods.isPerformed = function() {
+  return this.performed;
+};
+
 module.exports = mongoose.model('PlaceMeepleAction', PlaceMeepleSchema);

@@ -22,6 +22,9 @@ var PlaceMeeple = require("./placemeeple-action");
  * currentRound {Object} Things that change each round, such as active player and tile
  *   player {Number} The index of the active player in the {players} array
  *   tile   {Number} The index of the active tile in the {tiles} array
+ *   actions {Array}
+ *     mandatory {Array} An array of {Action}s that must be performed before the end of the turn
+ *     optional {Array} An array of {Actions}s that are optional
  * board {Board} The game's board
  */
 var schema = mongoose.Schema({
@@ -41,7 +44,6 @@ var schema = mongoose.Schema({
   currentRound : {
     player : { type: Number, default: 0 },
     tile : { type: Number, default : 0 },
-    tileHasBeenPlaced : { type: Boolean, default : false },
     actions : {
       mandatory : { type: Array, default: [] },
       optional : { type: Array, default: [] }
@@ -72,7 +74,7 @@ schema.methods.addPacks = function(gamepacks) {
  */
 schema.methods.nextTurn = function() {
   /* If the user still has mandatory actions left, refuse to change turn */
-  if (this.hasRemainingMandatoryActions()) {
+  if (this.hasUnperformedMandatoryActions()) {
     throw new Error("Tried to go to next turn, but still has mandatory actions");
   }
 
@@ -85,8 +87,6 @@ schema.methods.nextTurn = function() {
     this.removeAllActions();
     this.distributeActions();
     this.skipToNextTile();
-
-    this.currentRound.tileHasBeenPlaced = false;
   }
   return true;
 };
@@ -130,8 +130,7 @@ schema.methods.performAction = function(action, options, callback) {
     callback();
   }
 
-  this.removeAction(action);
-  if (this.getActions().length === 0) {
+  if (this.getUnperformedActions().length === 0) {
     this.nextTurn();
   }
 };
@@ -293,8 +292,42 @@ schema.methods.getPossibleMeeplePlacements = function() {
 };
 
 schema.methods.tileHasBeenPlacedThisRound = function() {
-  return this.currentRound.tileHasBeenPlaced;
+  return this.getPerformedActions().some(function(action) {
+    return action.name == 'PlaceTile';
+  });
 };
+
+schema.methods.getPerformedActions = function() {
+  return this.getPerformedMandatoryActions().concat(this.getPerformedOptionalActions());
+};
+
+schema.methods.getUnperformedActions = function() {
+  return this.getUnperformedMandatoryActions().concat(this.getUnperformedOptionalActions());
+};
+
+schema.methods.getPerformedMandatoryActions = function() {
+  return this.currentRound.actions.mandatory.filter(function(action) {
+    return action.isPerformed();
+  });
+};
+
+schema.methods.getPerformedOptionalActions = function() {
+  return this.currentRound.actions.optional.filter(function(action) {
+    return action.isPerformed();
+  });
+};
+
+schema.methods.getUnperformedMandatoryActions = function() {
+  return this.getMandatoryActions().filter(function(action) {
+    return !action.isPerformed();
+  });
+}
+
+schema.methods.getUnperformedOptionalActions = function() {
+  return this.getOptionalActions().filter(function(action) {
+    return !action.isPerformed();
+  });
+}
 
 /**
  * Shuffle the tiles in the tile queue.
@@ -399,8 +432,10 @@ schema.methods.getCurrentRoundNumber = function() {
   }
 };
 
-schema.methods.hasRemainingMandatoryActions = function() {
-  return (this.currentRound.actions.mandatory.length > 0);
+schema.methods.hasUnperformedMandatoryActions = function() {
+  return this.getMandatoryActions().some(function(action) {
+    return !action.isPerformed();
+  });
 };
 
 schema.methods.getPlayers = function() {
