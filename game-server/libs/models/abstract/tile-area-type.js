@@ -9,7 +9,8 @@ var mongoose = require("mongoose");
 var schema = mongoose.Schema({
   name : { "type" : String },
   meeplePlaceable : { "type" : Boolean, "default" : true },
-  returnMeepleOnFinish : { "type" : Boolean, "default" : true }
+  returnMeepleOnFinish : { "type" : Boolean, "default" : true },
+  connectable : { "type" : Boolean, "default" : true }
 });
 
 /*

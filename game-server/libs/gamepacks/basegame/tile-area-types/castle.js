@@ -33,6 +33,10 @@ BaseSchema.methods.getName = function() {
   return this.name;
 };
 
+/* TODO: Implement */
+BaseSchema.methods.getScore = function(board, areasInvolved) {
+  return 0;
+};
 
 var Castle = mongoose.model('Castle', BaseSchema);
 

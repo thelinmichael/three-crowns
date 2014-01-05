@@ -201,9 +201,11 @@ schema.methods.scoreFinishedAreas = function() {
 
   var finishedPlacements = this.board.getFinishedMeeplePlacements();
   finishedPlacements.forEach(function(finishedPlacement) {
-    var areasInvolvedInStructure = self.board.getTileAreasCoveredByConnectableArea(finishedPlacement.x, finishedPlacement.y, finishedPlacement.tileArea);
-    var score = finishedPlacement.tileArea.areaType.getScore(this.board, areasInvolvedInStructure);
-    self.giveScore(finishedPlacement.meeple.owner, score);
+    if (finishedPlacement.tileArea.areaType.connectable) {
+      var areasInvolvedInStructure = self.board.getTileAreasCoveredByConnectableArea(finishedPlacement.x, finishedPlacement.y, finishedPlacement.tileArea);
+      var score = finishedPlacement.tileArea.areaType.getScore(this.board, areasInvolvedInStructure);
+      self.giveScore(finishedPlacement.meeple.owner, score);
+    }
   });
 };
 
@@ -369,10 +371,10 @@ schema.methods.getPointsForPlayer = function(playerToGetPointsFor) {
     return player.player.equals(playerToGetPointsFor);
   });
 
-  if (playerContainer.length == 0) {
+  if (playerContainer.length === 0) {
     throw new Error("Didn't find player!");
   } else if (playerContainer.length > 1) {
-    throw new Error("Found more than one player!")
+    throw new Error("Found more than one player!");
   }
 
   return playerContainer[0].points;

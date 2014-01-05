@@ -28,6 +28,11 @@ BaseSchema.methods.getName = function() {
   return this.name;
 };
 
+/* TODO: Implement */
+BaseSchema.methods.getScore = function(board, areasInvolved) {
+  return 0;
+};
+
 var Grass = mongoose.model('Grass', BaseSchema);
 
 module.exports = new Grass({ "name" : "Grass", "returnMeepleOnFinish" : false });

@@ -33,4 +33,4 @@ BaseSchema.methods.isBuildingCompleted = function(position, board) {
 
 var Monastery = mongoose.model('Monastery', BaseSchema);
 
-module.exports = new Monastery({ "name" : "Monastery" });
+module.exports = new Monastery({ "name" : "Monastery", "connectable" : false });

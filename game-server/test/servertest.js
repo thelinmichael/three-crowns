@@ -85,7 +85,7 @@ describe("Websocket API", function() {
     });
   });
 
-  it.only("should be able to play end to end", function(done) {
+  it("should be able to play end to end", function(done) {
     socket.emit('create', { gamepacks : ['river', 'basegame' ]});
     socket.once('create', function(response) {
       response.status.should.equal("success");
