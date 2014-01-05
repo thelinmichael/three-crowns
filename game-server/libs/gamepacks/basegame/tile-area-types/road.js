@@ -33,6 +33,10 @@ BaseSchema.methods.getName = function() {
   return this.name;
 };
 
+BaseSchema.methods.getScore = function(board, areasInvolved) {
+  return areasInvolved.length;
+};
+
 var Road = mongoose.model('Road', BaseSchema);
 
 module.exports = new Road({ "name" : "Road" });

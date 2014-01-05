@@ -16,6 +16,7 @@ var PlaceTile = require("./placetile-action");
  * players {Array} An array of players and what kit they've got
  *   player {Player} A player
  *   meeples {Array} The meeples the player has left
+ *   points {Number}
  * startingKit {Object} Meeples each player start out with
  *   meeples   {Array} An array of {Meeples}, e.g. Regular Meeple, Big Meeple, Mayor, Pig
  * currentRound {Object} Things that change each round, such as active player and tile
@@ -31,7 +32,8 @@ var schema = mongoose.Schema({
   endTime : Date,
   players : [{
     player : {},
-    meeples : []
+    meeples : [],
+    points : { type : Number, default : 0 }
   }],
   tiles : ['Tile'],
   startingKit : {
@@ -194,6 +196,25 @@ schema.methods.returnMeeplesFromFinishedAreas = function() {
   });
 };
 
+schema.methods.scoreFinishedAreas = function() {
+  var self = this;
+
+  var finishedPlacements = this.board.getFinishedMeeplePlacements();
+  finishedPlacements.forEach(function(finishedPlacement) {
+    var areasInvolvedInStructure = self.board.getTileAreasCoveredByConnectableArea(finishedPlacement.x, finishedPlacement.y, finishedPlacement.tileArea);
+    var score = finishedPlacement.tileArea.areaType.getScore(this.board, areasInvolvedInStructure);
+    self.giveScore(finishedPlacement.meeple.owner, score);
+  });
+};
+
+schema.methods.giveScore = function(playerToScore, amount) {
+  var playerContainer = this.players.filter(function(player) {
+    return playerToScore.equals(player.player);
+  });
+
+  playerContainer[0].points = playerContainer[0].points + amount;
+};
+
 schema.methods.removeMeepleFromActivePlayer = function(meepleToRemove) {
   var activePlayer = this.getActivePlayer();
   this.players.forEach(function(player) {
@@ -341,6 +362,20 @@ schema.methods.distributeStartingKitToPlayers = function() {
       }
     });
   });
+};
+
+schema.methods.getPointsForPlayer = function(playerToGetPointsFor) {
+  var playerContainer = this.players.filter(function(player) {
+    return player.player.equals(playerToGetPointsFor);
+  });
+
+  if (playerContainer.length == 0) {
+    throw new Error("Didn't find player!");
+  } else if (playerContainer.length > 1) {
+    throw new Error("Found more than one player!")
+  }
+
+  return playerContainer[0].points;
 };
 
 /**

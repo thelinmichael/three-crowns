@@ -17,8 +17,6 @@ describe("Game", function() {
   it("Should be played the game from end to end", function() {
     var unit = GameBuilder.create({ gamepacks : ['basegame', 'river'] });
 
-    var BaseGame = GamepackLoader.loadPack("basegame");
-
     var players = unit.getPlayers();
     players.length.should.equal(0);
 
@@ -451,6 +449,53 @@ describe("Game", function() {
         }).should.not.throw();
     });
 
+  });
+
+  describe("Scoring", function() {
+    it("should score 1 point per road segment when the road is finished", function() {
+      var unit = new Game();
+
+      var player1 = new Player({ "name" : "Michael" });
+      var player2 = new Player({ "name" : "Jenni" });
+      unit.addPlayer(player1);
+      unit.addPlayer(player2);
+
+      var crossroads1 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+      var crossroads2 = require("../../libs/gamepacks/basegame/tiles/x-crossroads");
+      unit.tiles = [crossroads1, crossroads2];
+
+      var regularMeeple = require("../../libs/gamepacks/basegame/meeples/regular-meeple");
+      unit.startingKit.meeples = [{ "model" : regularMeeple, "amount" : 1 }];
+
+      unit.start();
+
+      /* Players start without any points */
+      unit.getPointsForPlayer(player1).should.equal(0);
+      unit.getPointsForPlayer(player2).should.equal(0);
+
+      /* Place a crossroads in origo */
+      unit.placeTile(0, 0, Rotations.NONE);
+
+      /* No scores should have been given after this placement */
+      unit.getPointsForPlayer(player1).should.equal(0);
+      unit.getPointsForPlayer(player2).should.equal(0);
+
+      /* Place a meeple on the south road */
+      var possibleMeeplePlacements = unit.getPossibleMeeplePlacements();
+      var meeples = unit.getActivePlayersMeeples();
+      unit.placeMeeple(possibleMeeplePlacements[0].x, possibleMeeplePlacements[0].y, possibleMeeplePlacements[0].areas[5], meeples[0]);
+
+      /* No points is given upon meeple placement */
+      unit.getPointsForPlayer(player1).should.equal(0);
+      unit.getPointsForPlayer(player2).should.equal(0);
+
+      /* Place a crossroads below the original one, so that the first player scores */
+      unit.placeTile(0, -1, Rotations.NONE);
+
+      /* First player scores two points */
+      unit.getPointsForPlayer(player1).should.equal(2);
+      unit.getPointsForPlayer(player2).should.equal(0);
+    });
   });
 
 });

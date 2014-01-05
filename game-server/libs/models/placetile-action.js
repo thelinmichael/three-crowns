@@ -16,6 +16,7 @@ PlaceTileSchema.methods.perform = function(game, options) {
   }
 
   game.board.placeTile(options.x, options.y, options.tile, options.rotation);
+  game.scoreFinishedAreas();
   game.returnMeeplesFromFinishedAreas();
   game.giveOptionalAction(new PlaceMeeple());
 
