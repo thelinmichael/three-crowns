@@ -5,9 +5,11 @@
   "private": true,
   "dependencies": {
     "socket.io" : "*",
-    "mongoose" : "*"
+    "mongoose" : "~3.8",
+    "express" : "~3.4"
   },
   "devDependencies": {
+    "socket.io-client" : "0.9.x",
     "grunt" : "*",
     "mocha" : "*",
     "should" : "*",
@@ -21,7 +23,6 @@
     "grunt-contrib-watch": "0.5.x",
     "grunt-contrib-jshint" : "0.7.1",
     "grunt-cli" : "0.1.11",
-    "socket.io-client" : "0.9.x",
     "grunt-simple-mocha" : "0.4.x"
   },
   "main" : "libs/server.js"

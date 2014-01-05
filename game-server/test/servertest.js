@@ -17,10 +17,16 @@ describe.only("Websocket API", function() {
   beforeEach(function(done) {
     server.start(null, 8090, { log : false });
 
+    /* Connect to MongoDB */
     mongoose.connection.once("open", function() {
       mongoose.connection.db.dropDatabase(function(err) {
         if (err) return done(err);
+
+        /* Connect to the server */
         socket = io.connect('http://localhost:8090', { 'force new connection' : true });
+        socket.on('error', function(reason) {
+          assert.fail(reason);
+        });
         socket.on('connect', function(data) {
           done();
         });
@@ -29,6 +35,7 @@ describe.only("Websocket API", function() {
   });
 
   afterEach(function(done) {
+    /* Disconnect MongoDB and the Websocket connection */
     mongoose.connection.db.dropDatabase(function(err) {
       if (err) return done(err);
       socket.disconnect();
@@ -134,8 +141,8 @@ describe.only("Websocket API", function() {
           games.length.should.equal(1);
           var mygame = games[0];
 
-          socket.emit('addplayer', { gameId : mygame.id, player : { name : 'Michael' }});
-          socket.once('addplayer', function(response) {
+          socket.emit('join', { gameId : mygame.id, player : { name : 'Michael' }});
+          socket.once('join', function(response) {
             response.status.should.equal('success');
             response.players.length.should.equal(1);
             response.players[0].player.name.should.equal('Michael');
