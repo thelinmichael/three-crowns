@@ -38,6 +38,18 @@ GameServer.prototype.start = function(stopCallback, port, options) {
       socket.emit('pong', { message : 'pong!'});
     });
 
+    socket.on('addplayer', function(options) {
+      var game = Game.findById(options.gameId, function(error, game) {
+        if (error) {
+          socket.emit('addplayer', { status : error.message });
+        } else {
+          game.addPlayerByName(options.player);
+          game.save(function(error, game) {
+            socket.emit('addplayer', { status : 'success', players : game.players });
+          });
+        }
+      });
+    });
   });
 };
 

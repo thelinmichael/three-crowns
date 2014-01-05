@@ -390,6 +390,11 @@ schema.methods.end = function() {
   }
 };
 
+schema.methods.addPlayerByName = function(name) {
+  var player = new Player(name);
+  this.addPlayer(player);
+};
+
 /**
  * @param {Player} The player to add to the game
  */

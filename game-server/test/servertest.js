@@ -85,13 +85,24 @@ describe("Websocket API", function() {
     });
   });
 
-  it("should be able to play end to end", function(done) {
+  it.only("should be able to play end to end", function(done) {
     socket.emit('create', { gamepacks : ['river', 'basegame' ]});
     socket.once('create', function(response) {
       response.status.should.equal("success");
       Game.find({}).exec(function(err, games) {
-        games.length.should.not.equal(0);
-        done();
+        games.length.should.equal(1);
+        var mygame = games[0];
+
+        socket.emit('addplayer', { gameId : mygame.id, player : { name : 'Michael' }});
+        socket.once('addplayer', function(response) {
+          response.status.should.equal('success');
+          response.players.length.should.equal(1);
+          response.players[0].player.name.should.equal('Michael');
+          Game.findById(mygame.id, function(error, game) {
+            game.getPlayers()[0].player.name.should.equal('Michael');
+            done();
+          });
+        });
       });
     });
   });
