@@ -37,14 +37,19 @@ describe.only("Websocket API", function() {
     });
   });
 
+  it("should be able to connect", function() {
+    if (!(socket && socket.socket && socket.socket.connected)) {
+      assert.fail("Could not connect");
+    }
+  });
+
+
+  /**
+   *  Commands tested: ping, server-status, find-games
+   */
   describe("Server status", function() {
 
-    it("should be able to connect", function() {
-      if (!(socket && socket.socket && socket.socket.connected)) {
-        assert.fail("Could not connect");
-      }
-    });
-
+    /* ping */
     it("should be able to ping server", function(done) {
       socket.emit('ping', {});
       socket.once('pong', function(pong) {
@@ -55,6 +60,7 @@ describe.only("Websocket API", function() {
       });
     });
 
+    /* server-status */
     it("should be able to get games count", function(done) {
       Game.find({}).exec(function(err,games) {
         var actualNumberOfGames = games.length;
@@ -70,6 +76,21 @@ describe.only("Websocket API", function() {
               done();
             });
           });
+        });
+      });
+    });
+
+    /* find-games */
+    it("should be able to find all games", function(done) {
+      Game.create({}, function(error, game) {
+        should.not.exist(error);
+
+        socket.emit('find-games', {});
+        socket.once('find-games', function(response) {
+          should.exist(response.games);
+          response.games.length.should.equal(1);
+          response.games[0]._id.should.equal(game.id);
+          done();
         });
       });
     });
@@ -101,15 +122,14 @@ describe.only("Websocket API", function() {
   });
 
   /**
-   * Commands tested: addplayer
+   * Commands tested: join
    */
-  describe("Creating and removing players", function() {
+  describe("Joining and leaving game", function() {
 
-    it("should be able to create a player", function(done) {
+    it("should be able to join a game", function(done) {
 
-      socket.emit('create', { gamepacks : ['river', 'basegame' ]});
-      socket.once('create', function(response) {
-        response.status.should.equal("success");
+      Game.create({}, function(err) {
+
         Game.find({}).exec(function(err, games) {
           games.length.should.equal(1);
           var mygame = games[0];
@@ -125,6 +145,7 @@ describe.only("Websocket API", function() {
             });
           });
         });
+
       });
     });
 
