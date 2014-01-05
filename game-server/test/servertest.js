@@ -10,7 +10,7 @@ var server = new GameServer();
 
 var socket;
 
-describe("Websocket API", function() {
+describe.only("Websocket API", function() {
 
   this.timeout(5000);
 
@@ -37,74 +37,97 @@ describe("Websocket API", function() {
     });
   });
 
-  it("should be able to connect", function() {
-    if (!(socket && socket.socket && socket.socket.connected)) {
-      assert.fail("Could not connect");
-    }
-  });
+  describe("Server status", function() {
 
-  it("should be able to ping server", function(done) {
-    socket.emit('ping', {});
-    socket.once('pong', function(pong) {
-      should.exist(pong);
-      should.exist(pong.message);
-      pong.message.should.equal("pong!");
-      done();
+    it("should be able to connect", function() {
+      if (!(socket && socket.socket && socket.socket.connected)) {
+        assert.fail("Could not connect");
+      }
     });
-  });
 
-  it("should be able to get games count", function(done) {
-    Game.find({}).exec(function(err,games) {
-      var actualNumberOfGames = games.length;
+    it("should be able to ping server", function(done) {
+      socket.emit('ping', {});
+      socket.once('pong', function(pong) {
+        should.exist(pong);
+        should.exist(pong.message);
+        pong.message.should.equal("pong!");
+        done();
+      });
+    });
 
-      socket.emit('server-status', {});
-      socket.once('server-status', function(status) {
-        (status.numberOfGames).should.equal(actualNumberOfGames);
+    it("should be able to get games count", function(done) {
+      Game.find({}).exec(function(err,games) {
+        var actualNumberOfGames = games.length;
 
-        Game.create({}, function(err) {
-          socket.emit('server-status', {});
-          socket.once('server-status', function(status) {
-            (status.numberOfGames).should.equal(actualNumberOfGames + 1);
-            done();
+        socket.emit('server-status', {});
+        socket.once('server-status', function(status) {
+          (status.numberOfGames).should.equal(actualNumberOfGames);
+
+          Game.create({}, function(err) {
+            socket.emit('server-status', {});
+            socket.once('server-status', function(status) {
+              (status.numberOfGames).should.equal(actualNumberOfGames + 1);
+              done();
+            });
           });
         });
       });
     });
+
   });
 
-  it("should be able to create games", function(done) {
-    Game.find({}).exec(function(err, games) {
-      var numberOfGames = games.length;
-      socket.emit('create', {});
-      socket.once('create', function() {
-        Game.find({}).exec(function(err, games) {
-          (games.length).should.equal(numberOfGames + 1);
-          done();
-        });
-      });
-    });
-  });
+  /**
+   * Commands tested: create
+   */
+  describe("Creating new games", function() {
 
-  it("should be able to play end to end", function(done) {
-    socket.emit('create', { gamepacks : ['river', 'basegame' ]});
-    socket.once('create', function(response) {
-      response.status.should.equal("success");
+    it("should be able to create games", function(done) {
       Game.find({}).exec(function(err, games) {
-        games.length.should.equal(1);
-        var mygame = games[0];
-
-        socket.emit('addplayer', { gameId : mygame.id, player : { name : 'Michael' }});
-        socket.once('addplayer', function(response) {
+        var numberOfGames = games.length;
+        socket.emit('create', {});
+        socket.once('create', function(response) {
           response.status.should.equal('success');
-          response.players.length.should.equal(1);
-          response.players[0].player.name.should.equal('Michael');
-          Game.findById(mygame.id, function(error, game) {
-            game.getPlayers()[0].player.name.should.equal('Michael');
+          should.exist(response.gameId);
+
+          Game.find({}).exec(function(err, games) {
+            games.length.should.equal(1);
+            games[0].id.should.equal(response.gameId);
             done();
           });
         });
       });
     });
+
+  });
+
+  /**
+   * Commands tested: addplayer
+   */
+  describe("Creating and removing players", function() {
+
+    it("should be able to create a player", function(done) {
+
+      socket.emit('create', { gamepacks : ['river', 'basegame' ]});
+      socket.once('create', function(response) {
+        response.status.should.equal("success");
+        Game.find({}).exec(function(err, games) {
+          games.length.should.equal(1);
+          var mygame = games[0];
+
+          socket.emit('addplayer', { gameId : mygame.id, player : { name : 'Michael' }});
+          socket.once('addplayer', function(response) {
+            response.status.should.equal('success');
+            response.players.length.should.equal(1);
+            response.players[0].player.name.should.equal('Michael');
+            Game.findById(mygame.id, function(error, game) {
+              game.getPlayers()[0].player.name.should.equal('Michael');
+              done();
+            });
+          });
+        });
+      });
+    });
+
   });
 
 });

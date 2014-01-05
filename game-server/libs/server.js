@@ -21,8 +21,8 @@ GameServer.prototype.start = function(stopCallback, port, options) {
     socket.emit('connection', { status: 'success' });
 
     socket.on('create', function(options) {
-      GameBuilder.create(options);
-      socket.emit('create', { status : 'success' });
+      var game = GameBuilder.create(options);
+      socket.emit('create', { status : 'success', gameId : game.id });
     });
 
     socket.on('server-status', function() {
