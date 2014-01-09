@@ -1,5 +1,7 @@
 var mongoose = require("mongoose");
 var Game = require("./models/game");
+var Player = require("./models/game");
+
 var GameBuilder = require("./gamebuilder");
 
 var express = require('express');
@@ -21,12 +23,7 @@ GameServer.prototype.start = function(stopCallback, port, options) {
 
   this.running = true;
 
-  io.set('authorization', authorize);
-
   io.sockets.on('connection', function (socket) {
-
-    // do authorization based on socket.handshake,
-    // respond with 200, 403, or 500 depending on outcome.
 
     socket.emit('connection', { status: 'success' });
 
@@ -34,8 +31,13 @@ GameServer.prototype.start = function(stopCallback, port, options) {
      * create
      */
     socket.on('create', function(options) {
-      var game = GameBuilder.create(options);
-      socket.emit('create', { status : 'success', gameId : game.id });
+      new GameBuilder().build(function(err, game) {
+        if (err) {
+          socket.emit('create', { status : 'error', 'message' : err.message });
+        } else {
+          socket.emit('create', { status : 'success', gameId : game.id });
+        }
+      });
     });
 
     /**
@@ -61,9 +63,9 @@ GameServer.prototype.start = function(stopCallback, port, options) {
      * find-games
      */
     socket.on('find-games', function() {
-      Game.find({}, function(error, foundGames) {
-        if (error) {
-          socket.emit('status', { status : error.message });
+      Game.find({}, function(err, foundGames) {
+        if (err) {
+          socket.emit('find-games', { status : 'error', 'message' : err.message });
         } else {
           socket.emit('find-games', { status : 'success', games : foundGames });
         }
@@ -74,13 +76,18 @@ GameServer.prototype.start = function(stopCallback, port, options) {
      * add-player
      */
     socket.on('join', function(options) {
-      var game = Game.findById(options.gameId, function(error, game) {
-        if (error) {
-          socket.emit('join', { status : error.message });
+      var game = Game.findById(options.gameId, function(err, game) {
+        if (err) {
+          socket.emit('join', { status : 'error', 'join' : err.message });
         } else {
-          game.addPlayerByName(options.player);
-          game.save(function(error, game) {
-            socket.emit('join', { status : 'success', players : game.players });
+          var player = new Player(options.player);
+          game.addPlayer(player);
+          game.save(function(err, game) {
+            if (err) {
+              socket.emit('join', { status : 'error', 'join' : err.message });
+            } else {
+              socket.emit('join', { status : 'success', players : game.players });
+            }
           });
         }
       });
@@ -110,15 +117,6 @@ GameServer.prototype.stop = function() {
  */
 GameServer.prototype.isRunning = function() {
   return this.running;
-};
-
-var authorize = function(handshakeData, callback) {
-  return callback(null, true); // Remove when cookie is available
-
-  if (!handshakeData.headers.cookie) {
-    return callback('No cookie transmitted', false);
-  }
-  return callback(null, true);
 };
 
 exports = module.exports = GameServer;

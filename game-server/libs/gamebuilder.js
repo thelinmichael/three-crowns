@@ -1,27 +1,15 @@
 var Game = require("./models/game.js");
-var GamepackLoader = require("./gamepackloader");
 
-var defaultOptions = {
-  gamepacks : ['basegame', 'single-starttile']
+var GameBuilder = function() {
+  var self = this;
+
+  this.game = new Game();
 };
 
-var create = function(options) {
-
-  /* Any options that are missing are filled in with default options */
-  for (var property in defaultOptions) {
-    if (options[property] === undefined) {
-      options[property] = defaultOptions[property];
-    }
-  }
-
-  var gamepacks = GamepackLoader.loadPacks(options.gamepacks);
-
-  var game = new Game();
-  game.addPacks(gamepacks);
-  game.save();
-
-  return game;
+GameBuilder.prototype.build = function(callback) {
+  this.game.save(function(err, game) {
+    callback(err, game);
+  });
 };
 
-exports = module.exports;
-exports.create = create;
+module.exports = GameBuilder;

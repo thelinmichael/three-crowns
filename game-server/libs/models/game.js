@@ -1,81 +1,15 @@
 var mongoose = require("mongoose");
-var Board = require("./board");
-var Player = require("./player");
-var DrawpileShufflingStrategy = require("../drawpile-shuffling-strategy");
-var PlaceTile = require("./placetile-action");
 
-/**
- * This model describes a Game. A game has general information such as start and end time, as well as
- * what players are in the game, and the game's board. It also keeps track of what tiles are left,
- * who'se player's turn it is, and which tile is up next.
- *
- * startTime {Date} The time the game started
- * endTime   {Date} The time the game ended
- * players   {Array} An array of {Player} who are playing the game
- * tiles {Array} An array of {Tile}
- * players {Array} An array of players and what kit they've got
- *   player {Player} A player
- *   meeples {Array} The meeples the player has left
- *   points {Number}
- * startingKit {Object} Meeples each player start out with
- *   meeples   {Array} An array of {Meeples}, e.g. Regular Meeple, Big Meeple, Mayor, Pig
- * currentRound {Object} Things that change each round, such as active player and tile
- *   player {Number} The index of the active player in the {players} array
- *   tile   {Number} The index of the active tile in the {tiles} array
- *   actions {Array}
- *     mandatory {Array} An array of {Action}s that must be performed before the end of the turn
- *     optional {Array} An array of {Actions}s that are optional
- * board {Board} The game's board
- */
 var schema = mongoose.Schema({
-  startTime: Date,
-  endTime : Date,
-  players : [{
-    player : {},
-    meeples : [],
-    points : { type : Number, default : 0 }
-  }],
-  tiles : ['Tile'],
-  startingKit : {
-    meeples : [{
-      model : {},
-      amount : { type : Number }
-    }]
-  },
-  currentRound : {
-    player : { type: Number, default: 0 },
-    tile : { type: Number, default : 0 },
-    actions : {
-      mandatory : { type: Array, default: [] },
-      optional : { type: Array, default: [] }
-    }
-  },
-  board : {}
+  startTime : Date,
+  endTime   : Date,
+  players   : ['Player'],
+  tileStack : {},
+  board     : {}
 });
 
-/**
- * Add basegame and/or expansions to this game
- * @param {Array} Array of gamepacks that will be added to this game
- */
-schema.methods.addPacks = function(gamepacks) {
-  var self = this;
-  gamepacks.forEach(function(gamepack) {
-    /* Add tiles from the gamepack */
-    var tiles = gamepack.getTiles();
-    self.tiles = self.tiles.concat(tiles);
-
-    /* Add meeples (e.g. regular, and big meeple) from the gamepack to the kit that each player gets */
-    self.startingKit.meeples = self.startingKit.meeples.concat(gamepack.getMeeples());
-  });
-};
-
-/**
- * Go to next turn or end the game if it was the last turn.
- * @returns {Boolean} Returns true if successfully changed to the next turn or ended the game, false otherwise.
- * @throws If there are still unperformed mandatory actions left.
- */
 schema.methods.nextTurn = function() {
-  if (this.hasUnperformedMandatoryActions()) {
+  if (player.hasUnperformedMandatoryActions()) {
     throw new Error("Tried to go to next turn, but still has mandatory actions");
   }
 
@@ -95,28 +29,19 @@ schema.methods.resetActions = function() {
 };
 
 schema.methods.skipToNextPlayer = function() {
-  this.currentRound.player = (this.currentRound.player + 1) % (this.players.length);
+  // Check index of active player. Switch to next player.
 };
 
 schema.methods.skipToNextTile = function() {
-  this.currentRound.tile++;
-  var possiblePlacementsForTile = this.board.getPossiblePlacementsForTile(this.getActiveTile());
-  while (possiblePlacementsForTile.length === 0) {
-    if (this.isLastTile()) {
-      this.end();
-    } else {
-      this.currentRound.tile++;
-      possiblePlacementsForTile = this.board.getPossiblePlacementsForTile(this.getActiveTile());
-    }
-  }
+  // Pop the tile stack
 };
 
 schema.methods.isLastTile = function() {
-  return (this.currentRound.tile == this.tiles.length - 1);
+  // Check if stack is empty
 };
 
 schema.methods.getActions = function() {
-  return this.currentRound.actions.mandatory.concat(this.currentRound.actions.optional);
+  // Get active player's actions
 };
 
 schema.methods.getMandatoryActions = function() {

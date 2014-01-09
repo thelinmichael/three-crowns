@@ -10,7 +10,7 @@ var server = new GameServer();
 
 var socket;
 
-describe.only("Websocket API", function() {
+describe("Websocket API", function() {
 
   this.timeout(5000);
 
@@ -133,7 +133,7 @@ describe.only("Websocket API", function() {
    */
   describe("Joining and leaving game", function() {
 
-    it("should be able to join a game", function(done) {
+    it.only("should be able to join a game", function(done) {
 
       Game.create({}, function(err) {
 
@@ -152,7 +152,6 @@ describe.only("Websocket API", function() {
             });
           });
         });
-
       });
     });
 

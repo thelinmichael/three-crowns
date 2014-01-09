@@ -1,7 +1,8 @@
 var mongoose = require("mongoose");
 
 var schema = mongoose.Schema({
-  name : { type : String }
+  name : { type : String },
+  color : { type : String }
 });
 
 schema.methods.getName = function() {
