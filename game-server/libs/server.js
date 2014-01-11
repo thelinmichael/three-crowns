@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 var Game = require("./models/game");
-var Player = require("./models/game");
+var Player = require("./models/player");
 
 var GameBuilder = require("./gamebuilder");
 

@@ -36,12 +36,15 @@ describe("Websocket API", function() {
 
   afterEach(function(done) {
     /* Disconnect MongoDB and the Websocket connection */
+    server.stop();
+    done();
+    /*
     mongoose.connection.db.dropDatabase(function(err) {
       if (err) return done(err);
       socket.disconnect();
       server.stop();
       done();
-    });
+    });*/
   });
 
   it("should be able to connect", function() {
@@ -145,9 +148,10 @@ describe("Websocket API", function() {
           socket.once('join', function(response) {
             response.status.should.equal('success');
             response.players.length.should.equal(1);
-            response.players[0].player.name.should.equal('Michael');
+            response.players[0].name.should.equal('Michael');
             Game.findById(mygame.id, function(error, game) {
-              game.getPlayers()[0].player.name.should.equal('Michael');
+              should.exist(game);
+              game.getPlayers()[0].name.should.equal('Michael');
               done();
             });
           });

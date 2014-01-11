@@ -317,34 +317,14 @@ schema.methods.end = function() {
   }
 };
 
-schema.methods.addPlayerByName = function(name) {
-  var player = new Player(name);
-  this.addPlayer(player);
-};
-
 /**
  * @param {Player} The player to add to the game
  */
-schema.methods.addPlayer = function(newPlayer) {
+schema.methods.addPlayer = function(player) {
   if (this.isStarted()) {
     throw new Error("Players cannot be added once game has started");
   }
-
-  if (this.players.length > 0) {
-    var foundPlayer = this.players.every(function(player) {
-      return (player.player === newPlayer);
-    });
-    if (foundPlayer) {
-      throw new Error("Player already exists in the game.");
-    }
-  }
-
-  /* Object that holds the player and the kit that the player has */
-  var newPlayerContainer = {
-    "player" : newPlayer,
-    "meeples"  : []
-  };
-  this.players.push(newPlayerContainer);
+  this.players.push(player);
 };
 
 schema.methods.getTiles = function() {
