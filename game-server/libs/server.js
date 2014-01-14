@@ -5,7 +5,16 @@ var Player = require("./models/player");
 var GameBuilder = require("./gamebuilder");
 
 var express = require('express');
+var MongoStore = require('connect-mongo')(express);
+var sessionStore = new MongoStore({ db: 'game' });
 var server = express();
+
+var passportSocketIo = require("passport.socketio");
+
+server.use(express.session({
+  secret: 'session_secret',
+  store: sessionStore
+}));
 
 var io;
 
@@ -20,6 +29,15 @@ GameServer.prototype.start = function(stopCallback, port, options) {
   mongoose.connect('mongodb://localhost/game');
 
   io = require('socket.io').listen(server.listen(port));
+
+  io.set('authorization', passportSocketIo.authorize({
+    cookieParser: express.cookieParser,
+    key:         'express.sid',       // the name of the cookie where express/connect stores its session_id
+    secret:      'session_secret',    // the session_secret to parse the cookie
+    store:       sessionStore,        // we NEED to use a sessionstore. no memorystore please
+    success:     onAuthorizeSuccess,  // *optional* callback on success - read more below
+    fail:        onAuthorizeFail,     // *optional* callback on fail/error - read more below
+  }));
 
   this.running = true;
 
@@ -73,10 +91,10 @@ GameServer.prototype.start = function(stopCallback, port, options) {
     });
 
     /**
-     * add-player
+     * Join game
      */
     socket.on('join', function(options) {
-      var game = Game.findById(options.gameId, function(err, game) {
+      Game.findById(options.gameId, function(err, game) {
         if (err) {
           socket.emit('join', { status : 'error', 'join' : err.message });
         } else {
@@ -92,6 +110,13 @@ GameServer.prototype.start = function(stopCallback, port, options) {
         }
       });
     });
+
+
+    /* Leave game */
+    socket.on('leave', function(options) {
+
+    });
+
   });
 };
 
@@ -118,5 +143,22 @@ GameServer.prototype.stop = function() {
 GameServer.prototype.isRunning = function() {
   return this.running;
 };
+
+function onAuthorizeSuccess(data, accept){
+  console.log('successful connection to socket.io');
+
+  // The accept-callback still allows us to decide whether to
+  // accept the connection or not.
+  accept(null, true);
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  if(error)
+    throw new Error(message);
+  console.log('failed connection to socket.io:', message);
+
+  // We use this callback to log all of our failed connections.
+  accept(null, false);
+}
 
 exports = module.exports = GameServer;

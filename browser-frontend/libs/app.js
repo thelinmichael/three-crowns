@@ -7,7 +7,6 @@ var PORT = 8080;
 var root = path.resolve(".");
 
 app.get('/', function(req, res) {
-  console.log(root);
   res.sendfile(root + "/pages/index.html");
 });
 

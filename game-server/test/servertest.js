@@ -36,15 +36,12 @@ describe("Websocket API", function() {
 
   afterEach(function(done) {
     /* Disconnect MongoDB and the Websocket connection */
-    server.stop();
-    done();
-    /*
     mongoose.connection.db.dropDatabase(function(err) {
       if (err) return done(err);
       socket.disconnect();
       server.stop();
       done();
-    });*/
+    });
   });
 
   it("should be able to connect", function() {
@@ -131,12 +128,27 @@ describe("Websocket API", function() {
 
   });
 
+  /* Command tested: create-user */
+  describe.skip('Create user', function() {
+    it("should be able to create a user", function() {
+      User.find({ "name" : "Michael" }).exec(function(err, users) {
+        users.length.should.equal(0);
+
+        socket.emit('create-user', { "name" : "Michael" });
+        socket.once('create', function(response) {
+          response.status.should.equal('success');
+          should.exist(response.user);
+        });
+      });
+    });
+  });
+
   /**
    * Commands tested: join
    */
-  describe("Joining and leaving game", function() {
+  describe("Joining game", function() {
 
-    it.only("should be able to join a game", function(done) {
+    it("should be able to join a game", function(done) {
 
       Game.create({}, function(err) {
 
